@@ -1,0 +1,352 @@
+/* ══════════════════════════════════════════════════════════════
+   UX ENHANCEMENTS — UNDO TOAST, CONTEXT BAR, PROGRESS BAR
+   ══════════════════════════════════════════════════════════════ */
+
+/* ── Undo Toast ──────────────────────────────────────────────── */
+.undo-toast {
+  position: fixed;
+  bottom: 16px;
+  left: 16px;
+  right: 16px;
+  max-width: 420px;
+  background: linear-gradient(135deg, #1e8a45 0%, #15652e 100%);
+  color: #ffffff;
+  border-radius: 12px;
+  padding: 14px 16px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 12px;
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.3);
+  z-index: 1000;
+  animation: undoToastSlideUp 0.35s cubic-bezier(0.34, 1.56, 0.64, 1);
+  font-size: 0.95rem;
+  line-height: 1.4;
+}
+
+.undo-toast.hidden {
+  display: none;
+}
+
+.undo-toast.undo-toast-exit {
+  animation: undoToastSlideDown 0.28s ease-in forwards;
+}
+
+.undo-toast-content {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  flex: 1;
+}
+
+#undoToastMessage {
+  font-weight: 500;
+  letter-spacing: 0.01em;
+}
+
+.undo-toast-action {
+  background: rgba(255, 255, 255, 0.2);
+  color: #ffffff;
+  border: 1px solid rgba(255, 255, 255, 0.3);
+  border-radius: 6px;
+  padding: 6px 10px;
+  font-size: 0.85rem;
+  font-weight: 600;
+  cursor: pointer;
+  white-space: nowrap;
+  transition: all 0.2s ease;
+}
+
+.undo-toast-action:active {
+  background: rgba(255, 255, 255, 0.3);
+  box-shadow: inset 0 2px 4px rgba(0, 0, 0, 0.2);
+}
+
+.undo-toast-dismiss {
+  font-size: 0.8rem;
+  opacity: 0.8;
+  text-align: right;
+}
+
+@keyframes undoToastSlideUp {
+  from {
+    opacity: 0;
+    transform: translateY(100px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes undoToastSlideDown {
+  from {
+    opacity: 1;
+    transform: translateY(0);
+  }
+  to {
+    opacity: 0;
+    transform: translateY(100px);
+  }
+}
+
+/* ── Live Context Bar ────────────────────────────────────────── */
+.live-context-bar {
+  display: none;
+  position: sticky;
+  top: 0;
+  z-index: 50;
+  background: linear-gradient(90deg, rgba(27,46,110,0.95) 0%, rgba(44,79,191,0.9) 100%);
+  color: #ffffff;
+  padding: 10px 14px;
+  font-size: 0.9rem;
+  line-height: 1.4;
+  border-bottom: 1px solid rgba(100,140,255,0.2);
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
+  backdrop-filter: blur(4px);
+}
+
+.live-context-bar:not(.hidden) {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 12px;
+  flex-wrap: wrap;
+}
+
+.context-vin, .context-part, .context-status {
+  font-weight: 500;
+  white-space: nowrap;
+  letter-spacing: 0.01em;
+}
+
+.context-count {
+  display: inline-block;
+  background: rgba(100,140,255,0.25);
+  border-radius: 4px;
+  padding: 2px 6px;
+  font-size: 0.85rem;
+  font-weight: 600;
+}
+
+/* ── Progress Bar Container ──────────────────────────────────── */
+.progress-bar-container {
+  padding: 12px 14px;
+  background: rgba(0, 0, 0, 0.05);
+  border-bottom: 1px solid rgba(15,27,64,0.08);
+}
+
+.progress-bar-container.hidden {
+  display: none;
+}
+
+.progress-bar-track {
+  height: 6px;
+  background: rgba(0, 0, 0, 0.08);
+  border-radius: 3px;
+  overflow: hidden;
+  margin-bottom: 8px;
+}
+
+#progressBarFill {
+  height: 100%;
+  background: linear-gradient(90deg, #1b2e6e 0%, #2c4fbf 50%, #5b4fcf 100%);
+  width: 0%;
+  transition: width 0.35s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+  border-radius: 3px;
+}
+
+.progress-bar-label {
+  font-size: 0.8rem;
+  color: #6b7a99;
+  margin: 0;
+  font-weight: 500;
+  letter-spacing: 0.02em;
+}
+
+/* ── Result Button Animations & Icons ────────────────────────── */
+.btn-result-good,
+.btn-result-bad {
+  position: relative;
+  overflow: hidden;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  font-weight: 600;
+  letter-spacing: 0.02em;
+  transition: all 0.25s ease;
+}
+
+.result-icon {
+  font-size: 1.2em;
+  font-weight: 700;
+  display: inline-block;
+  opacity: 0.8;
+  transition: all 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
+}
+
+.btn-result-good:active .result-icon.good-icon,
+.btn-result-bad:active .result-icon.bad-icon {
+  transform: scale(1.35) rotate(12deg);
+  opacity: 1;
+}
+
+@keyframes resultPulse {
+  0% { box-shadow: 0 0 0 0 rgba(30,138,69,0.7); }
+  70% { box-shadow: 0 0 0 12px rgba(30,138,69,0); }
+  100% { box-shadow: 0 0 0 0 rgba(30,138,69,0); }
+}
+
+@keyframes resultPulseBad {
+  0% { box-shadow: 0 0 0 0 rgba(212,107,0,0.7); }
+  70% { box-shadow: 0 0 0 12px rgba(212,107,0,0); }
+  100% { box-shadow: 0 0 0 0 rgba(212,107,0,0); }
+}
+
+.btn-result-good.result-confirmed {
+  animation: resultPulse 0.6s ease-out 1;
+}
+
+.btn-result-bad.result-confirmed {
+  animation: resultPulseBad 0.6s ease-out 1;
+}
+
+@keyframes goodFlash {
+  0% { background-color: rgba(30,138,69,0.1); }
+  50% { background-color: rgba(30,138,69,0.25); }
+  100% { background-color: transparent; }
+}
+
+@keyframes badFlash {
+  0% { background-color: rgba(212,107,0,0.1); }
+  50% { background-color: rgba(212,107,0,0.25); }
+  100% { background-color: transparent; }
+}
+
+#markGoodBtn.flash-confirmed {
+  animation: goodFlash 0.4s ease-out;
+}
+
+#markBadBtn.flash-confirmed {
+  animation: badFlash 0.4s ease-out;
+}
+
+/* ── Simplified Inspection Step Container ────────────────────── */
+.inspection-step-container {
+  display: flex;
+  flex-direction: column;
+  gap: 0;
+  animation: stepFadeIn 0.35s ease-out;
+}
+
+@keyframes stepFadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(8px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.inspection-step {
+  padding: 0;
+  margin: 0;
+  border: none;
+  background: transparent;
+  animation: stepSlideIn 0.4s cubic-bezier(0.34, 1.56, 0.64, 1);
+}
+
+@keyframes stepSlideIn {
+  from {
+    opacity: 0;
+    transform: translateX(20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateX(0);
+  }
+}
+
+.inspection-step.step-exit {
+  animation: stepSlideOut 0.3s ease-in forwards;
+}
+
+@keyframes stepSlideOut {
+  to {
+    opacity: 0;
+    transform: translateX(-20px);
+  }
+}
+
+/* ── Step Counter ────────────────────────────────────────────── */
+.step-indicator {
+  font-size: 0.85rem;
+  color: #6b7a99;
+  margin-bottom: 12px;
+  font-weight: 600;
+  letter-spacing: 0.02em;
+  text-transform: uppercase;
+}
+
+.step-indicator-dot {
+  display: inline-block;
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background: #2c4fbf;
+  margin: 0 4px;
+  animation: dotPulse 1.5s ease-in-out infinite;
+}
+
+@keyframes dotPulse {
+  0%, 100% { opacity: 0.4; }
+  50% { opacity: 1; }
+}
+
+/* ── Mobile Rapid Mode Enhancements ──────────────────────────── */
+@media (max-width: 640px) {
+  .live-context-bar {
+    font-size: 0.85rem;
+    padding: 8px 12px;
+  }
+
+  .context-count {
+    padding: 1px 4px;
+    font-size: 0.8rem;
+  }
+
+  .progress-bar-container {
+    padding: 10px 12px;
+  }
+
+  .progress-bar-label {
+    font-size: 0.75rem;
+  }
+
+  .undo-toast {
+    bottom: 12px;
+    left: 12px;
+    right: 12px;
+    font-size: 0.9rem;
+    padding: 12px 14px;
+  }
+
+  .btn-result-good,
+  .btn-result-bad {
+    min-height: 58px;
+    border-radius: 12px;
+    font-size: 1.05rem;
+  }
+
+  .result-icon {
+    font-size: 1.4em;
+  }
+
+  .step-indicator {
+    font-size: 0.75rem;
+    margin-bottom: 10px;
+  }
+}

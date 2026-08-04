@@ -1,0 +1,955 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta
+      name="viewport"
+      content="width=device-width, initial-scale=1.0, viewport-fit=cover, user-scalable=no"
+    />
+    <meta name="theme-color" content="#0a1128" />
+    <meta name="apple-mobile-web-app-capable" content="yes" />
+    <meta
+      name="apple-mobile-web-app-status-bar-style"
+      content="black-translucent"
+    />
+    <meta name="apple-mobile-web-app-title" content="AI Quality" />
+    <meta name="mobile-web-app-capable" content="yes" />
+    <meta name="format-detection" content="telephone=no" />
+    <title>AI Quality Inspection</title>
+    <link rel="manifest" href="manifest.webmanifest" />
+    <link rel="apple-touch-icon" href="stellantis_wordmark.png" />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;700&family=IBM+Plex+Sans:wght@400;500;600&display=swap"
+      rel="stylesheet"
+    />
+    <link rel="stylesheet" href="styles.css" />
+    <link rel="stylesheet" href="ux-enhancements.css" />
+    <link rel="stylesheet" href="inspection-workflow.css" />
+  </head>
+  <body>
+    <!-- ══════════════════════════════════════════════
+         SPLASH SCREEN
+    ══════════════════════════════════════════════ -->
+    <div id="splashScreen" class="splash-screen" aria-hidden="true">
+      <div class="splash-bg-ring splash-ring-1"></div>
+      <div class="splash-bg-ring splash-ring-2"></div>
+      <div class="splash-bg-ring splash-ring-3"></div>
+      <div class="splash-content">
+        <div class="splash-icon-wrap">
+          <div class="splash-icon-shield">
+            <svg
+              viewBox="0 0 64 72"
+              fill="none"
+              xmlns="http://www.w3.org/2000/svg"
+              class="splash-shield-svg"
+              aria-hidden="true"
+            >
+              <path
+                d="M32 4L8 14v20c0 16 11.5 28.4 24 32 12.5-3.6 24-16 24-32V14L32 4z"
+                fill="rgba(44,79,191,0.25)"
+                stroke="rgba(100,140,255,0.7)"
+                stroke-width="1.5"
+              />
+              <path
+                d="M22 36l7 7 13-14"
+                stroke="#64a8ff"
+                stroke-width="2.5"
+                stroke-linecap="round"
+                stroke-linejoin="round"
+              />
+            </svg>
+          </div>
+        </div>
+        <img
+          class="splash-wordmark"
+          src="stellantis_wordmark_header_transparent.png"
+          alt="Stellantis"
+          onerror="this.style.display = 'none'"
+        />
+        <h1 class="splash-title">AI Quality Inspection</h1>
+        <p class="splash-subtitle">Shop-Floor Quality Control Platform</p>
+        <div class="splash-loader" role="status" aria-label="Loading">
+          <span></span><span></span><span></span>
+        </div>
+        <p class="splash-version">v2.0 · Stellantis</p>
+      </div>
+    </div>
+
+    <!-- ══════════════════════════════════════════════
+         MAIN APP
+    ══════════════════════════════════════════════ -->
+    <div id="appRoot" class="app-root hidden">
+      <main class="app-shell">
+        <!-- LOGIN PAGE -->
+        <section id="loginPage" class="mobile-login-page">
+          <div class="mobile-login-bg">
+            <div class="login-bg-orb orb-a"></div>
+            <div class="login-bg-orb orb-b"></div>
+          </div>
+          <div class="mobile-login-body">
+            <!-- App identity -->
+            <div class="mobile-login-brand">
+              <div class="mobile-login-icon">
+                <svg
+                  viewBox="0 0 64 72"
+                  fill="none"
+                  xmlns="http://www.w3.org/2000/svg"
+                  aria-hidden="true"
+                >
+                  <path
+                    d="M32 4L8 14v20c0 16 11.5 28.4 24 32 12.5-3.6 24-16 24-32V14L32 4z"
+                    fill="rgba(255,255,255,0.12)"
+                    stroke="rgba(255,255,255,0.6)"
+                    stroke-width="1.8"
+                  />
+                  <path
+                    d="M22 36l7 7 13-14"
+                    stroke="#ffffff"
+                    stroke-width="2.8"
+                    stroke-linecap="round"
+                    stroke-linejoin="round"
+                  />
+                </svg>
+              </div>
+              <img
+                class="mobile-login-wordmark"
+                src="stellantis_wordmark_header_transparent.png"
+                alt="Stellantis"
+                onerror="this.style.display = 'none'"
+              />
+              <h1 class="mobile-login-title">AI Quality Inspection</h1>
+              <p class="mobile-login-caption">
+                Shop-Floor Quality Control Platform
+              </p>
+            </div>
+
+            <!-- Login form -->
+            <form id="loginForm" class="mobile-login-form">
+              <div class="mobile-input-group">
+                <span class="mobile-input-icon" aria-hidden="true">
+                  <svg
+                    viewBox="0 0 20 20"
+                    fill="none"
+                    xmlns="http://www.w3.org/2000/svg"
+                  >
+                    <circle
+                      cx="10"
+                      cy="7"
+                      r="3.5"
+                      stroke="currentColor"
+                      stroke-width="1.6"
+                    />
+                    <path
+                      d="M3 17c0-3.314 3.134-6 7-6s7 2.686 7 6"
+                      stroke="currentColor"
+                      stroke-width="1.6"
+                      stroke-linecap="round"
+                    />
+                  </svg>
+                </span>
+                <input
+                  type="text"
+                  id="nameInput"
+                  placeholder="Full Name"
+                  autocomplete="name"
+                  autocapitalize="words"
+                  required
+                />
+              </div>
+              <div class="mobile-input-group">
+                <span class="mobile-input-icon" aria-hidden="true">
+                  <svg
+                    viewBox="0 0 20 20"
+                    fill="none"
+                    xmlns="http://www.w3.org/2000/svg"
+                  >
+                    <rect
+                      x="4"
+                      y="9"
+                      width="12"
+                      height="9"
+                      rx="2"
+                      stroke="currentColor"
+                      stroke-width="1.6"
+                    />
+                    <path
+                      d="M7 9V6.5a3 3 0 016 0V9"
+                      stroke="currentColor"
+                      stroke-width="1.6"
+                      stroke-linecap="round"
+                    />
+                  </svg>
+                </span>
+                <input
+                  type="password"
+                  id="passwordInput"
+                  placeholder="Password"
+                  autocomplete="current-password"
+                />
+                <button
+                  type="button"
+                  class="pwd-toggle-btn"
+                  id="pwdToggleBtn"
+                  aria-label="Show password"
+                  tabindex="-1"
+                >
+                  <svg
+                    id="pwdEyeIcon"
+                    viewBox="0 0 20 20"
+                    fill="none"
+                    xmlns="http://www.w3.org/2000/svg"
+                  >
+                    <path
+                      d="M2 10s3-6 8-6 8 6 8 6-3 6-8 6-8-6-8-6z"
+                      stroke="currentColor"
+                      stroke-width="1.6"
+                    />
+                    <circle
+                      cx="10"
+                      cy="10"
+                      r="2.2"
+                      stroke="currentColor"
+                      stroke-width="1.6"
+                    />
+                  </svg>
+                </button>
+              </div>
+              <button type="submit" class="mobile-login-btn" id="loginBtn">
+                <span id="loginBtnText">Sign In</span>
+                <span
+                  id="loginBtnSpinner"
+                  class="btn-spinner hidden"
+                  aria-hidden="true"
+                ></span>
+              </button>
+              <p
+                id="loginError"
+                class="mobile-login-error hidden"
+                role="alert"
+              ></p>
+            </form>
+
+            <p class="mobile-login-footer">
+              Stellantis · AI Quality Platform · v2.0
+            </p>
+          </div>
+        </section>
+
+        <!-- DASHBOARD PAGE -->
+        <section id="dashboardPage" class="hidden">
+          <header class="dash-header card">
+            <div class="dash-brand-left">
+              <img
+                class="header-title-logo"
+                src="stellantis_wordmark_header_transparent.png?v=20260717-4"
+                alt="Stellantis"
+                onerror="this.style.display = 'none'"
+              />
+            </div>
+            <div class="dash-title-wrap">
+              <h2>AI Guided Quality Control Plan</h2>
+            </div>
+            <div class="dash-tools">
+              <p class="muted user-meta" id="welcomeText"></p>
+              <p class="muted date-time-meta" id="dateTimeText"></p>
+              <button id="logoutBtn" class="btn-ghost btn-small btn-with-icon">
+                <svg
+                  class="power-icon"
+                  aria-hidden="true"
+                  viewBox="0 0 24 24"
+                  focusable="false"
+                >
+                  <path d="M12 2v10" />
+                  <path d="M7.05 4.93a9 9 0 1 0 9.9 0" />
+                </svg>
+                Logout
+              </button>
+            </div>
+          </header>
+
+          <section class="dashboard-layout">
+            <aside class="card side-nav">
+              <div class="side-logo-wrap">
+                <img
+                  class="title-logo side-title-logo"
+                  src="stellantis-logo.svg?v=20260715-1"
+                  alt="Stellantis logo"
+                  onerror="this.style.display = 'none'"
+                />
+              </div>
+              <button id="homeBtn" type="button" class="side-nav-btn active">
+                Home
+              </button>
+              <button
+                id="menuToggleBtn"
+                type="button"
+                class="side-nav-btn btn-with-icon"
+              >
+                <span class="btn-glyph menu-glyph" aria-hidden="true"
+                  >&#8801;</span
+                >
+                Menu
+              </button>
+              <section id="optionGrid" class="side-menu hidden"></section>
+            </aside>
+
+            <div class="content-stack">
+              <section id="homePanel" class="card module-panel">
+                <h3>Quality Dashboard</h3>
+                <p class="muted">
+                  Live summary for today's inspection activity.
+                </p>
+                <div id="homeWidgetGrid" class="home-widget-grid"></div>
+              </section>
+              <section
+                id="modulePanel"
+                class="card module-panel hidden"
+              ></section>
+            </div>
+          </section>
+        </section>
+      </main>
+
+      <!-- ════════════════════════════════════════════
+           INSPECTION WORKFLOW SCREENS
+      ════════════════════════════════════════════ -->
+
+      <!-- PARTS LIST OVERVIEW SCREEN -->
+      <div
+        id="partsListScreen"
+        class="inspection-screen hidden"
+        role="main"
+        aria-label="Parts list overview"
+      >
+        <div class="screen-header">
+          <button
+            id="partsListBackBtn"
+            class="btn-ghost btn-header"
+            aria-label="Back to inspection"
+          >
+            ← Back
+          </button>
+          <span id="partsCountBadge" class="parts-count-badge">7 parts</span>
+        </div>
+        <div class="parts-title-bar">
+          <h2 class="parts-main-heading">Parts to Inspect</h2>
+        </div>
+        <div id="partsListContainer" class="parts-list-container">
+          <!-- Generated dynamically -->
+        </div>
+      </div>
+
+      <!-- IMAGE LIGHTBOX OVERLAY (zoom button) -->
+      <div
+        id="imageLightbox"
+        class="image-lightbox hidden"
+        role="dialog"
+        aria-modal="true"
+      >
+        <button id="lightboxCloseBtn" class="lightbox-close" aria-label="Close">
+          &times;
+        </button>
+        <img id="lightboxImg" class="lightbox-img" alt="Enlarged part image" />
+      </div>
+
+      <!-- PART INFO OVERLAY (shown on image click) -->
+      <div id="partInfoOverlay" class="part-info-overlay hidden">
+        <div class="part-info-card">
+          <button id="partInfoCloseBtn" class="part-info-close">✕</button>
+          <img id="partInfoImage" class="part-info-img" src="" alt="" />
+          <div class="part-info-body">
+            <div
+              id="partInfoPriorityBadge"
+              class="part-info-priority-badge hidden"
+            >
+              ⚠ Priority Check
+            </div>
+            <h3 id="partInfoName" class="part-info-name"></h3>
+            <p id="partInfoDesc" class="part-info-desc"></p>
+            <div class="part-info-row">
+              <span class="part-info-label">Criteria</span>
+              <span id="partInfoCriteria" class="part-info-value"></span>
+            </div>
+            <div class="part-info-row">
+              <span class="part-info-label">Status</span>
+              <span id="partInfoStatus" class="part-info-value"></span>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- PART DETAILS SCREEN -->
+      <div
+        id="partDetailsScreen"
+        class="inspection-screen hidden"
+        role="main"
+        aria-label="Part inspection details"
+      >
+        <div class="screen-header">
+          <button
+            id="partDetailsBackBtn"
+            class="btn-ghost btn-header"
+            aria-label="Back to parts list"
+          >
+            ← Back
+          </button>
+          <span id="partDetailsCount" class="part-progress-badge">1 of 7</span>
+        </div>
+        <div class="part-details-content">
+          <div class="part-details-title-bar">
+            <h3 id="partDetailsPartName">Part Name</h3>
+            <span id="partDetailsCheckType" class="part-check-type-badge"
+              >Standard</span
+            >
+          </div>
+          <div class="part-details-image-area">
+            <img
+              id="partDetailsImage"
+              class="part-details-image"
+              alt="Part reference"
+            />
+            <button
+              id="partDetailsImageZoom"
+              class="btn-icon"
+              aria-label="Zoom image"
+            >
+              🔍
+            </button>
+          </div>
+          <div class="part-details-info-section">
+            <dl class="part-details-list">
+              <dt>Part ID:</dt>
+              <dd id="partDetailsPartId">—</dd>
+              <dt>Description:</dt>
+              <dd id="partDetailsDescription">—</dd>
+              <dt>Quality Criteria:</dt>
+              <dd id="partDetailsQualityCriteria">—</dd>
+            </dl>
+          </div>
+          <div class="part-details-actions">
+            <button id="startDefectMarkingBtn" class="btn-primary">
+              Mark Defects (if any)
+            </button>
+            <button id="skipDefectMarkingBtn" class="btn-ghost">
+              Mark as GOOD
+            </button>
+          </div>
+        </div>
+      </div>
+
+      <!-- IMAGE EDITOR / DEFECT MARKING SCREEN -->
+      <div
+        id="imageEditorScreen"
+        class="inspection-screen hidden"
+        role="main"
+        aria-label="Mark defects on image"
+      >
+        <div class="screen-header">
+          <button
+            id="imageEditorBackBtn"
+            class="btn-ghost btn-header"
+            aria-label="Back to part details"
+          >
+            ← Back
+          </button>
+          <span id="imageEditorToolStatus" class="tool-status-badge"
+            >Drawing: Pen</span
+          >
+        </div>
+        <div class="image-editor-container">
+          <div class="canvas-wrapper">
+            <canvas
+              id="defectCanvas"
+              class="defect-canvas"
+              aria-label="Defect marking canvas"
+            ></canvas>
+            <div
+              id="canvasLoader"
+              class="canvas-loader hidden"
+              aria-hidden="true"
+            >
+              <span></span><span></span><span></span>
+            </div>
+          </div>
+          <div class="editor-toolbar">
+            <div class="toolbar-section">
+              <label for="penColorPicker" class="toolbar-label"
+                >Pen Color:</label
+              >
+              <input
+                type="color"
+                id="penColorPicker"
+                class="color-picker"
+                value="#ff0000"
+                aria-label="Select pen color"
+              />
+              <button
+                id="drawToolBtn"
+                class="toolbar-btn active"
+                title="Draw freely"
+              >
+                ✏️ Draw
+              </button>
+            </div>
+            <div class="toolbar-section">
+              <label for="penSizeSlider" class="toolbar-label">Pen Size:</label>
+              <input
+                type="range"
+                id="penSizeSlider"
+                class="size-slider"
+                min="2"
+                max="15"
+                value="4"
+                aria-label="Adjust pen size"
+              />
+              <span id="penSizeValue">4px</span>
+            </div>
+            <div class="toolbar-section">
+              <button
+                id="undoDrawBtn"
+                class="toolbar-btn"
+                title="Undo last mark"
+              >
+                ↶ Undo
+              </button>
+              <button
+                id="clearCanvasBtn"
+                class="toolbar-btn"
+                title="Clear all marks"
+              >
+                🗑️ Clear
+              </button>
+            </div>
+          </div>
+          <div class="editor-actions">
+            <button id="saveDefectMarkBtn" class="btn-primary">
+              Mark as BAD ⚠️
+            </button>
+            <button id="cancelMarkingBtn" class="btn-ghost">Cancel</button>
+          </div>
+        </div>
+      </div>
+
+      <!-- MOBILE INSPECTION ENTRY SCREEN (Mobile Only) -->
+      <div
+        id="mobileInspectionEntryScreen"
+        class="inspection-screen hidden"
+        role="main"
+        aria-label="Mobile inspection entry"
+      >
+        <div class="screen-header">
+          <h2>Start Inspection</h2>
+        </div>
+        <div class="mobile-entry-content">
+          <div class="entry-form">
+            <label
+              >VIN Number
+              <input
+                id="mobileVinInput"
+                type="text"
+                placeholder="Enter or scan VIN"
+              />
+              <input
+                id="mobileBarcodeImageInput"
+                type="file"
+                accept="image/*"
+                capture="environment"
+                class="hidden"
+              />
+              <div class="scan-btn-row">
+                <button
+                  id="mobileScanVinBtn"
+                  type="button"
+                  class="btn-ghost scan-vin-btn"
+                >
+                  Scan Barcode
+                </button>
+                <button
+                  id="mobileCameraVinBtn"
+                  type="button"
+                  class="btn-ghost scan-vin-btn camera-btn"
+                >
+                  &#128247; Camera
+                </button>
+              </div>
+            </label>
+            <label
+              >Vehicle Model
+              <select id="mobileVehicleModel">
+                <option value="">Select Model</option>
+                <option value="Model S">Model S</option>
+                <option value="Model 3">Model 3</option>
+                <option value="Model X">Model X</option>
+                <option value="Model Y">Model Y</option>
+              </select>
+            </label>
+            <label
+              >Station ID
+              <select id="mobileStationId">
+                <option value="">Select Station</option>
+                <option value="ST-001">ST-001</option>
+                <option value="ST-002">ST-002</option>
+                <option value="ST-003">ST-003</option>
+              </select>
+            </label>
+          </div>
+
+          <div class="entry-actions">
+            <button id="mobileBeginInspectionBtn" class="btn-primary btn-large">
+              Begin Inspection
+            </button>
+            <button id="mobileBackBtn" class="btn-ghost">Cancel</button>
+          </div>
+        </div>
+      </div>
+
+      <!-- LIVE CAMERA OVERLAY -->
+      <div
+        id="liveCameraOverlay"
+        class="hidden"
+        style="
+          position: fixed;
+          inset: 0;
+          z-index: 9999;
+          background: #000;
+          display: flex;
+          flex-direction: column;
+          align-items: center;
+          justify-content: center;
+        "
+      >
+        <div
+          style="
+            position: relative;
+            width: 100%;
+            max-width: 480px;
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+          "
+        >
+          <video
+            id="liveCameraVideo"
+            autoplay
+            playsinline
+            muted
+            style="width: 100%; height: 100%; object-fit: cover; flex: 1"
+          ></video>
+          <!-- scanning guide box -->
+          <div
+            style="
+              position: absolute;
+              inset: 0;
+              display: flex;
+              align-items: center;
+              justify-content: center;
+              pointer-events: none;
+            "
+          >
+            <div
+              style="
+                position: relative;
+                width: 88%;
+                height: 28%;
+                box-shadow: 0 0 0 2000px rgba(0, 0, 0, 0.55);
+                border-radius: 4px;
+              "
+            >
+              <!-- corner markers -->
+              <span
+                style="
+                  position: absolute;
+                  top: -2px;
+                  left: -2px;
+                  width: 22px;
+                  height: 22px;
+                  border-top: 3px solid #22c55e;
+                  border-left: 3px solid #22c55e;
+                  border-radius: 3px 0 0 0;
+                "
+              ></span>
+              <span
+                style="
+                  position: absolute;
+                  top: -2px;
+                  right: -2px;
+                  width: 22px;
+                  height: 22px;
+                  border-top: 3px solid #22c55e;
+                  border-right: 3px solid #22c55e;
+                  border-radius: 0 3px 0 0;
+                "
+              ></span>
+              <span
+                style="
+                  position: absolute;
+                  bottom: -2px;
+                  left: -2px;
+                  width: 22px;
+                  height: 22px;
+                  border-bottom: 3px solid #22c55e;
+                  border-left: 3px solid #22c55e;
+                  border-radius: 0 0 0 3px;
+                "
+              ></span>
+              <span
+                style="
+                  position: absolute;
+                  bottom: -2px;
+                  right: -2px;
+                  width: 22px;
+                  height: 22px;
+                  border-bottom: 3px solid #22c55e;
+                  border-right: 3px solid #22c55e;
+                  border-radius: 0 0 3px 0;
+                "
+              ></span>
+              <!-- laser line -->
+              <div
+                style="
+                  position: absolute;
+                  top: 50%;
+                  left: 6%;
+                  right: 6%;
+                  height: 1.5px;
+                  background: rgba(34, 197, 94, 0.7);
+                  transform: translateY(-50%);
+                  border-radius: 2px;
+                "
+              ></div>
+            </div>
+          </div>
+          <p
+            style="
+              position: absolute;
+              bottom: 90px;
+              width: 100%;
+              text-align: center;
+              color: #fff;
+              font-size: 0.8rem;
+              opacity: 0.85;
+              pointer-events: none;
+            "
+          >
+            Align barcode within the frame
+          </p>
+        </div>
+        <div
+          style="
+            width: 100%;
+            max-width: 480px;
+            display: flex;
+            gap: 12px;
+            padding: 16px;
+            background: #111;
+          "
+        >
+          <button
+            id="liveCameraCaptureBtn"
+            style="
+              flex: 1;
+              padding: 14px;
+              background: #22c55e;
+              color: #000;
+              font-weight: 700;
+              font-size: 1rem;
+              border: none;
+              border-radius: 8px;
+              cursor: pointer;
+            "
+          >
+            &#128247; Capture
+          </button>
+          <button
+            id="liveCameraCloseBtn"
+            style="
+              padding: 14px 20px;
+              background: #374151;
+              color: #fff;
+              font-weight: 600;
+              border: none;
+              border-radius: 8px;
+              cursor: pointer;
+            "
+          >
+            &#10005; Close
+          </button>
+        </div>
+        <canvas id="liveCameraCanvas" style="display: none"></canvas>
+      </div>
+
+      <!-- INSPECTION SUMMARY & SUBMIT SCREEN -->
+      <div
+        id="inspectionSummaryScreen"
+        class="inspection-screen hidden"
+        role="main"
+        aria-label="Inspection summary and submit"
+      >
+        <div class="screen-header">
+          <button
+            id="summaryBackBtn"
+            class="btn-header"
+            aria-label="Back to edit"
+          >
+            ← Back
+          </button>
+          <span id="summaryStatus" class="summary-status-badge">Ready</span>
+        </div>
+        <div class="summary-content">
+          <div class="summary-stats">
+            <div class="stat-card">
+              <div class="stat-number" id="goodCount">0</div>
+              <div class="stat-label">Parts OK</div>
+              <div class="stat-icon">✓</div>
+            </div>
+            <div class="stat-card">
+              <div class="stat-number" id="badCount">0</div>
+              <div class="stat-label">Defects Found</div>
+              <div class="stat-icon">⚠️</div>
+            </div>
+            <div class="stat-card">
+              <div class="stat-number" id="totalCount">0</div>
+              <div class="stat-label">Total Parts</div>
+              <div class="stat-icon">📋</div>
+            </div>
+          </div>
+
+          <div class="summary-results">
+            <h3>Inspection Results</h3>
+            <div id="summaryResultsList" class="summary-results-list">
+              <!-- Generated dynamically -->
+            </div>
+          </div>
+
+          <div class="summary-actions">
+            <button
+              id="submitInspectionWorkflowBtn"
+              class="btn-primary btn-large"
+            >
+              <span>✓ Submit Inspection</span>
+            </button>
+            <button id="editInspectionBtn" class="btn-ghost">
+              ← Edit Results
+            </button>
+          </div>
+
+          <p class="summary-footer">
+            All results have been saved to your device. Submitting will finalize
+            the inspection.
+          </p>
+        </div>
+      </div>
+
+      <!-- INSPECTION INITIALIZATION SCREEN -->
+      <div
+        id="inspectionInitScreen"
+        class="inspection-screen hidden"
+        role="main"
+        aria-label="Inspection initialization with priority and regular defects"
+      >
+        <div class="screen-header">
+          <button
+            id="initBackBtn"
+            class="btn-ghost btn-header"
+            aria-label="Back to entry"
+          >
+            ← Back
+          </button>
+          <span id="initStatus" class="init-status-badge hidden"
+            >Ready to Start</span
+          >
+        </div>
+        <div class="init-title-bar">
+          <h2 class="init-main-heading">Initialize Sequence</h2>
+        </div>
+        <div class="init-content">
+          <!-- Description -->
+          <div class="init-description">
+            <p class="init-description-text">
+              Review the inspection plan for this vehicle before starting.
+            </p>
+          </div>
+
+          <!-- Priority Defects Section -->
+          <div
+            id="prioritySection"
+            class="defect-section priority-section hidden"
+          >
+            <div class="section-header priority-header">
+              <span
+                class="section-icon"
+                style="
+                  display: inline-block;
+                  width: 12px;
+                  height: 12px;
+                  border-radius: 50%;
+                  background: #22c55e;
+                  flex-shrink: 0;
+                "
+              ></span>
+              <div class="section-title">
+                Priority Quality Checks — Parts with Defect History
+              </div>
+            </div>
+            <ol id="priorityPartsList" class="parts-list numbered-list"></ol>
+          </div>
+
+          <!-- Regular Defects Section -->
+          <div id="regularSection" class="defect-section regular-section">
+            <div class="section-header regular-header">
+              <span
+                class="section-icon"
+                style="
+                  display: inline-block;
+                  width: 12px;
+                  height: 12px;
+                  border-radius: 50%;
+                  background: #22c55e;
+                  flex-shrink: 0;
+                "
+              ></span>
+              <div class="section-title">
+                Regular Quality Checks — Standard Inspection
+              </div>
+            </div>
+            <ol id="regularPartsList" class="parts-list numbered-list"></ol>
+          </div>
+        </div>
+
+        <!-- Begin Inspection pinned outside scroll area -->
+        <div class="init-actions">
+          <button id="startInspectionBtn" class="btn-primary btn-large">
+            Begin Inspection →
+          </button>
+          <button id="initCancelBtn" class="btn-ghost">Cancel</button>
+        </div>
+      </div>
+
+      <!-- ════════════════════════════════════════════
+           UX ENHANCEMENT ELEMENTS
+      ════════════════════════════════════════════ -->
+
+      <!-- Undo Toast -->
+      <div
+        id="undoToast"
+        class="undo-toast hidden"
+        role="status"
+        aria-live="polite"
+        aria-label="Undo notification"
+      >
+        <div class="undo-toast-content">
+          <span id="undoToastMessage">✓ Marked as GOOD</span>
+          <button type="button" id="undoToastBtn" class="undo-toast-action">
+            ← Undo
+          </button>
+        </div>
+        <div class="undo-toast-dismiss">Saved to device</div>
+      </div>
+    </div>
+    <!-- /appRoot -->
+
+    <script src="app.js?v=20260728-3"></script>
+  </body>
+</html>

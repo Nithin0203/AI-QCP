@@ -1,0 +1,1796 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>CI/CD Delivery Dictionary and Execution Playbook</title>
+    <style>
+      :root {
+        --paper: #ffffff;
+        --ink: #111111;
+        --muted: #3b3b3b;
+        --line: #bfbfbf;
+        --accent: #111111;
+        --accent-2: #111111;
+        --good: #111111;
+        --warn: #111111;
+        --soft: #f7f7f7;
+      }
+
+      * {
+        box-sizing: border-box;
+      }
+
+      body {
+        margin: 0;
+        padding: 24px;
+        font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
+        color: var(--ink);
+        background: #ffffff;
+      }
+
+      .doc {
+        max-width: 1150px;
+        margin: 0 auto;
+        background: var(--paper);
+        border: 1px solid var(--line);
+        border-radius: 0;
+        box-shadow: none;
+        overflow: hidden;
+      }
+
+      .header {
+        padding: 24px 30px;
+        color: #111111;
+        background: #ffffff;
+        border-bottom: 1px solid var(--line);
+      }
+
+      .header h1 {
+        margin: 0 0 8px;
+        font-size: 28px;
+      }
+
+      .header p {
+        margin: 3px 0;
+        opacity: 1;
+      }
+
+      .pill {
+        display: none;
+        margin-left: 8px;
+        border-radius: 0;
+        padding: 0;
+        font-size: 12px;
+        font-weight: 700;
+        letter-spacing: 0.04em;
+        color: #fff;
+        background: transparent;
+      }
+
+      .section {
+        padding: 22px 30px;
+        border-top: 1px solid var(--line);
+      }
+
+      h2 {
+        margin: 0 0 10px;
+        color: var(--accent);
+        font-size: 21px;
+      }
+
+      h3 {
+        margin: 12px 0 8px;
+        font-size: 16px;
+      }
+
+      p,
+      li {
+        line-height: 1.46;
+      }
+
+      .muted {
+        color: var(--muted);
+      }
+
+      .grid {
+        display: grid;
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+        gap: 14px;
+      }
+
+      .grid-4 {
+        display: grid;
+        grid-template-columns: repeat(4, minmax(0, 1fr));
+        gap: 10px;
+      }
+
+      .card {
+        border: 1px solid var(--line);
+        border-radius: 0;
+        background: #ffffff;
+        padding: 12px 14px;
+      }
+
+      .task-link {
+        display: block;
+        text-decoration: none;
+        border: 1px solid var(--line);
+        border-radius: 0;
+        background: #ffffff;
+        padding: 8px 10px;
+        color: var(--accent-2);
+        font-weight: 400;
+        text-align: center;
+      }
+
+      .task-link:hover {
+        border-color: var(--accent-2);
+        background: #ffffff;
+      }
+
+      .table-wrap {
+        overflow-x: auto;
+      }
+
+      .matrix {
+        width: 100%;
+        border-collapse: collapse;
+        table-layout: fixed;
+        margin-top: 8px;
+      }
+
+      .matrix th,
+      .matrix td {
+        border: 1px solid var(--line);
+        padding: 10px;
+        text-align: left;
+        vertical-align: top;
+        font-size: 14px;
+        line-height: 1.4;
+        white-space: normal;
+        overflow-wrap: break-word;
+        word-wrap: break-word;
+        word-break: normal;
+        overflow: hidden;
+        hyphens: auto;
+        -pdf-keep-in-frame-mode: shrink;
+      }
+
+      .matrix .col-id {
+        width: 9%;
+      }
+
+      .matrix .col-area {
+        width: 14%;
+      }
+
+      .matrix .col-fe {
+        width: 22%;
+      }
+
+      .matrix .col-be {
+        width: 22%;
+      }
+
+      .matrix .col-deliverable {
+        width: 21%;
+      }
+
+      .matrix .col-time {
+        width: 12%;
+      }
+
+      .matrix th {
+        background: #ffffff;
+        color: #111111;
+      }
+
+      .matrix tbody tr:nth-child(even) {
+        background: #ffffff;
+      }
+
+      .matrix tbody tr:hover {
+        background: #ffffff;
+      }
+
+      .id-link {
+        color: var(--accent-2);
+        font-weight: 400;
+        text-decoration: none;
+      }
+
+      .id-link:hover {
+        text-decoration: underline;
+      }
+
+      .task-modal {
+        position: fixed;
+        inset: 0;
+        z-index: 9999;
+        display: none;
+      }
+
+      .task-modal.open {
+        display: block;
+      }
+
+      .task-modal-backdrop {
+        position: absolute;
+        inset: 0;
+        background: rgba(0, 0, 0, 0.58);
+      }
+
+      .task-modal-panel {
+        position: relative;
+        z-index: 1;
+        width: min(96vw, 1080px);
+        max-height: 92vh;
+        margin: 4vh auto;
+        overflow: auto;
+        background: #ffffff;
+        border: 1px solid var(--line);
+        border-radius: 12px;
+        box-shadow: 0 18px 46px rgba(24, 59, 150, 0.25);
+      }
+
+      .task-modal-header {
+        position: sticky;
+        top: 0;
+        z-index: 2;
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 10px;
+        background: #ffffff;
+        border-bottom: 1px solid var(--line);
+        padding: 10px 12px;
+      }
+
+      .task-modal-title {
+        margin: 0;
+        color: var(--accent);
+        font-size: 17px;
+      }
+
+      .task-modal-close {
+        border: 1px solid var(--line);
+        border-radius: 8px;
+        padding: 6px 10px;
+        background: #ffffff;
+        color: #111111;
+        font-weight: 700;
+        cursor: pointer;
+      }
+
+      .task-modal-content {
+        padding: 12px;
+      }
+
+      .term {
+        border: 1px solid var(--line);
+        border-radius: 10px;
+        background: #fff;
+        padding: 10px;
+      }
+
+      .term h3 {
+        margin: 0 0 6px;
+        color: var(--accent);
+      }
+
+      .dict-entry {
+        border: 1px solid var(--line);
+        border-radius: 12px;
+        background: #fff;
+        margin-bottom: 14px;
+      }
+
+      .dict-entry summary {
+        list-style: none;
+        cursor: pointer;
+        padding: 12px 14px;
+        font-weight: 700;
+        color: var(--accent);
+        background: #ffffff;
+        border-bottom: 1px solid var(--line);
+      }
+
+      .dict-entry summary::-webkit-details-marker {
+        display: none;
+      }
+
+      .dict-body {
+        padding: 12px 14px;
+      }
+
+      .meta {
+        display: grid;
+        grid-template-columns: repeat(4, minmax(0, 1fr));
+        gap: 10px;
+        margin-bottom: 10px;
+      }
+
+      .meta .card {
+        background: #ffffff;
+      }
+
+      .steps {
+        display: grid;
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+        gap: 12px;
+      }
+
+      .steps ol {
+        margin: 6px 0 0 18px;
+        padding: 0;
+      }
+
+      .checklist,
+      .pitfalls {
+        margin-top: 10px;
+      }
+
+      .warn {
+        color: #111111;
+      }
+
+      .top {
+        text-decoration: none;
+        font-weight: 700;
+        color: #111111;
+      }
+
+      @media (max-width: 980px) {
+        .grid,
+        .steps,
+        .meta,
+        .grid-4 {
+          grid-template-columns: 1fr;
+        }
+      }
+
+      @media print {
+        body {
+          background: #fff;
+          padding: 0;
+        }
+
+        .doc {
+          border: none;
+          box-shadow: none;
+          border-radius: 0;
+        }
+
+        .dict-entry {
+          page-break-inside: avoid;
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <article class="doc" id="top">
+      <header class="header">
+        <h1>
+          CI/CD Delivery Dictionary and Execution Playbook
+          <span class="pill">DEV - STAGE - PROD</span>
+        </h1>
+        <p><strong>Project:</strong> AI Quality Inspection Application</p>
+        <p>
+          <strong>Audience:</strong> Frontend Developer, Backend Developer,
+          Business Validation Team
+        </p>
+        <p>
+          <strong>Use:</strong> Follow this document task-by-task without
+          external help.
+        </p>
+      </header>
+
+      <section class="section">
+        <h2>Task Matrix (Same Form as Reference)</h2>
+        <p class="muted">
+          Use this table first. Click Task ID to open exact detailed execution
+          steps in a popup, without scrolling.
+        </p>
+        <div class="table-wrap">
+          <table class="matrix">
+            <colgroup>
+              <col class="col-id" />
+              <col class="col-area" />
+              <col class="col-fe" />
+              <col class="col-be" />
+              <col class="col-deliverable" />
+              <col class="col-time" />
+            </colgroup>
+            <thead>
+              <tr>
+                <th>Task ID</th>
+                <th>Area</th>
+                <th>Frontend Tasks</th>
+                <th>Backend Tasks</th>
+                <th>Deliverable</th>
+                <th>Est. Time</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td><a class="id-link" href="#P1-T1">P1-T1</a></td>
+                <td>AWS Environment Setup</td>
+                <td>Environment config mapping for Dev/Stage/Prod.</td>
+                <td>
+                  Provision VPC, IAM, subnets, security groups, secrets
+                  structure.
+                </td>
+                <td>Isolated environment foundation.</td>
+                <td>2-3 days</td>
+              </tr>
+              <tr>
+                <td><a class="id-link" href="#P1-T2">P1-T2</a></td>
+                <td>EC2 Configuration</td>
+                <td>
+                  Health endpoint validation and deployment script baseline.
+                </td>
+                <td>
+                  Provision and harden EC2,<br />
+                  enable patching, logging,<br />
+                  and secure access.
+                </td>
+                <td>Operational hardened EC2 setup.</td>
+                <td>1-2 days</td>
+              </tr>
+              <tr>
+                <td><a class="id-link" href="#P1-T3">P1-T3</a></td>
+                <td>S3 + CloudFront</td>
+                <td>
+                  Build static bundle, cache policy, SPA routing behavior.
+                </td>
+                <td>
+                  Create bucket / distribution / certificate and private origin
+                  controls.
+                </td>
+                <td>Frontend hosting stack.</td>
+                <td>1-2 days</td>
+              </tr>
+              <tr>
+                <td><a class="id-link" href="#P1-T4">P1-T4</a></td>
+                <td>Database Baseline</td>
+                <td>Client model mapping for SQL + KPI endpoints.</td>
+                <td>Setup PostgreSQL + DynamoDB with schema/index strategy.</td>
+                <td>Transactional and analytical datastore baseline.</td>
+                <td>2-3 days</td>
+              </tr>
+
+              <tr>
+                <td><a class="id-link" href="#P2-T1">P2-T1</a></td>
+                <td>PingFederate Authentication</td>
+                <td>OIDC login/callback/logout and token handling.</td>
+                <td>PingFederate claim mapping and JWT/JWKS validation.</td>
+                <td>Enterprise SSO integration.</td>
+                <td>2-4 days</td>
+              </tr>
+              <tr>
+                <td><a class="id-link" href="#P2-T2">P2-T2</a></td>
+                <td>Role-based Access</td>
+                <td>Admin/User UI visibility and route restrictions.</td>
+                <td>Policy-based authorization middleware and audit.</td>
+                <td>End-to-end RBAC.</td>
+                <td>1-2 days</td>
+              </tr>
+              <tr>
+                <td><a class="id-link" href="#P2-T3">P2-T3</a></td>
+                <td>API Gateway Security</td>
+                <td>Protected request handling with token lifecycle.</td>
+                <td>
+                  Authorizer, CORS,<br />
+                  throttling, WAF rules.
+                </td>
+                <td>Hardened API perimeter.</td>
+                <td>1-2 days</td>
+              </tr>
+
+              <tr>
+                <td><a class="id-link" href="#P3-T1">P3-T1</a></td>
+                <td>Lambda Service Setup</td>
+                <td>Module API integration, errors, loading states.</td>
+                <td>
+                  Build Lambda handlers for station/sequence/inspection/report.
+                </td>
+                <td>Functional backend APIs.</td>
+                <td>3-5 days</td>
+              </tr>
+              <tr>
+                <td><a class="id-link" href="#P3-T2">P3-T2</a></td>
+                <td>S3 Buckets and Media APIs</td>
+                <td>Upload flow, preview flow, signed URL consumption.</td>
+                <td>Create encrypted buckets and signed URL API endpoints.</td>
+                <td>Secure media pipeline.</td>
+                <td>2-3 days</td>
+              </tr>
+              <tr>
+                <td><a class="id-link" href="#P3-T3">P3-T3</a></td>
+                <td>PostgreSQL Configuration</td>
+                <td>DTO mapping and relational validation UX.</td>
+                <td>Schema design, migrations, indexes, backup policy.</td>
+                <td>Stable SQL data layer.</td>
+                <td>2-4 days</td>
+              </tr>
+              <tr>
+                <td><a class="id-link" href="#P3-T4">P3-T4</a></td>
+                <td>DynamoDB Configuration</td>
+                <td>Dashboard/report consumption with refresh model.</td>
+                <td>Key design, GSIs, TTL, aggregation updates.</td>
+                <td>Fast KPI read model.</td>
+                <td>2-3 days</td>
+              </tr>
+
+              <tr>
+                <td><a class="id-link" href="#P4-T1">P4-T1</a></td>
+                <td>Dev CI/CD Flow</td>
+                <td>Auto FE deploy from develop with smoke checks.</td>
+                <td>Auto BE deploy from develop with API smoke checks.</td>
+                <td>Continuous Dev delivery.</td>
+                <td>1-2 days setup</td>
+              </tr>
+              <tr>
+                <td><a class="id-link" href="#P4-T2">P4-T2</a></td>
+                <td>Stage CI/CD + UAT</td>
+                <td>Promote release artifact and support UAT cycle.</td>
+                <td>
+                  Promote API candidate and run<br />
+                  integration, regression, and perf tests.
+                </td>
+                <td>UAT-approved release candidate.</td>
+                <td>2-3 days/cycle</td>
+              </tr>
+              <tr>
+                <td><a class="id-link" href="#P4-T3">P4-T3</a></td>
+                <td>Prod CI/CD Flow</td>
+                <td>Controlled FE rollout and cache/version validation.</td>
+                <td>Canary/blue-green deployment with rollback policy.</td>
+                <td>Safe production release.</td>
+                <td>1 day/release</td>
+              </tr>
+
+              <tr>
+                <td><a class="id-link" href="#P5-T1">P5-T1</a></td>
+                <td>Business UAT</td>
+                <td>UAT walkthrough support and defect revalidation.</td>
+                <td>API diagnostics and patch closure for failed scenarios.</td>
+                <td>Formal sign-off evidence.</td>
+                <td>2-4 days</td>
+              </tr>
+              <tr>
+                <td><a class="id-link" href="#P5-T2">P5-T2</a></td>
+                <td>Hypercare</td>
+                <td>Rapid FE defect handling and SLA tracking.</td>
+                <td>Production monitoring, incident patching, daily report.</td>
+                <td>Stabilized production behavior.</td>
+                <td>1-2 weeks</td>
+              </tr>
+              <tr>
+                <td><a class="id-link" href="#P5-T3">P5-T3</a></td>
+                <td>Governance</td>
+                <td>Monthly FE quality and release compliance checks.</td>
+                <td>Security patching, backup restore test, access audit.</td>
+                <td>Sustained governance model.</td>
+                <td>Monthly</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </section>
+
+      <section class="section">
+        <h2>How To Use This Document</h2>
+        <div class="grid">
+          <div class="card">
+            <h3>Execution Mode</h3>
+            <ol>
+              <li>Pick a task ID from the Task Dictionary Index below.</li>
+              <li>
+                Open that entry and execute Frontend steps and Backend steps in
+                order.
+              </li>
+              <li>
+                Run the Validation Checklist for the task before moving next.
+              </li>
+              <li>
+                If blocked, check the Common Pitfalls section in the same entry.
+              </li>
+            </ol>
+          </div>
+          <div class="card">
+            <h3>Definition of Done (Per Task)</h3>
+            <ol>
+              <li>All listed steps completed.</li>
+              <li>Validation checklist is fully passed.</li>
+              <li>Artifacts listed in output are available.</li>
+              <li>No high-severity issue remains open for that task.</li>
+            </ol>
+          </div>
+        </div>
+      </section>
+
+      <section class="section">
+        <h2>Technical Dictionary (A-Z)</h2>
+        <div class="grid">
+          <div class="term">
+            <h3>API Gateway</h3>
+            <p>
+              Managed API front door for routing requests to Lambda/other
+              backend services with auth, throttling, and monitoring.
+            </p>
+          </div>
+          <div class="term">
+            <h3>CloudFront</h3>
+            <p>
+              AWS CDN that caches frontend content globally and provides TLS
+              endpoints for low-latency delivery.
+            </p>
+          </div>
+          <div class="term">
+            <h3>DynamoDB</h3>
+            <p>
+              NoSQL database for high-throughput key-based reads/writes, ideal
+              for KPI/event aggregation models.
+            </p>
+          </div>
+          <div class="term">
+            <h3>EC2</h3>
+            <p>
+              Virtual machine service for bastion hosts, utilities, or workloads
+              requiring full OS-level control.
+            </p>
+          </div>
+          <div class="term">
+            <h3>Lambda</h3>
+            <p>
+              Serverless compute to run APIs without managing servers; billed by
+              invocations and execution time.
+            </p>
+          </div>
+          <div class="term">
+            <h3>PingFederate</h3>
+            <p>
+              Enterprise identity federation platform for SSO using
+              SAML/OIDC/OAuth with claim mapping.
+            </p>
+          </div>
+          <div class="term">
+            <h3>PostgreSQL (RDS)</h3>
+            <p>
+              Managed relational database for transactional consistency,
+              relationships, and SQL reporting.
+            </p>
+          </div>
+          <div class="term">
+            <h3>S3 Bucket</h3>
+            <p>
+              Object storage used for frontend hosting artifacts and image
+              uploads with lifecycle and encryption controls.
+            </p>
+          </div>
+          <div class="term">
+            <h3>VPC</h3>
+            <p>
+              Isolated network boundary in AWS containing subnets, routes,
+              gateways, and security controls.
+            </p>
+          </div>
+        </div>
+      </section>
+
+      <section class="section" id="index">
+        <h2>Task Dictionary Index (Click Any Task)</h2>
+        <div class="grid-4">
+          <a class="task-link" href="#P1-T1">P1-T1</a>
+          <a class="task-link" href="#P1-T2">P1-T2</a>
+          <a class="task-link" href="#P1-T3">P1-T3</a>
+          <a class="task-link" href="#P1-T4">P1-T4</a>
+          <a class="task-link" href="#P2-T1">P2-T1</a>
+          <a class="task-link" href="#P2-T2">P2-T2</a>
+          <a class="task-link" href="#P2-T3">P2-T3</a>
+          <a class="task-link" href="#P3-T1">P3-T1</a>
+          <a class="task-link" href="#P3-T2">P3-T2</a>
+          <a class="task-link" href="#P3-T3">P3-T3</a>
+          <a class="task-link" href="#P3-T4">P3-T4</a>
+          <a class="task-link" href="#P4-T1">P4-T1</a>
+          <a class="task-link" href="#P4-T2">P4-T2</a>
+          <a class="task-link" href="#P4-T3">P4-T3</a>
+          <a class="task-link" href="#P5-T1">P5-T1</a>
+          <a class="task-link" href="#P5-T2">P5-T2</a>
+          <a class="task-link" href="#P5-T3">P5-T3</a>
+        </div>
+      </section>
+
+      <section class="section">
+        <h2>Task Dictionary Entries</h2>
+
+        <details class="dict-entry" id="P1-T1" open>
+          <summary>P1-T1: AWS Environment Setup</summary>
+          <div class="dict-body">
+            <div class="meta">
+              <div class="card">
+                <strong>Part</strong>
+                <p>Part 1</p>
+              </div>
+              <div class="card">
+                <strong>Time</strong>
+                <p>2-3 days</p>
+              </div>
+              <div class="card">
+                <strong>Owner</strong>
+                <p>FE + BE</p>
+              </div>
+              <div class="card">
+                <strong>Output</strong>
+                <p>Isolated Dev/Stage/Prod foundations</p>
+              </div>
+            </div>
+            <div class="steps">
+              <div class="card">
+                <h3>Frontend Steps (Basic)</h3>
+                <ol>
+                  <li>
+                    Create three environment config files for dev, stage, prod
+                    API URLs.
+                  </li>
+                  <li>
+                    Update app boot logic to load env config by deployment
+                    context.
+                  </li>
+                  <li>Add startup validation for missing env vars.</li>
+                  <li>
+                    Verify each environment points to its own backend endpoint.
+                  </li>
+                </ol>
+              </div>
+              <div class="card">
+                <h3>Backend Steps (Basic)</h3>
+                <ol>
+                  <li>
+                    Create or isolate Dev, Stage, and Prod environments in AWS.
+                  </li>
+                  <li>
+                    Create IAM roles for pipeline, runtime, and operations.
+                  </li>
+                  <li>
+                    Create VPC with subnets, route tables, NAT/IGW per
+                    architecture.
+                  </li>
+                  <li>Configure security groups with least privilege.</li>
+                  <li>
+                    Create environment-specific parameter/secret namespaces.
+                  </li>
+                </ol>
+              </div>
+            </div>
+            <div class="checklist card">
+              <h3>Validation Checklist</h3>
+              <ol>
+                <li>
+                  Frontend in each environment calls only corresponding backend.
+                </li>
+                <li>No cross-environment credential access exists.</li>
+                <li>VPC flow logs and CloudTrail are enabled.</li>
+              </ol>
+            </div>
+            <div class="pitfalls card">
+              <h3 class="warn">Common Pitfalls</h3>
+              <p>
+                Reusing one secret across all environments, opening broad
+                inbound ports, and hardcoding URLs in frontend build files.
+              </p>
+            </div>
+            <p><a class="top" href="#top">Back to top</a></p>
+          </div>
+        </details>
+
+        <details class="dict-entry" id="P1-T2">
+          <summary>P1-T2: EC2 Configuration</summary>
+          <div class="dict-body">
+            <div class="meta">
+              <div class="card">
+                <strong>Part</strong>
+                <p>Part 1</p>
+              </div>
+              <div class="card">
+                <strong>Time</strong>
+                <p>1-2 days</p>
+              </div>
+              <div class="card">
+                <strong>Owner</strong>
+                <p>BE primary</p>
+              </div>
+              <div class="card">
+                <strong>Output</strong>
+                <p>Hardened EC2 utility host</p>
+              </div>
+            </div>
+            <div class="steps">
+              <div class="card">
+                <h3>Frontend Steps (Basic)</h3>
+                <ol>
+                  <li>
+                    Deploy a health-check static page to validate DNS/network
+                    reachability.
+                  </li>
+                  <li>
+                    Add FE deployment script for artifact copy and service
+                    restart.
+                  </li>
+                  <li>Validate static assets load from expected host path.</li>
+                </ol>
+              </div>
+              <div class="card">
+                <h3>Backend Steps (Basic)</h3>
+                <ol>
+                  <li>
+                    Launch EC2 with approved AMI, key pair, and encrypted root
+                    volume.
+                  </li>
+                  <li>
+                    Apply OS updates and disable password SSH authentication.
+                  </li>
+                  <li>Install CloudWatch Agent and SSM Agent.</li>
+                  <li>
+                    Attach IAM role for logs and minimal management actions.
+                  </li>
+                  <li>
+                    Restrict ingress using source security groups/IP allow-list.
+                  </li>
+                </ol>
+              </div>
+            </div>
+            <div class="checklist card">
+              <h3>Validation Checklist</h3>
+              <ol>
+                <li>Only allowed ports are reachable.</li>
+                <li>SSH key auth works; password auth blocked.</li>
+                <li>System metrics visible in CloudWatch.</li>
+              </ol>
+            </div>
+            <p><a class="top" href="#top">Back to top</a></p>
+          </div>
+        </details>
+
+        <details class="dict-entry" id="P1-T3">
+          <summary>P1-T3: S3 + CloudFront Setup</summary>
+          <div class="dict-body">
+            <div class="meta">
+              <div class="card">
+                <strong>Part</strong>
+                <p>Part 1</p>
+              </div>
+              <div class="card">
+                <strong>Time</strong>
+                <p>1-2 days</p>
+              </div>
+              <div class="card">
+                <strong>Owner</strong>
+                <p>FE + BE</p>
+              </div>
+              <div class="card">
+                <strong>Output</strong>
+                <p>Frontend hosting stack</p>
+              </div>
+            </div>
+            <div class="steps">
+              <div class="card">
+                <h3>Frontend Steps (Basic)</h3>
+                <ol>
+                  <li>Create production build with hashed asset names.</li>
+                  <li>Configure SPA route fallback to index page.</li>
+                  <li>
+                    Set cache-control for HTML low TTL and assets long TTL.
+                  </li>
+                  <li>Validate deployment artifact integrity before upload.</li>
+                </ol>
+              </div>
+              <div class="card">
+                <h3>Backend Steps (Basic)</h3>
+                <ol>
+                  <li>
+                    Create S3 buckets per environment with
+                    versioning/encryption.
+                  </li>
+                  <li>
+                    Create CloudFront distributions with OAC/OAI origin control.
+                  </li>
+                  <li>Attach ACM certificate and DNS record.</li>
+                  <li>Block all direct public S3 bucket access.</li>
+                </ol>
+              </div>
+            </div>
+            <div class="checklist card">
+              <h3>Validation Checklist</h3>
+              <ol>
+                <li>App loads over HTTPS only.</li>
+                <li>Direct S3 object access is blocked.</li>
+                <li>Route refresh on deep links works.</li>
+              </ol>
+            </div>
+            <p><a class="top" href="#top">Back to top</a></p>
+          </div>
+        </details>
+
+        <details class="dict-entry" id="P1-T4">
+          <summary>P1-T4: Database Baseline (PostgreSQL + DynamoDB)</summary>
+          <div class="dict-body">
+            <div class="meta">
+              <div class="card">
+                <strong>Part</strong>
+                <p>Part 1</p>
+              </div>
+              <div class="card">
+                <strong>Time</strong>
+                <p>2-3 days</p>
+              </div>
+              <div class="card">
+                <strong>Owner</strong>
+                <p>BE primary</p>
+              </div>
+              <div class="card">
+                <strong>Output</strong>
+                <p>Transactional + analytics datastore baseline</p>
+              </div>
+            </div>
+            <div class="steps">
+              <div class="card">
+                <h3>Frontend Steps (Basic)</h3>
+                <ol>
+                  <li>
+                    Define client models for relational and NoSQL response
+                    shapes.
+                  </li>
+                  <li>Add retry/error UI for temporary DB/API failures.</li>
+                  <li>
+                    Separate service layers for master-data and KPI endpoints.
+                  </li>
+                </ol>
+              </div>
+              <div class="card">
+                <h3>Backend Steps (Basic)</h3>
+                <ol>
+                  <li>Provision RDS PostgreSQL with backup retention.</li>
+                  <li>Create DynamoDB tables with partition/sort keys.</li>
+                  <li>Define naming standards and migration strategy.</li>
+                  <li>Create indexes for expected query patterns.</li>
+                </ol>
+              </div>
+            </div>
+            <div class="checklist card">
+              <h3>Validation Checklist</h3>
+              <ol>
+                <li>PostgreSQL connection health endpoint passes.</li>
+                <li>DynamoDB read/write test with expected latency passes.</li>
+                <li>Backup and restore test is documented.</li>
+              </ol>
+            </div>
+            <p><a class="top" href="#top">Back to top</a></p>
+          </div>
+        </details>
+
+        <details class="dict-entry" id="P2-T1">
+          <summary>P2-T1: PingFederate Authentication Configuration</summary>
+          <div class="dict-body">
+            <div class="meta">
+              <div class="card">
+                <strong>Part</strong>
+                <p>Part 2</p>
+              </div>
+              <div class="card">
+                <strong>Time</strong>
+                <p>2-4 days</p>
+              </div>
+              <div class="card">
+                <strong>Owner</strong>
+                <p>FE + BE</p>
+              </div>
+              <div class="card">
+                <strong>Output</strong>
+                <p>SSO login/logout end-to-end</p>
+              </div>
+            </div>
+            <div class="steps">
+              <div class="card">
+                <h3>Frontend Steps (Basic)</h3>
+                <ol>
+                  <li>
+                    Configure OIDC values: issuer, client ID, redirect URI.
+                  </li>
+                  <li>Implement login redirect to PingFederate.</li>
+                  <li>Handle callback and token parsing safely.</li>
+                  <li>Implement logout to identity end-session endpoint.</li>
+                </ol>
+              </div>
+              <div class="card">
+                <h3>Backend Steps (Basic)</h3>
+                <ol>
+                  <li>Create PingFederate client/app with required scopes.</li>
+                  <li>Map role and identity claims for API authorization.</li>
+                  <li>Implement JWT validation using issuer and JWKS.</li>
+                  <li>
+                    Reject invalid/expired tokens with clear 401 response.
+                  </li>
+                </ol>
+              </div>
+            </div>
+            <div class="checklist card">
+              <h3>Validation Checklist</h3>
+              <ol>
+                <li>Admin and user can log in with correct role claim.</li>
+                <li>
+                  Expired token is rejected and session refresh path works.
+                </li>
+                <li>Logout invalidates app session and returns to login.</li>
+              </ol>
+            </div>
+            <p><a class="top" href="#top">Back to top</a></p>
+          </div>
+        </details>
+
+        <details class="dict-entry" id="P2-T2">
+          <summary>P2-T2: Role-based Access Control</summary>
+          <div class="dict-body">
+            <div class="meta">
+              <div class="card">
+                <strong>Part</strong>
+                <p>Part 2</p>
+              </div>
+              <div class="card">
+                <strong>Time</strong>
+                <p>1-2 days</p>
+              </div>
+              <div class="card">
+                <strong>Owner</strong>
+                <p>FE + BE</p>
+              </div>
+              <div class="card">
+                <strong>Output</strong>
+                <p>Admin/User permission boundaries</p>
+              </div>
+            </div>
+            <div class="steps">
+              <div class="card">
+                <h3>Frontend Steps (Basic)</h3>
+                <ol>
+                  <li>
+                    Read role claim after login and cache in session state.
+                  </li>
+                  <li>Render only authorized modules in side menu.</li>
+                  <li>
+                    Protect route access and show forbidden UI for restricted
+                    pages.
+                  </li>
+                </ol>
+              </div>
+              <div class="card">
+                <h3>Backend Steps (Basic)</h3>
+                <ol>
+                  <li>Define endpoint permission matrix by role.</li>
+                  <li>
+                    Apply authorization middleware to all protected routes.
+                  </li>
+                  <li>Write audit logs for denied requests.</li>
+                </ol>
+              </div>
+            </div>
+            <div class="checklist card">
+              <h3>Validation Checklist</h3>
+              <ol>
+                <li>User role cannot access admin endpoints.</li>
+                <li>Admin role can access allowed combined paths.</li>
+                <li>
+                  Permission changes reflect without code change
+                  (policy-driven).
+                </li>
+              </ol>
+            </div>
+            <p><a class="top" href="#top">Back to top</a></p>
+          </div>
+        </details>
+
+        <details class="dict-entry" id="P2-T3">
+          <summary>P2-T3: API Gateway Security Hardening</summary>
+          <div class="dict-body">
+            <div class="meta">
+              <div class="card">
+                <strong>Part</strong>
+                <p>Part 2</p>
+              </div>
+              <div class="card">
+                <strong>Time</strong>
+                <p>1-2 days</p>
+              </div>
+              <div class="card">
+                <strong>Owner</strong>
+                <p>BE primary</p>
+              </div>
+              <div class="card">
+                <strong>Output</strong>
+                <p>Secure API perimeter</p>
+              </div>
+            </div>
+            <div class="steps">
+              <div class="card">
+                <h3>Frontend Steps (Basic)</h3>
+                <ol>
+                  <li>Attach bearer token to protected requests.</li>
+                  <li>Handle 401/403 responses with clear UX.</li>
+                  <li>Restrict browser origins to approved domains.</li>
+                </ol>
+              </div>
+              <div class="card">
+                <h3>Backend Steps (Basic)</h3>
+                <ol>
+                  <li>Enable JWT authorizer in API Gateway.</li>
+                  <li>Configure CORS allow-list per environment.</li>
+                  <li>Enable rate limiting and burst control.</li>
+                  <li>Attach WAF managed rules and log blocked traffic.</li>
+                </ol>
+              </div>
+            </div>
+            <div class="checklist card">
+              <h3>Validation Checklist</h3>
+              <ol>
+                <li>Unauthorized requests are blocked.</li>
+                <li>CORS policy rejects unknown origins.</li>
+                <li>WAF metrics and blocked request logs visible.</li>
+              </ol>
+            </div>
+            <p><a class="top" href="#top">Back to top</a></p>
+          </div>
+        </details>
+
+        <details class="dict-entry" id="P3-T1">
+          <summary>P3-T1: Lambda Service Setup for Modules</summary>
+          <div class="dict-body">
+            <div class="meta">
+              <div class="card">
+                <strong>Part</strong>
+                <p>Part 3</p>
+              </div>
+              <div class="card">
+                <strong>Time</strong>
+                <p>3-5 days</p>
+              </div>
+              <div class="card">
+                <strong>Owner</strong>
+                <p>BE primary</p>
+              </div>
+              <div class="card">
+                <strong>Output</strong>
+                <p>Running APIs for all core modules</p>
+              </div>
+            </div>
+            <div class="steps">
+              <div class="card">
+                <h3>Frontend Steps (Basic)</h3>
+                <ol>
+                  <li>Implement typed API clients for each module.</li>
+                  <li>Add loading states for all API actions.</li>
+                  <li>Add standardized error banners and retry actions.</li>
+                </ol>
+              </div>
+              <div class="card">
+                <h3>Backend Steps (Basic)</h3>
+                <ol>
+                  <li>
+                    Create separate handlers for station, sequence, inspection,
+                    report.
+                  </li>
+                  <li>
+                    Split transport, service logic, and repository layers.
+                  </li>
+                  <li>Configure timeout/memory/concurrency per Lambda.</li>
+                  <li>Enable structured logging and tracing.</li>
+                </ol>
+              </div>
+            </div>
+            <div class="checklist card">
+              <h3>Validation Checklist</h3>
+              <ol>
+                <li>All endpoints pass contract tests.</li>
+                <li>Cold-start and latency metrics are within target.</li>
+                <li>Error paths return consistent response schema.</li>
+              </ol>
+            </div>
+            <p><a class="top" href="#top">Back to top</a></p>
+          </div>
+        </details>
+
+        <details class="dict-entry" id="P3-T2">
+          <summary>P3-T2: S3 Buckets and Media APIs</summary>
+          <div class="dict-body">
+            <div class="meta">
+              <div class="card">
+                <strong>Part</strong>
+                <p>Part 3</p>
+              </div>
+              <div class="card">
+                <strong>Time</strong>
+                <p>2-3 days</p>
+              </div>
+              <div class="card">
+                <strong>Owner</strong>
+                <p>FE + BE</p>
+              </div>
+              <div class="card">
+                <strong>Output</strong>
+                <p>Secure image upload and retrieval</p>
+              </div>
+            </div>
+            <div class="steps">
+              <div class="card">
+                <h3>Frontend Steps (Basic)</h3>
+                <ol>
+                  <li>Validate file type and size before upload.</li>
+                  <li>Request signed upload URL from API.</li>
+                  <li>Upload directly to S3 and store object key in record.</li>
+                  <li>
+                    Render preview and enlarge modal using retrieved signed URL.
+                  </li>
+                </ol>
+              </div>
+              <div class="card">
+                <h3>Backend Steps (Basic)</h3>
+                <ol>
+                  <li>
+                    Create encrypted private bucket with lifecycle policy.
+                  </li>
+                  <li>Build signed URL issue endpoint with short expiry.</li>
+                  <li>Validate object key patterns and MIME restrictions.</li>
+                  <li>Block public access and enforce IAM least privilege.</li>
+                </ol>
+              </div>
+            </div>
+            <div class="checklist card">
+              <h3>Validation Checklist</h3>
+              <ol>
+                <li>Upload works only for allowed file formats.</li>
+                <li>Direct public URL access fails.</li>
+                <li>Signed URL expires as expected.</li>
+              </ol>
+            </div>
+            <p><a class="top" href="#top">Back to top</a></p>
+          </div>
+        </details>
+
+        <details class="dict-entry" id="P3-T3">
+          <summary>P3-T3: PostgreSQL Configuration</summary>
+          <div class="dict-body">
+            <div class="meta">
+              <div class="card">
+                <strong>Part</strong>
+                <p>Part 3</p>
+              </div>
+              <div class="card">
+                <strong>Time</strong>
+                <p>2-4 days</p>
+              </div>
+              <div class="card">
+                <strong>Owner</strong>
+                <p>BE primary</p>
+              </div>
+              <div class="card">
+                <strong>Output</strong>
+                <p>Normalized transactional model</p>
+              </div>
+            </div>
+            <div class="steps">
+              <div class="card">
+                <h3>Frontend Steps (Basic)</h3>
+                <ol>
+                  <li>
+                    Map forms to SQL-backed DTOs (station, sequence,
+                    inspection).
+                  </li>
+                  <li>Handle validation errors at field level.</li>
+                  <li>Support pagination/sorting for heavy lists.</li>
+                </ol>
+              </div>
+              <div class="card">
+                <h3>Backend Steps (Basic)</h3>
+                <ol>
+                  <li>Create schema and constraints for core entities.</li>
+                  <li>Add migration scripts and version tracking.</li>
+                  <li>Add indexes for date, station, VIN, sequence queries.</li>
+                  <li>Configure backup retention and restore drills.</li>
+                </ol>
+              </div>
+            </div>
+            <div class="checklist card">
+              <h3>Validation Checklist</h3>
+              <ol>
+                <li>Migration up/down tested in non-prod.</li>
+                <li>Query performance meets expected SLAs.</li>
+                <li>Data consistency constraints block invalid writes.</li>
+              </ol>
+            </div>
+            <p><a class="top" href="#top">Back to top</a></p>
+          </div>
+        </details>
+
+        <details class="dict-entry" id="P3-T4">
+          <summary>P3-T4: DynamoDB Configuration</summary>
+          <div class="dict-body">
+            <div class="meta">
+              <div class="card">
+                <strong>Part</strong>
+                <p>Part 3</p>
+              </div>
+              <div class="card">
+                <strong>Time</strong>
+                <p>2-3 days</p>
+              </div>
+              <div class="card">
+                <strong>Owner</strong>
+                <p>BE primary</p>
+              </div>
+              <div class="card">
+                <strong>Output</strong>
+                <p>Fast KPI/read-model storage</p>
+              </div>
+            </div>
+            <div class="steps">
+              <div class="card">
+                <h3>Frontend Steps (Basic)</h3>
+                <ol>
+                  <li>Consume KPI endpoints for widgets and reports.</li>
+                  <li>Implement periodic refresh with clear loading state.</li>
+                  <li>
+                    Show empty-state values when no records are available.
+                  </li>
+                </ol>
+              </div>
+              <div class="card">
+                <h3>Backend Steps (Basic)</h3>
+                <ol>
+                  <li>Design partition/sort keys for read patterns.</li>
+                  <li>Create GSIs for alternate access patterns.</li>
+                  <li>Enable TTL where event data can expire.</li>
+                  <li>Implement aggregation update jobs/events.</li>
+                </ol>
+              </div>
+            </div>
+            <div class="checklist card">
+              <h3>Validation Checklist</h3>
+              <ol>
+                <li>Widget reads stay within latency targets.</li>
+                <li>Hot partitions are not observed in metrics.</li>
+                <li>TTL behavior is confirmed on sample records.</li>
+              </ol>
+            </div>
+            <p><a class="top" href="#top">Back to top</a></p>
+          </div>
+        </details>
+
+        <details class="dict-entry" id="P4-T1">
+          <summary>P4-T1: Dev CI/CD Deployment Flow</summary>
+          <div class="dict-body">
+            <div class="meta">
+              <div class="card">
+                <strong>Part</strong>
+                <p>Part 4</p>
+              </div>
+              <div class="card">
+                <strong>Time</strong>
+                <p>1-2 days setup</p>
+              </div>
+              <div class="card">
+                <strong>Owner</strong>
+                <p>FE + BE</p>
+              </div>
+              <div class="card">
+                <strong>Output</strong>
+                <p>Automated Dev deployment</p>
+              </div>
+            </div>
+            <div class="steps">
+              <div class="card">
+                <h3>Frontend Steps (Basic)</h3>
+                <ol>
+                  <li>Trigger CI on develop merges.</li>
+                  <li>Run lint/tests/build and publish artifacts.</li>
+                  <li>Deploy to Dev bucket/distribution automatically.</li>
+                </ol>
+              </div>
+              <div class="card">
+                <h3>Backend Steps (Basic)</h3>
+                <ol>
+                  <li>Run build/tests/package on develop merges.</li>
+                  <li>Deploy Lambda/API stack to Dev.</li>
+                  <li>Execute post-deploy smoke suite and publish results.</li>
+                </ol>
+              </div>
+            </div>
+            <div class="checklist card">
+              <h3>Validation Checklist</h3>
+              <ol>
+                <li>Single commit reaches Dev without manual actions.</li>
+                <li>Smoke tests run automatically after deployment.</li>
+                <li>Failed smoke triggers pipeline failure notification.</li>
+              </ol>
+            </div>
+            <p><a class="top" href="#top">Back to top</a></p>
+          </div>
+        </details>
+
+        <details class="dict-entry" id="P4-T2">
+          <summary>P4-T2: Stage CI/CD and UAT Gate</summary>
+          <div class="dict-body">
+            <div class="meta">
+              <div class="card">
+                <strong>Part</strong>
+                <p>Part 4</p>
+              </div>
+              <div class="card">
+                <strong>Time</strong>
+                <p>2-3 days per cycle</p>
+              </div>
+              <div class="card">
+                <strong>Owner</strong>
+                <p>FE + BE + Business</p>
+              </div>
+              <div class="card">
+                <strong>Output</strong>
+                <p>UAT-approved release candidate</p>
+              </div>
+            </div>
+            <div class="steps">
+              <div class="card">
+                <h3>Frontend Steps (Basic)</h3>
+                <ol>
+                  <li>Promote tested artifact from Dev to Stage.</li>
+                  <li>Support business UAT walkthrough and defect triage.</li>
+                  <li>Freeze non-critical UI scope during UAT.</li>
+                </ol>
+              </div>
+              <div class="card">
+                <h3>Backend Steps (Basic)</h3>
+                <ol>
+                  <li>Promote candidate API build to Stage.</li>
+                  <li>
+                    Run integration/regression/performance baseline suites.
+                  </li>
+                  <li>Patch blocking defects and retest before sign-off.</li>
+                </ol>
+              </div>
+            </div>
+            <div class="checklist card">
+              <h3>Validation Checklist</h3>
+              <ol>
+                <li>Business test scripts fully executed.</li>
+                <li>Critical defects closed and revalidated.</li>
+                <li>Signed UAT approval recorded.</li>
+              </ol>
+            </div>
+            <p><a class="top" href="#top">Back to top</a></p>
+          </div>
+        </details>
+
+        <details class="dict-entry" id="P4-T3">
+          <summary>P4-T3: Prod CI/CD and Controlled Release</summary>
+          <div class="dict-body">
+            <div class="meta">
+              <div class="card">
+                <strong>Part</strong>
+                <p>Part 4</p>
+              </div>
+              <div class="card">
+                <strong>Time</strong>
+                <p>1 day per release</p>
+              </div>
+              <div class="card">
+                <strong>Owner</strong>
+                <p>FE + BE + Release owner</p>
+              </div>
+              <div class="card">
+                <strong>Output</strong>
+                <p>Safe production rollout</p>
+              </div>
+            </div>
+            <div class="steps">
+              <div class="card">
+                <h3>Frontend Steps (Basic)</h3>
+                <ol>
+                  <li>Deploy approved FE artifact to Prod.</li>
+                  <li>Run cache invalidation and version check.</li>
+                  <li>Execute critical-path smoke tests.</li>
+                </ol>
+              </div>
+              <div class="card">
+                <h3>Backend Steps (Basic)</h3>
+                <ol>
+                  <li>Deploy API using canary or blue-green strategy.</li>
+                  <li>Monitor error rate and latency alarms during rollout.</li>
+                  <li>Rollback automatically if thresholds exceed.</li>
+                </ol>
+              </div>
+            </div>
+            <div class="checklist card">
+              <h3>Validation Checklist</h3>
+              <ol>
+                <li>Dual approvals are present before release.</li>
+                <li>No critical alarms triggered post-deploy.</li>
+                <li>Business confirms primary workflows are operational.</li>
+              </ol>
+            </div>
+            <p><a class="top" href="#top">Back to top</a></p>
+          </div>
+        </details>
+
+        <details class="dict-entry" id="P5-T1">
+          <summary>P5-T1: Business UAT Execution</summary>
+          <div class="dict-body">
+            <div class="meta">
+              <div class="card">
+                <strong>Part</strong>
+                <p>Part 5</p>
+              </div>
+              <div class="card">
+                <strong>Time</strong>
+                <p>2-4 days</p>
+              </div>
+              <div class="card">
+                <strong>Owner</strong>
+                <p>Business + FE + BE</p>
+              </div>
+              <div class="card">
+                <strong>Output</strong>
+                <p>Formal acceptance record</p>
+              </div>
+            </div>
+            <div class="steps">
+              <div class="card">
+                <h3>Frontend Steps (Basic)</h3>
+                <ol>
+                  <li>
+                    Create UAT guide with screenshots and expected outcomes.
+                  </li>
+                  <li>Support execution and capture defects with evidence.</li>
+                  <li>Retest fixed issues and update UAT tracker.</li>
+                </ol>
+              </div>
+              <div class="card">
+                <h3>Backend Steps (Basic)</h3>
+                <ol>
+                  <li>Provide trace logs for failed UAT transactions.</li>
+                  <li>Fix API/data issues and redeploy to Stage.</li>
+                  <li>Share closure report for sign-off.</li>
+                </ol>
+              </div>
+            </div>
+            <div class="checklist card">
+              <h3>Validation Checklist</h3>
+              <ol>
+                <li>All UAT scenarios marked pass/fail with evidence.</li>
+                <li>No unresolved blocker remains open.</li>
+                <li>Business sign-off is archived.</li>
+              </ol>
+            </div>
+            <p><a class="top" href="#top">Back to top</a></p>
+          </div>
+        </details>
+
+        <details class="dict-entry" id="P5-T2">
+          <summary>P5-T2: Hypercare (Post-Go-Live)</summary>
+          <div class="dict-body">
+            <div class="meta">
+              <div class="card">
+                <strong>Part</strong>
+                <p>Part 5</p>
+              </div>
+              <div class="card">
+                <strong>Time</strong>
+                <p>1-2 weeks</p>
+              </div>
+              <div class="card">
+                <strong>Owner</strong>
+                <p>FE + BE</p>
+              </div>
+              <div class="card">
+                <strong>Output</strong>
+                <p>Stable production operations</p>
+              </div>
+            </div>
+            <div class="steps">
+              <div class="card">
+                <h3>Frontend Steps (Basic)</h3>
+                <ol>
+                  <li>Monitor user feedback and UI error events daily.</li>
+                  <li>Prioritize and release urgent frontend fixes.</li>
+                  <li>Track SLA for defect resolution and retesting.</li>
+                </ol>
+              </div>
+              <div class="card">
+                <h3>Backend Steps (Basic)</h3>
+                <ol>
+                  <li>
+                    Track CloudWatch metrics and error spikes in real time.
+                  </li>
+                  <li>Fix incidents with rollback-ready patch releases.</li>
+                  <li>Publish daily hypercare status report.</li>
+                </ol>
+              </div>
+            </div>
+            <div class="checklist card">
+              <h3>Validation Checklist</h3>
+              <ol>
+                <li>Critical incident count trends down week-over-week.</li>
+                <li>No recurring Sev-1/Sev-2 issue remains unresolved.</li>
+                <li>Stakeholder health report approved.</li>
+              </ol>
+            </div>
+            <p><a class="top" href="#top">Back to top</a></p>
+          </div>
+        </details>
+
+        <details class="dict-entry" id="P5-T3">
+          <summary>P5-T3: Governance and Monthly Hardening</summary>
+          <div class="dict-body">
+            <div class="meta">
+              <div class="card">
+                <strong>Part</strong>
+                <p>Part 5</p>
+              </div>
+              <div class="card">
+                <strong>Time</strong>
+                <p>Monthly cadence</p>
+              </div>
+              <div class="card">
+                <strong>Owner</strong>
+                <p>FE + BE + Security</p>
+              </div>
+              <div class="card">
+                <strong>Output</strong>
+                <p>Sustained compliance and quality</p>
+              </div>
+            </div>
+            <div class="steps">
+              <div class="card">
+                <h3>Frontend Steps (Basic)</h3>
+                <ol>
+                  <li>Publish release notes and quality metrics monthly.</li>
+                  <li>
+                    Review performance/accessibility debt and plan improvements.
+                  </li>
+                  <li>Maintain standardized UX acceptance criteria.</li>
+                </ol>
+              </div>
+              <div class="card">
+                <h3>Backend Steps (Basic)</h3>
+                <ol>
+                  <li>
+                    Patch dependencies and OS/runtime vulnerabilities monthly.
+                  </li>
+                  <li>Run backup restore and DR simulation checks.</li>
+                  <li>Audit IAM, API access logs, and policy drift.</li>
+                </ol>
+              </div>
+            </div>
+            <div class="checklist card">
+              <h3>Validation Checklist</h3>
+              <ol>
+                <li>Security and dependency scan findings are closed.</li>
+                <li>Restore drill report is documented.</li>
+                <li>Governance review minutes are archived.</li>
+              </ol>
+            </div>
+            <p><a class="top" href="#top">Back to top</a></p>
+          </div>
+        </details>
+      </section>
+
+      <section class="section">
+        <h2>Total Program Estimate</h2>
+        <div class="grid">
+          <div class="card">
+            <h3>With GitHub Copilot</h3>
+            <p><strong>7 to 9 weeks</strong></p>
+            <p class="muted">
+              Lower effort in repetitive coding, tests, and integration
+              scaffolding.
+            </p>
+          </div>
+          <div class="card">
+            <h3>Without GitHub Copilot</h3>
+            <p><strong>10 to 13 weeks</strong></p>
+            <p class="muted">
+              Higher manual effort in boilerplate, refactoring, and validation
+              scripts.
+            </p>
+          </div>
+        </div>
+      </section>
+
+      <div id="taskModal" class="task-modal" aria-hidden="true">
+        <div id="taskModalBackdrop" class="task-modal-backdrop"></div>
+        <div
+          class="task-modal-panel"
+          role="dialog"
+          aria-modal="true"
+          aria-label="Task details"
+        >
+          <div class="task-modal-header">
+            <h3 id="taskModalTitle" class="task-modal-title">Task Details</h3>
+            <button id="taskModalClose" class="task-modal-close" type="button">
+              Close
+            </button>
+          </div>
+          <div id="taskModalContent" class="task-modal-content"></div>
+        </div>
+      </div>
+    </article>
+
+    <script>
+      (function () {
+        const modal = document.getElementById("taskModal");
+        const modalBackdrop = document.getElementById("taskModalBackdrop");
+        const modalClose = document.getElementById("taskModalClose");
+        const modalTitle = document.getElementById("taskModalTitle");
+        const modalContent = document.getElementById("taskModalContent");
+
+        if (
+          !modal ||
+          !modalBackdrop ||
+          !modalClose ||
+          !modalTitle ||
+          !modalContent
+        ) {
+          return;
+        }
+
+        const closeTaskModal = () => {
+          modal.classList.remove("open");
+          modal.setAttribute("aria-hidden", "true");
+          modalContent.innerHTML = "";
+        };
+
+        const openTaskModal = (taskId) => {
+          const entry = document.getElementById(taskId);
+          if (!entry) {
+            return;
+          }
+
+          const titleSource =
+            entry.querySelector("summary") || entry.querySelector("h3");
+          const bodySource = entry.querySelector(".dict-body") || entry;
+
+          modalTitle.textContent = titleSource
+            ? titleSource.textContent.trim()
+            : taskId;
+          modalContent.innerHTML = bodySource ? bodySource.innerHTML : "";
+
+          modal.classList.add("open");
+          modal.setAttribute("aria-hidden", "false");
+        };
+
+        document.addEventListener("click", (event) => {
+          const link = event.target.closest("a[href]");
+          if (!link) {
+            return;
+          }
+
+          const href = link.getAttribute("href") || "";
+          if (!/^#P\d-T\d$/.test(href)) {
+            return;
+          }
+
+          event.preventDefault();
+          openTaskModal(href.slice(1));
+        });
+
+        modalBackdrop.addEventListener("click", closeTaskModal);
+        modalClose.addEventListener("click", closeTaskModal);
+
+        document.addEventListener("keydown", (event) => {
+          if (event.key === "Escape" && modal.classList.contains("open")) {
+            closeTaskModal();
+          }
+        });
+      })();
+    </script>
+  </body>
+</html>
