@@ -1505,7 +1505,7 @@ function showInitializationScreen(sequences, vin, model, station) {
   if (startBtn) {
     startBtn.onclick = () => {
       screen.classList.add("hidden");
-      showPartDetailsScreen(sequences, 0);
+      showPartsListScreen(sequences);
     };
   }
 
@@ -1852,6 +1852,14 @@ function showPartsListScreen(sequences) {
         ?.classList.remove("hidden");
     };
   }
+
+  // Submit button — complete inspection and show summary
+  const submitBtn = document.getElementById("partsListSubmitBtn");
+  if (submitBtn) {
+    submitBtn.onclick = () => {
+      completeInspectionWorkflow();
+    };
+  }
 }
 
 /**
@@ -2041,15 +2049,7 @@ function showPartDetailsScreen(sequences, partIndex) {
       if (isProcessing) return;
       isProcessing = true;
       requestAnimationFrame(() => {
-        if (partIndex > 0) {
-          // Go to previous part
-          showPartDetailsScreen(sequences, partIndex - 1);
-        } else {
-          // First part — go back to barcode entry
-          screen.classList.add("hidden");
-          inspectionWorkflow.isActive = false;
-          showMobileInspectionEntry();
-        }
+        showPartsListScreen(sequences);
       });
     };
   }
@@ -2107,7 +2107,11 @@ function showImageEditorScreen(seq, partIndex, origin) {
       isProcessing = true;
       requestAnimationFrame(() => {
         screen.classList.add("hidden");
-        showPartDetailsScreen(inspectionWorkflow.currentSequences, partIndex);
+        if (origin === "partsList") {
+          showPartsListScreen(inspectionWorkflow.currentSequences);
+        } else {
+          showPartDetailsScreen(inspectionWorkflow.currentSequences, partIndex);
+        }
         isProcessing = false;
       });
     };
@@ -2133,7 +2137,11 @@ function showImageEditorScreen(seq, partIndex, origin) {
       isProcessing = true;
       requestAnimationFrame(() => {
         screen.classList.add("hidden");
-        showPartDetailsScreen(inspectionWorkflow.currentSequences, partIndex);
+        if (origin === "partsList") {
+          showPartsListScreen(inspectionWorkflow.currentSequences);
+        } else {
+          showPartDetailsScreen(inspectionWorkflow.currentSequences, partIndex);
+        }
         isProcessing = false;
       });
     };
@@ -2486,16 +2494,14 @@ function showInspectionSummary() {
   if (editBtn) {
     editBtn.onclick = () => {
       screen.classList.add("hidden");
-      const lastIndex = sequences.length - 1;
-      showPartDetailsScreen(sequences, lastIndex >= 0 ? lastIndex : 0);
+      showPartsListScreen(sequences);
     };
   }
 
   if (backBtn) {
     backBtn.onclick = () => {
       screen.classList.add("hidden");
-      const lastIndex = sequences.length - 1;
-      showPartDetailsScreen(sequences, lastIndex >= 0 ? lastIndex : 0);
+      showPartsListScreen(sequences);
     };
   }
 }
