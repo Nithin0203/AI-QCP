@@ -2397,8 +2397,35 @@ function completeInspectionWorkflow() {
   document.getElementById("partDetailsScreen")?.classList.add("hidden");
   document.getElementById("partsListScreen")?.classList.add("hidden");
 
-  // Show summary screen
-  showInspectionSummary();
+  // Save inspection results
+  const inspection = {
+    vin: document.getElementById("inspectionVin")?.value || "Unknown",
+    stationId:
+      document.getElementById("inspectionStationId")?.value || "Unknown",
+    sequenceId:
+      document.getElementById("inspectionSequenceName")?.value || "sequence-1",
+    inspectionStatus: "Submitted",
+    submittedAt: Date.now(),
+    totalPartsInspected: inspectionWorkflow.currentSequences.length,
+  };
+
+  if (!state.submittedInspections) state.submittedInspections = [];
+  state.submittedInspections.push(inspection);
+  localStorage.setItem(
+    STORAGE_KEYS.inspections,
+    JSON.stringify(state.submittedInspections),
+  );
+
+  // Mark workflow as inactive
+  inspectionWorkflow.isActive = false;
+
+  // Show success notification
+  showUndoToast("✅ Inspection Completed Successfully!", null, 3000);
+
+  // Return to barcode entry page after 1.5 seconds
+  setTimeout(() => {
+    showMobileInspectionEntry();
+  }, 1500);
 }
 
 /**
