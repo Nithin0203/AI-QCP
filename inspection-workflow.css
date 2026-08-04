@@ -145,6 +145,163 @@ body.force-mobile-workflow .toolbar-label {
   font-weight: 600;
 }
 
+/* ─────────────────────────────────────────────────────────────────
+   SUMMARY SCREEN — works at any viewport width in mobile workflow
+   ───────────────────────────────────────────────────────────────── */
+body.force-mobile-workflow .summary-content {
+  flex: 1;
+  overflow-y: auto;
+  -webkit-overflow-scrolling: touch;
+  overscroll-behavior-y: contain;
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  padding: 16px;
+  padding-bottom: max(24px, env(safe-area-inset-bottom));
+}
+
+body.force-mobile-workflow .summary-stats {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 12px;
+}
+
+body.force-mobile-workflow .stat-card {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  padding: 16px;
+  background: linear-gradient(135deg, rgba(44,79,191,0.2) 0%, rgba(30,138,69,0.1) 100%);
+  border: 1px solid rgba(100,140,255,0.2);
+  border-radius: 8px;
+}
+
+body.force-mobile-workflow .stat-number {
+  font-size: 2rem;
+  font-weight: 700;
+  color: #64a8ff;
+}
+
+body.force-mobile-workflow .stat-label {
+  font-size: 0.75rem;
+  font-weight: 600;
+  color: #9db4d4;
+  text-align: center;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+body.force-mobile-workflow .stat-icon {
+  font-size: 1.5rem;
+  opacity: 0.6;
+}
+
+body.force-mobile-workflow .summary-results {
+  padding: 12px;
+  background: rgba(100,140,255,0.05);
+  border: 1px solid rgba(100,140,255,0.15);
+  border-radius: 8px;
+}
+
+body.force-mobile-workflow .summary-results h3 {
+  margin: 0 0 12px;
+  font-size: 0.9rem;
+  font-weight: 700;
+  color: #64a8ff;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+body.force-mobile-workflow .summary-result-item {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 10px 0;
+  border-bottom: 1px solid rgba(100,140,255,0.1);
+  gap: 8px;
+}
+
+body.force-mobile-workflow .summary-result-item:last-child {
+  border-bottom: none;
+}
+
+body.force-mobile-workflow .summary-result-item-name {
+  font-size: 0.85rem;
+  color: #ffffff;
+  font-weight: 500;
+  flex: 1;
+}
+
+body.force-mobile-workflow .summary-result-item-badge {
+  font-size: 0.75rem;
+  font-weight: 700;
+  padding: 3px 8px;
+  border-radius: 12px;
+  background: rgba(30,138,69,0.2);
+  color: #4ade80;
+  flex-shrink: 0;
+}
+
+body.force-mobile-workflow .summary-result-item-badge.bad {
+  background: rgba(200,38,45,0.2);
+  color: #ff6b6b;
+}
+
+body.force-mobile-workflow .summary-actions {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  padding-top: 4px;
+}
+
+body.force-mobile-workflow .summary-actions .btn-primary {
+  display: block;
+  width: 100%;
+  padding: 16px 20px;
+  font-size: 1rem;
+  font-weight: 700;
+  letter-spacing: 0.5px;
+  background: linear-gradient(135deg, #1e8a45 0%, #15652e 100%);
+  color: #ffffff;
+  border: none;
+  border-radius: 6px;
+  cursor: pointer;
+  transition: all 0.25s ease;
+  touch-action: manipulation;
+  -webkit-tap-highlight-color: transparent;
+}
+
+body.force-mobile-workflow .summary-actions .btn-primary:active {
+  transform: scale(0.98);
+  box-shadow: 0 4px 12px rgba(30,138,69,0.4);
+}
+
+body.force-mobile-workflow .summary-actions .btn-ghost {
+  display: block;
+  width: 100%;
+  padding: 14px 16px;
+  font-size: 0.9rem;
+  font-weight: 600;
+  background: rgba(100,140,255,0.1);
+  color: #64a8ff;
+  border: 1px solid rgba(100,140,255,0.3);
+  border-radius: 6px;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  touch-action: manipulation;
+  -webkit-tap-highlight-color: transparent;
+}
+
+body.force-mobile-workflow .summary-footer {
+  text-align: center;
+  font-size: 0.75rem;
+  color: #7a8ba8;
+  margin: 0;
+  font-style: italic;
+}
+
 /* Parts grid — single column for new layout with action buttons */
 body.force-mobile-workflow .parts-list-container {
   flex: 1;
