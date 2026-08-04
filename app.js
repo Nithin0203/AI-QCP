@@ -666,6 +666,14 @@ function showMobileInspectionEntry() {
     // Show mobile entry screen
     screen.classList.remove("hidden");
 
+    // Clear input fields for new inspection
+    const vinInput = document.getElementById("mobileVinInput");
+    const modelSelect = document.getElementById("mobileVehicleModel");
+    const stationSelect = document.getElementById("mobileStationId");
+    if (vinInput) vinInput.value = "";
+    if (modelSelect) modelSelect.value = "";
+    if (stationSelect) stationSelect.value = "";
+
     // Wire up buttons
     const beginBtn = document.getElementById("mobileBeginInspectionBtn");
     const backBtn = document.getElementById("mobileBackBtn");
@@ -2531,9 +2539,9 @@ function submitInspectionWorkflow() {
   // Show success notification
   showUndoToast("✅ Inspection Submitted Successfully!", null, 3000);
 
-  // Return to dashboard after 1.5 seconds
+  // Return to barcode entry page after 1.5 seconds
   setTimeout(() => {
-    showDashboard();
+    showMobileInspectionEntry();
   }, 1500);
 }
 
