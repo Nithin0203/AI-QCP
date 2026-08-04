@@ -1505,7 +1505,7 @@ function showInitializationScreen(sequences, vin, model, station) {
   if (startBtn) {
     startBtn.onclick = () => {
       screen.classList.add("hidden");
-      showPartsListScreen(sequences);
+      showPartDetailsScreen(sequences, 0);
     };
   }
 
@@ -2040,7 +2040,17 @@ function showPartDetailsScreen(sequences, partIndex) {
     backBtn.onclick = () => {
       if (isProcessing) return;
       isProcessing = true;
-      requestAnimationFrame(() => showPartsListScreen(sequences));
+      requestAnimationFrame(() => {
+        if (partIndex > 0) {
+          // Go to previous part
+          showPartDetailsScreen(sequences, partIndex - 1);
+        } else {
+          // First part — go back to barcode entry
+          screen.classList.add("hidden");
+          inspectionWorkflow.isActive = false;
+          showMobileInspectionEntry();
+        }
+      });
     };
   }
 
@@ -2397,35 +2407,8 @@ function completeInspectionWorkflow() {
   document.getElementById("partDetailsScreen")?.classList.add("hidden");
   document.getElementById("partsListScreen")?.classList.add("hidden");
 
-  // Save inspection results
-  const inspection = {
-    vin: document.getElementById("inspectionVin")?.value || "Unknown",
-    stationId:
-      document.getElementById("inspectionStationId")?.value || "Unknown",
-    sequenceId:
-      document.getElementById("inspectionSequenceName")?.value || "sequence-1",
-    inspectionStatus: "Submitted",
-    submittedAt: Date.now(),
-    totalPartsInspected: inspectionWorkflow.currentSequences.length,
-  };
-
-  if (!state.submittedInspections) state.submittedInspections = [];
-  state.submittedInspections.push(inspection);
-  localStorage.setItem(
-    STORAGE_KEYS.inspections,
-    JSON.stringify(state.submittedInspections),
-  );
-
-  // Mark workflow as inactive
-  inspectionWorkflow.isActive = false;
-
-  // Show success notification
-  showUndoToast("✅ Inspection Completed Successfully!", null, 3000);
-
-  // Return to barcode entry page after 1.5 seconds
-  setTimeout(() => {
-    showMobileInspectionEntry();
-  }, 1500);
+  // Show summary screen
+  showInspectionSummary();
 }
 
 /**
@@ -2571,8 +2554,6 @@ function submitInspectionWorkflow() {
     showMobileInspectionEntry();
   }, 1500);
 }
-
-// ─── Demo simulation ────────────────────────────────────────────────────────
 const DEMO_PARTS = [
   "Left Door Handle",
   "Right Door Trim",
