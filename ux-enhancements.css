@@ -68,6 +68,16 @@
   text-align: right;
 }
 
+/* ── Warning Toast Variant ──────────────────────────────────── */
+.undo-toast.undo-toast-warning {
+  background: linear-gradient(135deg, #d84e3f 0%, #b93f2f 100%);
+  border-left: 4px solid #ff6b54;
+}
+
+.undo-toast.undo-toast-warning .undo-toast-dismiss {
+  color: #ffe5e5;
+}
+
 @keyframes undoToastSlideUp {
   from {
     opacity: 0;
@@ -96,12 +106,16 @@
   position: sticky;
   top: 0;
   z-index: 50;
-  background: linear-gradient(90deg, rgba(27,46,110,0.95) 0%, rgba(44,79,191,0.9) 100%);
+  background: linear-gradient(
+    90deg,
+    rgba(27, 46, 110, 0.95) 0%,
+    rgba(44, 79, 191, 0.9) 100%
+  );
   color: #ffffff;
   padding: 10px 14px;
   font-size: 0.9rem;
   line-height: 1.4;
-  border-bottom: 1px solid rgba(100,140,255,0.2);
+  border-bottom: 1px solid rgba(100, 140, 255, 0.2);
   box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
   backdrop-filter: blur(4px);
 }
@@ -114,7 +128,9 @@
   flex-wrap: wrap;
 }
 
-.context-vin, .context-part, .context-status {
+.context-vin,
+.context-part,
+.context-status {
   font-weight: 500;
   white-space: nowrap;
   letter-spacing: 0.01em;
@@ -122,7 +138,7 @@
 
 .context-count {
   display: inline-block;
-  background: rgba(100,140,255,0.25);
+  background: rgba(100, 140, 255, 0.25);
   border-radius: 4px;
   padding: 2px 6px;
   font-size: 0.85rem;
@@ -133,7 +149,7 @@
 .progress-bar-container {
   padding: 12px 14px;
   background: rgba(0, 0, 0, 0.05);
-  border-bottom: 1px solid rgba(15,27,64,0.08);
+  border-bottom: 1px solid rgba(15, 27, 64, 0.08);
 }
 
 .progress-bar-container.hidden {
@@ -193,15 +209,27 @@
 }
 
 @keyframes resultPulse {
-  0% { box-shadow: 0 0 0 0 rgba(30,138,69,0.7); }
-  70% { box-shadow: 0 0 0 12px rgba(30,138,69,0); }
-  100% { box-shadow: 0 0 0 0 rgba(30,138,69,0); }
+  0% {
+    box-shadow: 0 0 0 0 rgba(30, 138, 69, 0.7);
+  }
+  70% {
+    box-shadow: 0 0 0 12px rgba(30, 138, 69, 0);
+  }
+  100% {
+    box-shadow: 0 0 0 0 rgba(30, 138, 69, 0);
+  }
 }
 
 @keyframes resultPulseBad {
-  0% { box-shadow: 0 0 0 0 rgba(212,107,0,0.7); }
-  70% { box-shadow: 0 0 0 12px rgba(212,107,0,0); }
-  100% { box-shadow: 0 0 0 0 rgba(212,107,0,0); }
+  0% {
+    box-shadow: 0 0 0 0 rgba(212, 107, 0, 0.7);
+  }
+  70% {
+    box-shadow: 0 0 0 12px rgba(212, 107, 0, 0);
+  }
+  100% {
+    box-shadow: 0 0 0 0 rgba(212, 107, 0, 0);
+  }
 }
 
 .btn-result-good.result-confirmed {
@@ -213,15 +241,27 @@
 }
 
 @keyframes goodFlash {
-  0% { background-color: rgba(30,138,69,0.1); }
-  50% { background-color: rgba(30,138,69,0.25); }
-  100% { background-color: transparent; }
+  0% {
+    background-color: rgba(30, 138, 69, 0.1);
+  }
+  50% {
+    background-color: rgba(30, 138, 69, 0.25);
+  }
+  100% {
+    background-color: transparent;
+  }
 }
 
 @keyframes badFlash {
-  0% { background-color: rgba(212,107,0,0.1); }
-  50% { background-color: rgba(212,107,0,0.25); }
-  100% { background-color: transparent; }
+  0% {
+    background-color: rgba(212, 107, 0, 0.1);
+  }
+  50% {
+    background-color: rgba(212, 107, 0, 0.25);
+  }
+  100% {
+    background-color: transparent;
+  }
 }
 
 #markGoodBtn.flash-confirmed {
@@ -302,8 +342,13 @@
 }
 
 @keyframes dotPulse {
-  0%, 100% { opacity: 0.4; }
-  50% { opacity: 1; }
+  0%,
+  100% {
+    opacity: 0.4;
+  }
+  50% {
+    opacity: 1;
+  }
 }
 
 /* ── Mobile Rapid Mode Enhancements ──────────────────────────── */

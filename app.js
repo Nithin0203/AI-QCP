@@ -458,6 +458,35 @@ function dismissUndoToast() {
 }
 
 /**
+ * Show a warning toast for missed inspections
+ * Displays: "Warning- Inspection is missed for Part XX. Please complete the Inspection."
+ */
+function showMissedInspectionWarning(partName) {
+  const toast = document.getElementById("warningToast");
+  const msgEl = document.getElementById("warningToastMessage");
+
+  if (!toast || !msgEl) return;
+
+  const message = `⚠️ Warning- Inspection is missed for Part ${partName}. Please complete the Inspection.`;
+  msgEl.textContent = message;
+  toast.classList.remove("hidden", "undo-toast-exit");
+
+  // Clear any existing timeout
+  if (toast._warningTimeout) clearTimeout(toast._warningTimeout);
+
+  // Auto-dismiss after 4 seconds for warning message
+  toast._warningTimeout = setTimeout(() => dismissWarningToast(), 4000);
+}
+
+function dismissWarningToast() {
+  const toast = document.getElementById("warningToast");
+  if (!toast) return;
+  toast.classList.add("undo-toast-exit");
+  setTimeout(() => toast.classList.add("hidden"), 280);
+  if (toast._warningTimeout) clearTimeout(toast._warningTimeout);
+}
+
+/**
  * Update live context bar with current inspection details
  */
 function updateLiveContextBar(vin, partName, partIndex, totalParts) {
@@ -1988,9 +2017,14 @@ function showPartDetailsScreen(sequences, partIndex) {
   if (skipBtn) {
     skipBtn.onclick = () => {
       if (isProcessing) return;
+      // Show warning that inspection is being skipped
+      showMissedInspectionWarning(seq.partName);
       isProcessing = true;
       recordPartResult(seq, partIndex, false);
-      moveToNextPart(sequences, partIndex);
+      setTimeout(() => {
+        moveToNextPart(sequences, partIndex);
+        isProcessing = false;
+      }, 500);
     };
   }
 
