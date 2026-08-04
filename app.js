@@ -1540,6 +1540,24 @@ function showPartsListScreen(sequences) {
   const container = document.getElementById("partsListContainer");
   if (!container) return;
 
+  const isPartSelected = (part) =>
+    Boolean(part?.completed || part?.resultGood || part?.resultBad);
+
+  const updateSubmitButtonState = () => {
+    const submitBtn = document.getElementById("partsListSubmitBtn");
+    if (!submitBtn) return;
+
+    const total = sequences.length;
+    const completed = sequences.filter(isPartSelected).length;
+    const allSelected = total > 0 && completed === total;
+
+    submitBtn.disabled = !allSelected;
+    submitBtn.setAttribute("aria-disabled", String(!allSelected));
+    submitBtn.textContent = allSelected
+      ? "✓ Submit Inspection"
+      : `Complete all parts (${completed}/${total})`;
+  };
+
   // Build parts grid using DocumentFragment for better performance
   const fragment = document.createDocumentFragment();
   sequences.forEach((seq, index) => {
@@ -1674,6 +1692,7 @@ function showPartsListScreen(sequences) {
         s.className = "parts-list-item-status good";
         s.textContent = "✓ Good";
       }
+      updateSubmitButtonState();
     });
 
     const btnNotOk = document.createElement("button");
@@ -1778,9 +1797,13 @@ function showPartsListScreen(sequences) {
         defectPanel.querySelectorAll(".defect-select").forEach((sel) => {
           seq[sel.dataset.field] = sel.value;
         });
+        // Mark this part as selected as NOT OK when defect details are saved.
+        recordPartResult(seq, index, true);
         defectPanel.classList.add("hidden");
         btnNotOk.classList.remove("red");
         btnNotOk.classList.add("active");
+        btnOk.classList.remove("active");
+        updateSubmitButtonState();
       });
 
     btnNotOk.addEventListener("click", (e) => {
@@ -1856,7 +1879,19 @@ function showPartsListScreen(sequences) {
   // Submit button — complete inspection and show summary
   const submitBtn = document.getElementById("partsListSubmitBtn");
   if (submitBtn) {
+    updateSubmitButtonState();
     submitBtn.onclick = () => {
+      const total = sequences.length;
+      const completed = sequences.filter(isPartSelected).length;
+      if (completed < total) {
+        showUndoToast(
+          `Please complete all parts before submitting (${completed}/${total}).`,
+          null,
+          2500,
+        );
+        updateSubmitButtonState();
+        return;
+      }
       completeInspectionWorkflow();
     };
   }
@@ -2355,7 +2390,14 @@ function recordPartResult(seq, partIndex, hasDefects, imageData = null) {
 
   // Save to state
   if (!state.inspections) state.inspections = [];
-  state.inspections.push(result);
+  const existingIndex = state.inspections.findIndex(
+    (item) => item.partIndex === partIndex,
+  );
+  if (existingIndex >= 0) {
+    state.inspections[existingIndex] = result;
+  } else {
+    state.inspections.push(result);
+  }
   localStorage.setItem(
     STORAGE_KEYS.inspections,
     JSON.stringify(state.inspections),

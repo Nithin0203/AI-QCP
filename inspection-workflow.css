@@ -349,6 +349,12 @@ body.force-mobile-workflow .btn-parts-submit:active {
   box-shadow: 0 4px 16px rgba(30, 138, 69, 0.5);
 }
 
+body.force-mobile-workflow .btn-parts-submit:disabled {
+  opacity: 0.55;
+  cursor: not-allowed;
+  box-shadow: none;
+}
+
 body.force-mobile-workflow .parts-list-item {
   display: flex;
   flex-direction: column;
