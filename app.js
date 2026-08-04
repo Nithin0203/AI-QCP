@@ -2107,11 +2107,7 @@ function showImageEditorScreen(seq, partIndex, origin) {
       isProcessing = true;
       requestAnimationFrame(() => {
         screen.classList.add("hidden");
-        if (origin === "partsList") {
-          showPartsListScreen(inspectionWorkflow.currentSequences);
-        } else {
-          showPartDetailsScreen(inspectionWorkflow.currentSequences, partIndex);
-        }
+        showPartDetailsScreen(inspectionWorkflow.currentSequences, partIndex);
         isProcessing = false;
       });
     };
@@ -2137,11 +2133,7 @@ function showImageEditorScreen(seq, partIndex, origin) {
       isProcessing = true;
       requestAnimationFrame(() => {
         screen.classList.add("hidden");
-        if (origin === "partsList") {
-          showPartsListScreen(inspectionWorkflow.currentSequences);
-        } else {
-          showPartDetailsScreen(inspectionWorkflow.currentSequences, partIndex);
-        }
+        showPartDetailsScreen(inspectionWorkflow.currentSequences, partIndex);
         isProcessing = false;
       });
     };
@@ -2494,14 +2486,16 @@ function showInspectionSummary() {
   if (editBtn) {
     editBtn.onclick = () => {
       screen.classList.add("hidden");
-      showPartsListScreen(sequences);
+      const lastIndex = sequences.length - 1;
+      showPartDetailsScreen(sequences, lastIndex >= 0 ? lastIndex : 0);
     };
   }
 
   if (backBtn) {
     backBtn.onclick = () => {
       screen.classList.add("hidden");
-      showPartsListScreen(sequences);
+      const lastIndex = sequences.length - 1;
+      showPartDetailsScreen(sequences, lastIndex >= 0 ? lastIndex : 0);
     };
   }
 }
