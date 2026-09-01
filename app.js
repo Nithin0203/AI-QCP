@@ -30,6 +30,68 @@ const SUBAREA_OPTIONS = {
 
 const STATION_OPTIONS = ["ST-001", "ST-002", "ST-003"];
 const ALL_PLANT_OPTIONS = Object.values(REGION_PLANT_OPTIONS).flat();
+
+// ═══════════════════════════════════════════════════════════════════
+// PART-SPECIFIC DEFECT METADATA
+// ═══════════════════════════════════════════════════════════════════
+const DEFECT_METADATA = {
+  "Left Door Handle": {
+    operationCodes: ["B1FT0001", "B1FT0002", "B1FT0003"],
+    operationLabels: ["DOOR HANDLE ASSEMBLY", "SCRATCH INSPECTION", "FUNCTION TEST"],
+    errorCodes: ["0B", "NM", "03", "0C"],
+    localisations: ["DOOR HANDLE EXTERIOR (Z1D01001)", "DOOR HANDLE INTERIOR (Z1D01002)", "HANDLE GRIP AREA (Z1D01003)"],
+    familyNatures: ["SCRATCH / MARK [AE]", "CRACK / FRACTURE [AE]", "FUNCTIONAL ISSUE [FM]", "ASSEMBLY DEFECT [AS]"],
+  },
+  "Right Door Trim": {
+    operationCodes: ["B2FT0001", "B2FT0002", "B2FT0003"],
+    operationLabels: ["TRIM PANEL INSPECTION", "PAINT QUALITY CHECK", "FIT & FINISH"],
+    errorCodes: ["05", "11", "NC", "10"],
+    localisations: ["TRIM PANEL SURFACE (Z2B02001)", "TRIM EDGE (Z2B02002)", "ATTACHMENT POINT (Z2B02003)"],
+    familyNatures: ["PAINT DEFECT [PE]", "GAP OUT OF SPEC [FT]", "TRIM MISALIGNMENT [FT]", "SURFACE DAMAGE [AE]"],
+  },
+  "Front Bumper": {
+    operationCodes: ["C1QC0001", "C1QC0002", "C1QC0003"],
+    operationLabels: ["BUMPER ASSEMBLY CHECK", "GAP ALIGNMENT", "CLIP & LOCK INSPECTION"],
+    errorCodes: ["06", "07", "08", "09"],
+    localisations: ["BUMPER FACE (Z3C03001)", "BUMPER CLIP (Z3C03002)", "BUMPER GAP (Z3C03003)", "BRACKET AREA (Z3C03004)"],
+    familyNatures: ["GAP OUT OF SPEC [FT]", "MISALIGNMENT [FT]", "CLIP FAILURE [AS]", "CRACK [AE]"],
+  },
+  "Hood Panel": {
+    operationCodes: ["D2OP0001", "D2OP0002", "D2OP0003"],
+    operationLabels: ["HOOD PAINT CHECK", "PANEL ALIGNMENT", "FINISH QUALITY"],
+    errorCodes: ["0A", "12", "13"],
+    localisations: ["HOOD SURFACE (Z4D04001)", "HOOD EDGE (Z4D04002)", "HOOD HINGE AREA (Z4D04003)"],
+    familyNatures: ["PAINT DEFECT [PE]", "DUST / PARTICLE [PE]", "FINISH INCONSISTENCY [PE]", "DENT [AE]"],
+  },
+  "Right Front Fender": {
+    operationCodes: ["E3AS0001", "E3AS0002", "E3AS0003"],
+    operationLabels: ["FENDER PANEL CHECK", "GAP INSPECTION", "SURFACE DEFECT"],
+    errorCodes: ["14", "15", "01", "0B"],
+    localisations: ["FENDER SURFACE (Z5E05001)", "FENDER GAP (Z5E05002)", "WHEEL WELL AREA (Z5E05003)", "FENDER EDGE (Z5E05004)"],
+    familyNatures: ["DENT [AE]", "GAP OUT OF SPEC [FT]", "PAINT DEFECT [PE]", "PANEL MISALIGNMENT [FT]"],
+  },
+  "Rear Bumper": {
+    operationCodes: ["F4BP0001", "F4BP0002", "F4BP0003"],
+    operationLabels: ["BUMPER REAR CHECK", "CLIP ENGAGEMENT", "PAINT INSPECTION"],
+    errorCodes: ["02", "03", "04", "05"],
+    localisations: ["REAR BUMPER FACE (Z6F06001)", "BUMPER CLIP (Z6F06002)", "BUMPER SEAL (Z6F06003)", "ATTACHMENT (Z6F06004)"],
+    familyNatures: ["CLIP FAILURE [AS]", "GAP OUT OF SPEC [FT]", "PAINT DEFECT [PE]", "MISALIGNMENT [FT]"],
+  },
+  "Rear Spoiler": {
+    operationCodes: ["G5SP0001", "G5SP0002", "G5SP0003"],
+    operationLabels: ["SPOILER FITMENT", "ALIGNMENT CHECK", "FINISH QUALITY"],
+    errorCodes: ["06", "07", "08"],
+    localisations: ["SPOILER TIP (Z7G07001)", "SPOILER BASE (Z7G07002)", "ATTACHMENT POINT (Z7G07003)"],
+    familyNatures: ["MISALIGNMENT [FT]", "LOOSE ATTACHMENT [AS]", "PAINT DEFECT [PE]", "CRACK [AE]"],
+  },
+  "Right Tail Lamp": {
+    operationCodes: ["H6LL0001", "H6LL0002", "H6LL0003"],
+    operationLabels: ["LAMP SEAL CHECK", "FITMENT INSPECTION", "HOUSING CONDITION"],
+    errorCodes: ["09", "0A", "0B"],
+    localisations: ["LAMP HOUSING (Z8H08001)", "LAMP SEAL (Z8H08002)", "ATTACHMENT POINT (Z8H08003)", "LENS AREA (Z8H08004)"],
+    familyNatures: ["SEAL FAILURE [AS]", "HOUSING CRACK [AE]", "MISALIGNMENT [FT]", "OPTICAL DEFECT [FM]"],
+  },
+};
 const LEFT_DOOR_HANDLE_PREVIEW_CANDIDATES = [
   "./left-door-handle.png",
   "left-door-handle.png",
@@ -275,10 +337,10 @@ const modules = [
   },
   {
     id: "ai-report",
-    title: "2. AI Report",
+    title: "2. Report",
     role: "user",
     description:
-      "Configure report schedule and review AI inspection trend summaries.",
+      "Review defect trends by vehicle model and scanned barcode.",
     render: renderAiReport,
   },
 ];
@@ -321,6 +383,7 @@ const logoutBtn = document.getElementById("logoutBtn");
     dismissSplash();
   } else {
     window.addEventListener("load", dismissSplash, { once: true });
+    window.setTimeout(dismissSplash, 5000);
   }
 })();
 
@@ -391,6 +454,12 @@ function setLoginError(msg) {
 
 let currentUser = null;
 let activeModuleId = null;
+let reportRefreshTimer = null;
+const reportFilters = {
+  fromDate: "",
+  toDate: "",
+  vehicleModel: "",
+};
 let dashboardClockTimer = null;
 let liveWidgetTimer = null;
 let demoSimTimer = null;
@@ -587,9 +656,74 @@ const inspectionWorkflow = {
   isMobile: () => window.matchMedia("(max-width: 640px)").matches,
 };
 
-function buildMobileInspectionSequences(vehicleModel, stationId) {
+function shuffleMobileSequences(sequences) {
+  const shuffled = [...sequences];
+  for (let index = shuffled.length - 1; index > 0; index -= 1) {
+    const randomIndex = Math.floor(Math.random() * (index + 1));
+    [shuffled[index], shuffled[randomIndex]] = [
+      shuffled[randomIndex],
+      shuffled[index],
+    ];
+  }
+  return shuffled;
+}
+
+const BARCODE_PART_SPLITS = {
+  "1001": {
+    priority: ["Left Door Handle", "Front Bumper", "Right Front Fender", "Rear Bumper", "Right Tail Lamp"],
+    regular: ["Right Door Trim", "Hood Panel", "Rear Spoiler"],
+  },
+  "1002": {
+    priority: ["Right Door Trim", "Hood Panel", "Rear Bumper", "Rear Spoiler"],
+    regular: ["Left Door Handle", "Front Bumper", "Right Front Fender", "Right Tail Lamp"],
+  },
+  "1003": {
+    priority: ["Front Bumper", "Right Tail Lamp", "Left Door Handle"],
+    regular: ["Right Door Trim", "Hood Panel", "Right Front Fender", "Rear Bumper", "Rear Spoiler"],
+  },
+  "2001": {
+    priority: ["Left Door Handle", "Right Front Fender", "Rear Spoiler", "Right Tail Lamp"],
+    regular: ["Right Door Trim", "Front Bumper", "Hood Panel", "Rear Bumper"],
+  },
+  "2002": {
+    priority: ["Front Bumper", "Rear Bumper"],
+    regular: ["Left Door Handle", "Right Door Trim", "Hood Panel", "Right Front Fender", "Rear Spoiler", "Right Tail Lamp"],
+  },
+  "2003": {
+    priority: ["Right Door Trim", "Hood Panel", "Right Front Fender", "Rear Bumper", "Rear Spoiler"],
+    regular: ["Left Door Handle", "Front Bumper", "Right Tail Lamp"],
+  },
+  "3001": {
+    priority: ["Left Door Handle", "Hood Panel", "Right Tail Lamp"],
+    regular: ["Right Door Trim", "Front Bumper", "Right Front Fender", "Rear Bumper", "Rear Spoiler"],
+  },
+  "3002": {
+    priority: ["Front Bumper", "Right Front Fender", "Rear Bumper", "Right Tail Lamp"],
+    regular: ["Left Door Handle", "Right Door Trim", "Hood Panel", "Rear Spoiler"],
+  },
+  "3003": {
+    priority: ["Left Door Handle", "Right Door Trim", "Front Bumper", "Rear Spoiler", "Right Tail Lamp"],
+    regular: ["Hood Panel", "Right Front Fender", "Rear Bumper"],
+  },
+  "4001": {
+    priority: ["Right Front Fender", "Right Tail Lamp"],
+    regular: ["Left Door Handle", "Right Door Trim", "Front Bumper", "Hood Panel", "Rear Bumper", "Rear Spoiler"],
+  },
+  "4002": {
+    priority: ["Left Door Handle", "Hood Panel", "Rear Bumper", "Right Tail Lamp"],
+    regular: ["Right Door Trim", "Front Bumper", "Right Front Fender", "Rear Spoiler"],
+  },
+  "4003": {
+    priority: ["Right Door Trim", "Front Bumper", "Right Front Fender", "Rear Bumper", "Right Tail Lamp"],
+    regular: ["Left Door Handle", "Hood Panel", "Rear Spoiler"],
+  },
+};
+
+function buildMobileInspectionSequences(vehicleModel, stationId, barcode = "") {
   const model = (vehicleModel || "").trim();
   const station = (stationId || "").trim();
+  const split = BARCODE_PART_SPLITS[String(barcode || "").trim()];
+  const priorityParts = new Set(split?.priority || []);
 
   const configured = Array.isArray(state?.stationSequences)
     ? state.stationSequences
@@ -600,7 +734,7 @@ function buildMobileInspectionSequences(vehicleModel, stationId) {
           description: item.sequenceDescription || "Visual inspection",
           qualityCriteria: item.qualityCriteria || "Standard visual inspection",
           imageUrl: item.imageName || "./placeholder.png",
-          isPriority: false,
+          isPriority: priorityParts.has(item.partName || ""),
           completed: false,
           vehicleModel: model,
           stationId: station,
@@ -608,7 +742,9 @@ function buildMobileInspectionSequences(vehicleModel, stationId) {
     : [];
 
   if (configured.length > 0) {
-    return configured;
+    const priority = configured.filter((item) => item.isPriority);
+    const regular = configured.filter((item) => !item.isPriority);
+    return [...shuffleMobileSequences(priority), ...shuffleMobileSequences(regular)];
   }
 
   const demoParts = [
@@ -622,17 +758,20 @@ function buildMobileInspectionSequences(vehicleModel, stationId) {
     ["PART-008", "Right Tail Lamp", "right-tail-lamp.png"],
   ];
 
-  return demoParts.map(([sequenceId, partName, imageUrl], index) => ({
+  const sequences = demoParts.map(([sequenceId, partName, imageUrl]) => ({
     sequenceId,
     partName,
     description: `Inspect ${partName} for fit, finish, and defects.`,
     qualityCriteria: "Standard visual inspection",
     imageUrl,
-    isPriority: index < 4, // First 4 parts are priority
+    isPriority: priorityParts.has(partName),
     completed: false,
     vehicleModel: model,
     stationId: station,
   }));
+  const priority = sequences.filter((item) => item.isPriority);
+  const regular = sequences.filter((item) => !item.isPriority);
+  return [...shuffleMobileSequences(priority), ...shuffleMobileSequences(regular)];
 }
 
 /**
@@ -647,17 +786,12 @@ function showMobileInspectionEntry() {
 
   const screen = document.getElementById("mobileInspectionEntryScreen");
   const form = document.getElementById("inspectionForm");
-  const dashboardPage = document.getElementById("dashboardPage");
   const loginPage = document.getElementById("loginPage");
 
   if (screen) {
     // Hide login page
     if (loginPage) {
       loginPage.classList.add("hidden");
-    }
-    // Hide dashboard
-    if (dashboardPage) {
-      dashboardPage.classList.add("hidden");
     }
     // Hide the traditional form
     if (form) {
@@ -680,6 +814,13 @@ function showMobileInspectionEntry() {
     const scanBtn = document.getElementById("mobileScanVinBtn");
     const barcodeInput = document.getElementById("mobileBarcodeImageInput");
     const cameraBtn = document.getElementById("mobileCameraVinBtn");
+    const entryHomeBtn = document.getElementById("mobileEntryHomeBtn");
+
+    if (entryHomeBtn) {
+      entryHomeBtn.onclick = () => {
+        showHome();
+      };
+    }
 
     // Live camera overlay logic
     if (cameraBtn) {
@@ -1148,7 +1289,7 @@ function showMobileInspectionEntry() {
         safeSetInputValue("inspectionStationName", station);
 
         // Build mobile workflow sequences without depending on module-local functions
-        const sequences = buildMobileInspectionSequences(model, station);
+        const sequences = buildMobileInspectionSequences(model, station, vin);
 
         if (sequences.length === 0) {
           showUndoToast("No sequences available for this station.", null, 2200);
@@ -1530,6 +1671,90 @@ function showInitializationScreen(sequences, vin, model, station) {
   }
 }
 
+const VOICE_RECORDINGS_DB = "ai-quality-voice-recordings";
+const VOICE_RECORDINGS_STORE = "recordings";
+
+function openVoiceRecordingsDb() {
+  return new Promise((resolve, reject) => {
+    const request = indexedDB.open(VOICE_RECORDINGS_DB, 1);
+    request.addEventListener("upgradeneeded", () => {
+      if (!request.result.objectStoreNames.contains(VOICE_RECORDINGS_STORE)) {
+        request.result.createObjectStore(VOICE_RECORDINGS_STORE);
+      }
+    });
+    request.addEventListener("success", () => resolve(request.result));
+    request.addEventListener("error", () => reject(request.error));
+  });
+}
+
+async function saveVoiceRecording(blob) {
+  const database = await openVoiceRecordingsDb();
+  const recordingId = crypto.randomUUID();
+  return new Promise((resolve, reject) => {
+    const transaction = database.transaction(VOICE_RECORDINGS_STORE, "readwrite");
+    transaction.objectStore(VOICE_RECORDINGS_STORE).put(blob, recordingId);
+    transaction.addEventListener("complete", () => {
+      database.close();
+      resolve(recordingId);
+    });
+    transaction.addEventListener("error", () => reject(transaction.error));
+  });
+}
+
+async function getVoiceRecording(recordingId) {
+  const database = await openVoiceRecordingsDb();
+  return new Promise((resolve, reject) => {
+    const transaction = database.transaction(VOICE_RECORDINGS_STORE, "readonly");
+    const request = transaction.objectStore(VOICE_RECORDINGS_STORE).get(recordingId);
+    request.addEventListener("success", () => resolve(request.result));
+    request.addEventListener("error", () => reject(request.error));
+    transaction.addEventListener("complete", () => database.close());
+  });
+}
+
+function encodePcmAsWav(chunks, sampleRate) {
+  const sampleCount = chunks.reduce((total, chunk) => total + chunk.length, 0);
+  const wavBuffer = new ArrayBuffer(44 + sampleCount * 2);
+  const view = new DataView(wavBuffer);
+  const writeText = (offset, text) => {
+    for (let index = 0; index < text.length; index += 1) {
+      view.setUint8(offset + index, text.charCodeAt(index));
+    }
+  };
+
+  writeText(0, "RIFF");
+  view.setUint32(4, wavBuffer.byteLength - 8, true);
+  writeText(8, "WAVE");
+  writeText(12, "fmt ");
+  view.setUint32(16, 16, true);
+  view.setUint16(20, 1, true);
+  view.setUint16(22, 1, true);
+  view.setUint32(24, sampleRate, true);
+  view.setUint32(28, sampleRate * 2, true);
+  view.setUint16(32, 2, true);
+  view.setUint16(34, 16, true);
+  writeText(36, "data");
+  view.setUint32(40, sampleCount * 2, true);
+
+  let offset = 44;
+  chunks.forEach((chunk) => {
+    chunk.forEach((value) => {
+      const sample = Math.max(-1, Math.min(1, value));
+      view.setInt16(
+        offset,
+        sample < 0 ? sample * 0x8000 : sample * 0x7fff,
+        true,
+      );
+      offset += 2;
+    });
+  });
+
+  return {
+    blob: new Blob([wavBuffer], { type: "audio/wav" }),
+    durationMs: (sampleCount / sampleRate) * 1000,
+  };
+}
+
 /**
  * Show the Parts List Overview Screen (Screen 1)
  */
@@ -1539,6 +1764,15 @@ function showPartsListScreen(sequences) {
 
   const container = document.getElementById("partsListContainer");
   if (!container) return;
+
+  let activeVoiceRecorder = null;
+
+  const formatVoiceDuration = (durationMs) => {
+    const totalSeconds = Math.max(0, Math.floor(durationMs / 1000));
+    const minutes = Math.floor(totalSeconds / 60);
+    const seconds = String(totalSeconds % 60).padStart(2, "0");
+    return `${minutes}:${seconds}`;
+  };
 
   const isPartSelected = (part) =>
     Boolean(part?.completed || part?.resultGood || part?.resultBad);
@@ -1702,103 +1936,113 @@ function showPartsListScreen(sequences) {
     btnNotOk.textContent = "✗ Not Ok";
     btnNotOk.setAttribute("aria-label", "Mark Not OK");
 
-    // Defect details dropdown panel
+    // Defect details dropdown panel — generated dynamically from past trends
     const defectPanel = document.createElement("div");
     defectPanel.className = "defect-details-panel hidden";
+    
+    // Get past defect trends for this part
+    const trends = extractDefectTrendsForPart(seq.partName);
+    const metadata = DEFECT_METADATA[seq.partName] || {
+      operationCodes: [],
+      operationLabels: [],
+      errorCodes: [],
+      localisations: [],
+      familyNatures: [],
+    };
+
+    // Helper to create select with options prioritized by past trends
+    const buildSelectOptions = (field, trendValues, metaValues) => {
+      let html = '<option value="">— Select —</option>';
+      const seen = new Set();
+      
+      // Add trend values first (most common)
+      trendValues.forEach((val) => {
+        if (val && !seen.has(val)) {
+          html += `<option value="${sanitize(val)}">${sanitize(val)} ★</option>`;
+          seen.add(val);
+        }
+      });
+      
+      // Then add predefined metadata values
+      metaValues.forEach((val) => {
+        if (val && !seen.has(val)) {
+          html += `<option value="${sanitize(val)}">${sanitize(val)}</option>`;
+          seen.add(val);
+        }
+      });
+      
+      return html;
+    };
+
     defectPanel.innerHTML = `
       <div class="defect-details-form">
         <div class="defect-field">
-          <label>Operation Code</label>
+          <label>Operation Code ${trends.operationCodes.length > 0 ? '(with trends)' : ''}</label>
           <select class="defect-select" data-field="operationCode">
-            <option value="">— Select —</option>
-            <option>B1FT0001</option>
-            <option>B2FT0002</option>
-            <option>C1QC0010</option>
-            <option>D2OP0025</option>
-            <option>E3AS0030</option>
+            ${buildSelectOptions('operationCode', trends.operationCodes, metadata.operationCodes)}
           </select>
         </div>
         <div class="defect-field">
-          <label>Operation Label</label>
-          <select class="defect-select" data-field="operationLabel">
-            <option value="">— Select —</option>
-            <option>BATTERY FUNCTION TEST</option>
-            <option>DOOR ASSEMBLY CHECK</option>
-            <option>BODY PANEL INSPECTION</option>
-            <option>TRIM FIT CHECK</option>
-            <option>PAINT QUALITY REVIEW</option>
-          </select>
-        </div>
-        <div class="defect-field">
-          <label>Error Code</label>
+          <label>Error Code ${trends.errorCodes.length > 0 ? '(with trends)' : ''}</label>
           <select class="defect-select" data-field="errorCode">
-            <option value="">— Select —</option>
-            <option>0B</option>
-            <option>NM</option>
-            <option>03</option>
-            <option>0C</option>
-            <option>05</option>
-            <option>11</option>
-            <option>NC</option>
-            <option>10</option>
-            <option>06</option>
-            <option>07</option>
-            <option>08</option>
-            <option>09</option>
-            <option>0A</option>
-            <option>12</option>
-            <option>13</option>
-            <option>14</option>
-            <option>15</option>
-            <option>01</option>
+            ${buildSelectOptions('errorCode', trends.errorCodes, metadata.errorCodes)}
           </select>
         </div>
-        <div class="defect-field">
-          <label>Localisation</label>
-          <select class="defect-select" data-field="localisation">
-            <option value="">— Select —</option>
-            <option>BATTERY FUNCTION TEST (Z1A03002) (BAFJ1)</option>
-            <option>DOOR HANDLE AREA (Z2B01001)</option>
-            <option>BODY SIDE PANEL (Z3C02005)</option>
-            <option>FRONT BUMPER ZONE (Z4D04010)</option>
-            <option>REAR TRIM PANEL (Z5E05015)</option>
-            <option>ROOF ASSEMBLY (Z6F06020)</option>
-            <option>WINDSHIELD AREA (Z7G07025)</option>
-          </select>
+        <div class="defect-field voice-recording-field">
+          <label>Voice Recording</label>
+          <span class="voice-recording-status">Tap the microphone to record the defect</span>
+          <audio class="voice-recording-preview hidden" controls preload="metadata"></audio>
         </div>
-        <div class="defect-field">
-          <label>Family / Nature</label>
-          <select class="defect-select" data-field="familyNature">
-            <option value="">— Select —</option>
-            <option>NO VOLTAGE TEST KO (619) [EE]</option>
-            <option>ISOLATION TEST KO (614) [EE]</option>
-            <option>VOLTAGE TEST KO (615) [EE]</option>
-            <option>POWER TEST KO (617) [EE]</option>
-            <option>E SERVICE TEST KO (616) [EE]</option>
-            <option>BIN WRITE (618) [EE]</option>
-            <option>DTC PRESENCE (620) [EE]</option>
-            <option>READ ZI/ZA FAILURE (613) [EE]</option>
-            <option>MALFUNCTION (085) [DV]</option>
-            <option>NOT TO TORQUE, TO BE CHECKED (74)</option>
-            <option>SCRATCH / MARK [AE]</option>
-            <option>GAP OUT OF SPEC [FT]</option>
-            <option>PAINT DEFECT [PE]</option>
-          </select>
-        </div>
-        <button type="button" class="defect-save-btn">✓ Save</button>
+        <button type="button" class="defect-save-btn">✓ Save Defect</button>
       </div>
     `;
 
-    // Save button — saves selections and closes panel (no image editor navigation)
+    const recordingStatus = defectPanel.querySelector(".voice-recording-status");
+    const recordingPreview = defectPanel.querySelector(".voice-recording-preview");
+    const existingResult = state.inspections?.find(
+      (inspection) => inspection.partIndex === index && inspection.resultBad,
+    );
+    const existingRecordingId = existingResult?.defectDetails?.voiceRecordingId;
+    const existingRecordingDuration = Number(
+      existingResult?.defectDetails?.voiceRecordingDurationMs || 0,
+    );
+    if (existingRecordingId) {
+      defectPanel.dataset.voiceRecordingId = existingRecordingId;
+      defectPanel.dataset.voiceRecordingDurationMs = String(existingRecordingDuration);
+      getVoiceRecording(existingRecordingId)
+        .then((blob) => {
+          if (!blob) return;
+          recordingPreview.src = URL.createObjectURL(blob);
+          recordingPreview.classList.remove("hidden");
+          recordingStatus.textContent = existingRecordingDuration
+            ? `Recording attached (${formatVoiceDuration(existingRecordingDuration)})`
+            : "Recording attached";
+        })
+        .catch(() => {
+          recordingStatus.textContent = "Saved recording is unavailable";
+        });
+    }
+
+    // Save button — saves selections and closes panel
     defectPanel
       .querySelector(".defect-save-btn")
       .addEventListener("click", (e) => {
         e.stopPropagation();
-        defectPanel.querySelectorAll(".defect-select").forEach((sel) => {
-          seq[sel.dataset.field] = sel.value;
+        
+        // Collect defect details from form
+        const defectDetails = {};
+        defectPanel.querySelectorAll("[data-field]").forEach((field) => {
+          defectDetails[field.dataset.field] = field.value.trim();
         });
-        // Mark this part as selected as NOT OK when defect details are saved.
-        recordPartResult(seq, index, true);
+        if (defectPanel.dataset.voiceRecordingId) {
+          defectDetails.voiceRecordingId = defectPanel.dataset.voiceRecordingId;
+          defectDetails.voiceRecordingDurationMs = Number(
+            defectPanel.dataset.voiceRecordingDurationMs || 0,
+          );
+        }
+        
+        // Mark this part as NOT OK and store defect metadata
+        recordPartResult(seq, index, true, null, defectDetails);
         defectPanel.classList.add("hidden");
         btnNotOk.classList.remove("red");
         btnNotOk.classList.add("active");
@@ -1833,9 +2077,123 @@ function showPartsListScreen(sequences) {
     btnMic.className = "parts-action-btn mic";
     btnMic.innerHTML = "🎤";
     btnMic.setAttribute("aria-label", "Voice note");
-    btnMic.addEventListener("click", (e) => {
+    btnMic.setAttribute("aria-pressed", "false");
+    btnMic.addEventListener("click", async (e) => {
       e.stopPropagation();
-      showUndoToast("🎤 Voice note recorded", null, 1500);
+
+      if (activeVoiceRecorder) {
+        if (activeVoiceRecorder.button === btnMic) {
+          await activeVoiceRecorder.stop();
+        } else {
+          showUndoToast("Finish the current voice recording first", null, 2500);
+        }
+        return;
+      }
+
+      const AudioContextClass = window.AudioContext || window.webkitAudioContext;
+      if (!navigator.mediaDevices?.getUserMedia || !AudioContextClass) {
+        showUndoToast("Audio recording is not supported in this browser", null, 3000);
+        return;
+      }
+
+      if (!window.isSecureContext) {
+        showUndoToast("Microphone access requires HTTPS or localhost", null, 3500);
+        return;
+      }
+
+      defectPanel.classList.remove("hidden");
+      btnNotOk.classList.add("active", "red");
+      btnOk.classList.remove("active");
+
+      try {
+        const stream = await navigator.mediaDevices.getUserMedia({
+          audio: {
+            channelCount: 1,
+            echoCancellation: true,
+            noiseSuppression: true,
+          },
+        });
+        const audioContext = new AudioContextClass();
+        const source = audioContext.createMediaStreamSource(stream);
+        const processor = audioContext.createScriptProcessor(4096, 1, 1);
+        const chunks = [];
+        const startedAt = Date.now();
+        const sampleRate = audioContext.sampleRate;
+
+        const captureHandler = (event) => {
+          chunks.push(new Float32Array(event.inputBuffer.getChannelData(0)));
+        };
+        processor.addEventListener("audioprocess", captureHandler);
+        source.connect(processor);
+        processor.connect(audioContext.destination);
+        await audioContext.resume();
+
+        recordingStatus.textContent = "Recording 0:00 · Tap stop when finished";
+        recordingPreview.pause();
+        recordingPreview.classList.add("hidden");
+        if (recordingPreview.src) URL.revokeObjectURL(recordingPreview.src);
+        recordingPreview.removeAttribute("src");
+        btnMic.classList.add("recording");
+        btnMic.innerHTML = "■";
+        btnMic.setAttribute("aria-label", "Stop voice recording");
+        btnMic.setAttribute("aria-pressed", "true");
+
+        const stopRecording = async () => {
+          const currentRecorder = activeVoiceRecorder;
+          if (!currentRecorder || currentRecorder.stopping) return;
+          currentRecorder.stopping = true;
+          if (currentRecorder) {
+            clearInterval(currentRecorder.intervalId);
+            clearTimeout(currentRecorder.timeoutId);
+          }
+          processor.disconnect();
+          source.disconnect();
+          processor.removeEventListener("audioprocess", captureHandler);
+          stream.getTracks().forEach((track) => track.stop());
+          await audioContext.close();
+          activeVoiceRecorder = null;
+          btnMic.classList.remove("recording");
+          btnMic.innerHTML = "🎤";
+          btnMic.setAttribute("aria-label", "Record voice note");
+          btnMic.setAttribute("aria-pressed", "false");
+
+          if (!chunks.length) {
+            recordingStatus.textContent = "No audio was captured";
+            return;
+          }
+
+          recordingStatus.textContent = "Preparing recording…";
+          try {
+            const recording = encodePcmAsWav(chunks, sampleRate);
+            const recordingId = await saveVoiceRecording(recording.blob);
+            defectPanel.dataset.voiceRecordingId = recordingId;
+            defectPanel.dataset.voiceRecordingDurationMs = String(recording.durationMs);
+            recordingPreview.src = URL.createObjectURL(recording.blob);
+            recordingPreview.classList.remove("hidden");
+            recordingStatus.textContent = `Recording attached (${formatVoiceDuration(recording.durationMs)})`;
+            showUndoToast("Voice recording attached", null, 2000);
+          } catch (error) {
+            console.error("Voice recording preparation failed", error);
+            recordingStatus.textContent = "Recording could not be prepared";
+            showUndoToast("Audio processing failed. Please record again", null, 3000);
+          }
+        };
+
+        activeVoiceRecorder = {
+          button: btnMic,
+          stop: stopRecording,
+          stopping: false,
+          intervalId: setInterval(() => {
+            recordingStatus.textContent = `Recording ${formatVoiceDuration(Date.now() - startedAt)} · Tap stop when finished`;
+          }, 500),
+          timeoutId: setTimeout(stopRecording, 60000),
+        };
+      } catch (error) {
+        const message = error?.name === "NotAllowedError"
+          ? "Microphone permission was denied"
+          : "Microphone could not be started";
+        showUndoToast(message, null, 3000);
+      }
     });
 
     idRow.appendChild(btnOk);
@@ -2155,10 +2513,170 @@ function showImageEditorScreen(seq, partIndex, origin) {
   if (markBadBtn) {
     markBadBtn.onclick = () => {
       if (isProcessing) return;
-      isProcessing = true;
-      const imageData = getCanvasImageData();
-      recordPartResult(seq, partIndex, true, imageData);
-      moveToNextPart(inspectionWorkflow.currentSequences, partIndex);
+      
+      // Show quick defect form before saving
+      const defectForm = document.createElement("div");
+      defectForm.id = "quickDefectForm";
+      defectForm.style.cssText = `
+        position: fixed;
+        top: 50%;
+        left: 50%;
+        transform: translate(-50%, -50%);
+        background: rgba(10, 17, 40, 0.98);
+        border: 2px solid rgba(220, 38, 38, 0.6);
+        border-radius: 12px;
+        padding: 20px;
+        z-index: 9999;
+        max-width: 90%;
+        max-height: 80vh;
+        overflow-y: auto;
+        box-shadow: 0 8px 32px rgba(0, 0, 0, 0.6);
+      `;
+      
+      // Get past defect trends for this part
+      const trends = extractDefectTrendsForPart(seq.partName);
+      const metadata = DEFECT_METADATA[seq.partName] || {
+        operationCodes: [],
+        operationLabels: [],
+        errorCodes: [],
+        localisations: [],
+        familyNatures: [],
+      };
+
+      // Helper to create select with options
+      const buildSelectOptions = (field, trendValues, metaValues) => {
+        let html = '<option value="">— Select —</option>';
+        const seen = new Set();
+        
+        trendValues.forEach((val) => {
+          if (val && !seen.has(val)) {
+            html += `<option value="${sanitize(val)}">${sanitize(val)} ★</option>`;
+            seen.add(val);
+          }
+        });
+        
+        metaValues.forEach((val) => {
+          if (val && !seen.has(val)) {
+            html += `<option value="${sanitize(val)}">${sanitize(val)}</option>`;
+            seen.add(val);
+          }
+        });
+        
+        return html;
+      };
+
+      defectForm.innerHTML = `
+        <style>
+          #quickDefectForm h3 {
+            color: #ffffff;
+            margin-top: 0;
+            margin-bottom: 16px;
+            font-size: 1.1rem;
+          }
+          #quickDefectForm .qf-fields {
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+            margin-bottom: 16px;
+          }
+          #quickDefectForm .qf-field {
+            display: flex;
+            flex-direction: column;
+            gap: 4px;
+          }
+          #quickDefectForm .qf-field label {
+            font-size: 0.75rem;
+            font-weight: 700;
+            color: rgba(220, 38, 38, 0.9);
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+          }
+          #quickDefectForm .qf-field select {
+            background: rgba(255, 255, 255, 0.07);
+            border: 1px solid rgba(255, 255, 255, 0.15);
+            border-radius: 6px;
+            color: #ffffff;
+            font-size: 0.85rem;
+            padding: 8px 10px;
+            outline: none;
+          }
+          #quickDefectForm .qf-field select:focus {
+            border-color: rgba(220, 38, 38, 0.6);
+            background-color: rgba(255, 255, 255, 0.1);
+          }
+          #quickDefectForm .qf-field select option {
+            background: #1a2550;
+            color: #ffffff;
+          }
+          #quickDefectForm .qf-buttons {
+            display: flex;
+            gap: 10px;
+            justify-content: flex-end;
+          }
+          #quickDefectForm button {
+            padding: 10px 16px;
+            border: none;
+            border-radius: 6px;
+            font-weight: 700;
+            cursor: pointer;
+            font-size: 0.9rem;
+          }
+          #quickDefectForm .qf-save {
+            background: rgba(34, 197, 94, 0.8);
+            color: #ffffff;
+          }
+          #quickDefectForm .qf-cancel {
+            background: rgba(100, 100, 100, 0.6);
+            color: #ffffff;
+          }
+        </style>
+        <h3>📋 Record Defect Details for ${sanitize(seq.partName)}</h3>
+        <div class="qf-fields">
+          <div class="qf-field">
+            <label>Operation Code ${trends.operationCodes.length > 0 ? '(trending)' : ''}</label>
+            <select id="qf-operationCode">
+              ${buildSelectOptions('operationCode', trends.operationCodes, metadata.operationCodes)}
+            </select>
+          </div>
+          <div class="qf-field">
+            <label>Error Code ${trends.errorCodes.length > 0 ? '(trending)' : ''}</label>
+            <select id="qf-errorCode">
+              ${buildSelectOptions('errorCode', trends.errorCodes, metadata.errorCodes)}
+            </select>
+          </div>
+        </div>
+        <div class="qf-buttons">
+          <button class="qf-cancel">Cancel</button>
+          <button class="qf-save">✓ Save Defect</button>
+        </div>
+      `;
+      
+      document.body.appendChild(defectForm);
+      
+      // Wire up buttons
+      const saveBtn = defectForm.querySelector(".qf-save");
+      const cancelBtn = defectForm.querySelector(".qf-cancel");
+      
+      saveBtn.onclick = () => {
+        isProcessing = true;
+        
+        // Collect defect details
+        const defectDetails = {
+          operationCode: document.getElementById("qf-operationCode").value,
+          errorCode: document.getElementById("qf-errorCode").value,
+        };
+        
+        // Remove form and save
+        document.body.removeChild(defectForm);
+        const imageData = getCanvasImageData();
+        recordPartResult(seq, partIndex, true, imageData, defectDetails);
+        moveToNextPart(inspectionWorkflow.currentSequences, partIndex);
+      };
+      
+      cancelBtn.onclick = () => {
+        document.body.removeChild(defectForm);
+        isProcessing = false;
+      };
     };
   }
 
@@ -2227,13 +2745,20 @@ function setupDrawingTools(canvas) {
   let isDrawing = false;
   let lastX = 0;
   let lastY = 0;
+  let startX = 0;
+  let startY = 0;
+  let dragSnapshot = null; // canvas image captured at drag-start, used to preview shapes while dragging
   let drawHistory = [];
 
   const penColorInput = document.getElementById("penColorPicker");
   const penSizeInput = document.getElementById("penSizeSlider");
   const penSizeValue = document.getElementById("penSizeValue");
   const drawToolBtn = document.getElementById("drawToolBtn");
+  const rectToolBtn = document.getElementById("rectToolBtn");
+  const squareToolBtn = document.getElementById("squareToolBtn");
+  const circleToolBtn = document.getElementById("circleToolBtn");
   const undoBtn = document.getElementById("undoDrawBtn");
+  const toolStatus = document.getElementById("imageEditorToolStatus");
 
   let currentTool = "draw";
   let currentColor = "#ff0000";
@@ -2250,8 +2775,29 @@ function setupDrawingTools(canvas) {
     currentColor = e.target.value;
   });
 
+  const setTool = (tool, label, activeBtn) => {
+    currentTool = tool;
+    updateToolButtons(
+      activeBtn,
+      ...[drawToolBtn, rectToolBtn, squareToolBtn, circleToolBtn].filter(
+        (btn) => btn !== activeBtn,
+      ),
+    );
+    if (toolStatus) toolStatus.textContent = `Drawing: ${label}`;
+  };
+
   // Draw tool active by default
   drawToolBtn?.classList.add("active");
+  drawToolBtn?.addEventListener("click", () => setTool("draw", "Pen", drawToolBtn));
+  rectToolBtn?.addEventListener("click", () =>
+    setTool("rectangle", "Rectangle", rectToolBtn),
+  );
+  squareToolBtn?.addEventListener("click", () =>
+    setTool("square", "Square", squareToolBtn),
+  );
+  circleToolBtn?.addEventListener("click", () =>
+    setTool("circle", "Circle", circleToolBtn),
+  );
 
   // Undo
   undoBtn?.addEventListener("click", () => {
@@ -2274,33 +2820,79 @@ function setupDrawingTools(canvas) {
     };
   }
 
+  function drawShapePreview(x0, y0, x1, y1) {
+    let width = x1 - x0;
+    let height = y1 - y0;
+    if (currentTool === "square") {
+      const side = Math.max(Math.abs(width), Math.abs(height));
+      width = width < 0 ? -side : side;
+      height = height < 0 ? -side : side;
+    }
+    ctx.strokeStyle = currentColor;
+    ctx.lineWidth = currentSize;
+    if (currentTool === "circle") {
+      const radiusX = Math.abs(width) / 2;
+      const radiusY = Math.abs(height) / 2;
+      const centerX = x0 + width / 2;
+      const centerY = y0 + height / 2;
+      ctx.beginPath();
+      ctx.ellipse(centerX, centerY, radiusX, radiusY, 0, 0, Math.PI * 2);
+      ctx.stroke();
+      return;
+    }
+    ctx.strokeRect(x0, y0, width, height);
+  }
+
+  function restoreSnapshot() {
+    if (!dragSnapshot) return;
+    ctx.clearRect(0, 0, canvas.width, canvas.height);
+    ctx.drawImage(dragSnapshot, 0, 0);
+  }
+
   function startDraw(e) {
     e.preventDefault();
     isDrawing = true;
     const pos = getPos(e);
     lastX = pos.x;
     lastY = pos.y;
+    startX = pos.x;
+    startY = pos.y;
+
+    if (currentTool !== "draw") {
+      const snap = new Image();
+      snap.src = canvas.toDataURL();
+      dragSnapshot = snap;
+    }
   }
 
   function draw(e) {
     e.preventDefault();
     if (!isDrawing) return;
     const pos = getPos(e);
-    ctx.strokeStyle = currentColor;
-    ctx.lineWidth = currentSize;
-    ctx.lineCap = "round";
-    ctx.lineJoin = "round";
-    ctx.beginPath();
-    ctx.moveTo(lastX, lastY);
-    ctx.lineTo(pos.x, pos.y);
-    ctx.stroke();
-    lastX = pos.x;
-    lastY = pos.y;
+
+    if (currentTool === "draw") {
+      ctx.strokeStyle = currentColor;
+      ctx.lineWidth = currentSize;
+      ctx.lineCap = "round";
+      ctx.lineJoin = "round";
+      ctx.beginPath();
+      ctx.moveTo(lastX, lastY);
+      ctx.lineTo(pos.x, pos.y);
+      ctx.stroke();
+      lastX = pos.x;
+      lastY = pos.y;
+      return;
+    }
+
+    // Rectangle / Square: redraw the pre-drag snapshot then preview the live shape
+    restoreSnapshot();
+    drawShapePreview(startX, startY, pos.x, pos.y);
   }
 
   function endDraw(e) {
     if (isDrawing) {
       isDrawing = false;
+      dragSnapshot = null;
       drawHistory.push(canvas.toDataURL());
     }
   }
@@ -2371,7 +2963,61 @@ function redrawCanvas(canvas, ctx, history) {
 /**
  * Record part inspection result
  */
-function recordPartResult(seq, partIndex, hasDefects, imageData = null) {
+/**
+ * Extract defect trends from past inspections for a specific part
+ * Returns the most common operation codes, error codes, localisations, and family/nature values
+ */
+function extractDefectTrendsForPart(partName) {
+  if (!state.inspections) {
+    return {
+      operationCodes: [],
+      operationLabels: [],
+      errorCodes: [],
+      localisations: [],
+      familyNatures: [],
+    };
+  }
+
+  // Filter inspections for this part that had defects
+  const defectRecords = state.inspections.filter(
+    (item) => item.partName === partName && item.resultBad && item.defectDetails,
+  );
+
+  if (defectRecords.length === 0) {
+    return {
+      operationCodes: [],
+      operationLabels: [],
+      errorCodes: [],
+      localisations: [],
+      familyNatures: [],
+    };
+  }
+
+  // Collect all values and count frequencies
+  const collect = (field) => {
+    const counts = {};
+    defectRecords.forEach((rec) => {
+      const value = rec.defectDetails[field];
+      if (value) {
+        counts[value] = (counts[value] || 0) + 1;
+      }
+    });
+    // Return sorted by frequency (descending)
+    return Object.entries(counts)
+      .sort((a, b) => b[1] - a[1])
+      .map((entry) => entry[0]);
+  };
+
+  return {
+    operationCodes: collect("operationCode"),
+    operationLabels: collect("operationLabel"),
+    errorCodes: collect("errorCode"),
+    localisations: collect("localisation"),
+    familyNatures: collect("familyNature"),
+  };
+}
+
+function recordPartResult(seq, partIndex, hasDefects, imageData = null, defectDetails = null) {
   // Update the sequence object so parts list reflects the result
   seq.completed = true;
   seq.resultGood = !hasDefects;
@@ -2381,10 +3027,17 @@ function recordPartResult(seq, partIndex, hasDefects, imageData = null) {
   const result = {
     partName: seq.partName,
     sequenceId: seq.sequenceId,
+    vehicleModel: seq.vehicleModel || "",
+    stationId: seq.stationId || "",
+    inspectionBarcode:
+      document.getElementById("mobileVinInput")?.value?.trim() ||
+      document.getElementById("inspectionVin")?.value?.trim() ||
+      "",
     partIndex: partIndex,
     resultGood: !hasDefects,
     resultBad: hasDefects,
     defectImage: imageData,
+    defectDetails: defectDetails || {}, // Store defect metadata
     timestamp: Date.now(),
   };
 
@@ -2403,9 +3056,18 @@ function recordPartResult(seq, partIndex, hasDefects, imageData = null) {
     JSON.stringify(state.inspections),
   );
 
-  // Show toast
+  // Show toast with defect summary
   if (hasDefects) {
-    showUndoToast("⚠️ Marked as BAD — Defects noted", () => {
+    let message = "⚠️ Marked as BAD";
+    if (defectDetails) {
+      const code = defectDetails.errorCode || "";
+      const nature = defectDetails.familyNature || "";
+      if (code || nature) {
+        const details = [code, nature].filter(Boolean).slice(0, 2).join(" · ");
+        message = `⚠️ ${seq.partName}: ${details}`;
+      }
+    }
+    showUndoToast(message, () => {
       state.inspections.pop();
       localStorage.setItem(
         STORAGE_KEYS.inspections,
@@ -2904,10 +3566,11 @@ function seedDemoData() {
 }
 
 function tickDemoRecord() {
-  // Add one fresh demo record every 6 s to simulate live activity
+  // Add one fresh demo record every 5 s to simulate live activity
   const rec = makeDemoInspection(0);
   state.inspections.push(rec);
   refreshWidgetGrid();
+  refreshReportGraphs();
 }
 
 function refreshWidgetGrid() {
@@ -2920,8 +3583,8 @@ function refreshWidgetGrid() {
 function startDemoSim() {
   stopDemoSim();
   seedDemoData();
-  // Trickle a new record every 6 seconds
-  demoSimTimer = setInterval(tickDemoRecord, 6000);
+  // Trickle a new record every 5 seconds
+  demoSimTimer = setInterval(tickDemoRecord, 5000);
   // Refresh widget display every 3 seconds
   liveWidgetTimer = setInterval(refreshWidgetGrid, 3000);
 }
@@ -3856,15 +4519,29 @@ function toLocalDateTime(raw) {
       });
 }
 
-function reportSummary() {
-  const total = state.inspections.length;
-  const pass = state.inspections.filter(
-    (item) => item.result === "Pass",
+function getDateFilteredReportRecords() {
+  const fromTime = reportFilters.fromDate
+    ? new Date(`${reportFilters.fromDate}T00:00:00`).getTime()
+    : Number.NEGATIVE_INFINITY;
+  const toTime = reportFilters.toDate
+    ? new Date(`${reportFilters.toDate}T23:59:59.999`).getTime()
+    : Number.POSITIVE_INFINITY;
+
+  return state.inspections.filter((item) => {
+    const timestamp = new Date(item.timestamp).getTime();
+    return Number.isFinite(timestamp) && timestamp >= fromTime && timestamp <= toTime;
+  });
+}
+
+function reportSummary(records = state.inspections) {
+  const total = records.length;
+  const pass = records.filter(
+    (item) => item.result === "Pass" || item.resultGood,
   ).length;
-  const fail = state.inspections.filter(
-    (item) => item.result === "Fail",
+  const fail = records.filter(
+    (item) => item.result === "Fail" || item.result === "Bad" || item.resultBad,
   ).length;
-  const review = state.inspections.filter(
+  const review = records.filter(
     (item) => item.result === "Manual Review",
   ).length;
   const passRate = total ? ((pass / total) * 100).toFixed(1) : "0.0";
@@ -3876,6 +4553,118 @@ function reportSummary() {
     review,
     passRate,
   };
+}
+
+function buildDefectTrendCharts(selectedModel = "", records = state.inspections) {
+  const modelRecords = records.filter(
+    (item) => !selectedModel || (item.vehicleModel || "") === selectedModel,
+  );
+  const badRecords = modelRecords.filter(
+    (item) => item.resultBad || item.result === "Fail" || item.result === "Bad",
+  );
+  const partCounts = new Map();
+  badRecords.forEach((item) => {
+    const partName = item.partName || item.partDescription || "Unspecified part";
+    partCounts.set(partName, (partCounts.get(partName) || 0) + 1);
+  });
+
+  const partTrends = [...partCounts.entries()].sort((left, right) => right[1] - left[1]);
+  const maxPartDefects = Math.max(1, ...partTrends.map(([, count]) => count));
+  const partBars = partTrends.length
+    ? partTrends
+        .map(
+          ([partName, count]) => `
+            <div class="report-bar-row">
+              <span class="report-bar-label">${sanitize(partName)}</span>
+              <div class="report-bar-track"><span class="report-bar-fill defect" style="width:${(count / maxPartDefects) * 100}%"></span></div>
+              <strong>${count}</strong>
+            </div>`,
+        )
+        .join("")
+    : '<p class="muted report-empty">No defects recorded for this model.</p>';
+
+  return `
+    <div class="report-trend-grid single-chart">
+      <section class="report-chart" aria-labelledby="defectsByPartTitle">
+        <h4 id="defectsByPartTitle">Defects by Part</h4>
+        <p class="muted">Ordered from the most frequently reported defect.</p>
+        <div class="report-bars">${partBars}</div>
+      </section>
+    </div>`;
+}
+
+function buildTopFiveReportSummaries(records = state.inspections) {
+  const badRecords = records.filter(
+    (item) => item.resultBad || item.result === "Fail" || item.result === "Bad",
+  );
+  const countBy = (getLabel) => {
+    const counts = new Map();
+    badRecords.forEach((item) => {
+      const label = getLabel(item);
+      if (label) counts.set(label, (counts.get(label) || 0) + 1);
+    });
+    return [...counts.entries()]
+      .sort((left, right) => right[1] - left[1] || left[0].localeCompare(right[0]))
+      .slice(0, 5);
+  };
+
+  const modelRanking = countBy((item) => item.vehicleModel || "Unknown model");
+  const defectRanking = countBy((item) => {
+    const details = item.defectDetails || {};
+    if (details.familyNature) return details.familyNature;
+    if (item.defectCategory) return item.defectCategory;
+    if (details.errorCode) {
+      return `${item.partName || "Part"} · Error ${details.errorCode}`;
+    }
+    return item.partName || item.partDescription || "Unspecified defect";
+  });
+
+  const renderRanking = (items, fillClass, emptyMessage) => {
+    if (!items.length) return `<p class="muted report-empty">${emptyMessage}</p>`;
+    const maximum = Math.max(1, ...items.map(([, count]) => count));
+    return items
+      .map(
+        ([label, count], index) => `
+          <div class="report-ranking-row">
+            <span class="report-rank">${index + 1}</span>
+            <span class="report-ranking-label">${sanitize(label)}</span>
+            <div class="report-bar-track"><span class="report-bar-fill ${fillClass}" style="width:${(count / maximum) * 100}%"></span></div>
+            <strong>${count}</strong>
+          </div>`,
+      )
+      .join("");
+  };
+
+  return `
+    <div class="report-ranking-grid">
+      <section class="report-chart" aria-labelledby="topVehicleModelsTitle">
+        <h4 id="topVehicleModelsTitle">Top 5 Vehicle Models with Highest Defects</h4>
+        <p class="muted">Ranked by total failed part inspections.</p>
+        <div class="report-bars">${renderRanking(modelRanking, "vehicle", "No vehicle-model defects recorded.")}</div>
+      </section>
+      <section class="report-chart" aria-labelledby="topDefectsTitle">
+        <h4 id="topDefectsTitle">Top 5 Defects</h4>
+        <p class="muted">Most frequently reported defect types.</p>
+        <div class="report-bars">${renderRanking(defectRanking, "defect", "No defects recorded.")}</div>
+      </section>
+    </div>`;
+}
+
+function refreshReportGraphs() {
+  if (activeModuleId !== "ai-report") return;
+  const reportRecords = getDateFilteredReportRecords();
+  const topFiveCharts = document.getElementById("reportTopFiveCharts");
+  const modelFilter = document.getElementById("reportVehicleModel");
+  const trendCharts = document.getElementById("reportTrendCharts");
+  if (topFiveCharts) {
+    topFiveCharts.innerHTML = buildTopFiveReportSummaries(reportRecords);
+  }
+  if (trendCharts) {
+    trendCharts.innerHTML = buildDefectTrendCharts(
+      modelFilter?.value || reportFilters.vehicleModel,
+      reportRecords,
+    );
+  }
 }
 
 function mapQualiffDefectRecord(item) {
@@ -3930,6 +4719,25 @@ function openModule(moduleId, notice) {
   const module = modules.find((item) => item.id === moduleId);
   if (!module) {
     return;
+  }
+
+  if (reportRefreshTimer) {
+    clearInterval(reportRefreshTimer);
+    reportRefreshTimer = null;
+  }
+
+  if (document.body.classList.contains("force-mobile-workflow")) {
+    document
+      .getElementById("mobileInspectionEntryScreen")
+      ?.classList.add("hidden");
+    document.getElementById("inspectionInitScreen")?.classList.add("hidden");
+    document.getElementById("partsListScreen")?.classList.add("hidden");
+    document.getElementById("partDetailsScreen")?.classList.add("hidden");
+    document.getElementById("imageEditorScreen")?.classList.add("hidden");
+    document.getElementById("inspectionSummaryScreen")?.classList.add("hidden");
+    document.getElementById("inspectionForm")?.style.removeProperty("display");
+    document.body.classList.remove("force-mobile-workflow");
+    document.getElementById("dashboardPage")?.classList.remove("hidden");
   }
 
   activeModuleId = moduleId;
@@ -4372,10 +5180,18 @@ function renderStationInspection() {
 }
 
 function renderAiReport() {
-  const summary = reportSummary();
+  const reportRecords = getDateFilteredReportRecords();
+  const summary = reportSummary(reportRecords);
   const config = state.reportConfig || {};
+  const vehicleModels = [...new Set(
+    reportRecords.map((item) => item.vehicleModel).filter(Boolean),
+  )].sort((left, right) => left.localeCompare(right));
 
-  const badParts = state.inspections.filter(
+  if (reportFilters.vehicleModel && !vehicleModels.includes(reportFilters.vehicleModel)) {
+    reportFilters.vehicleModel = "";
+  }
+
+  const badParts = reportRecords.filter(
     (item) => item.resultBad && !item.resultGood,
   );
   const badPartsRows = badParts.length
@@ -4398,21 +5214,34 @@ function renderAiReport() {
     : `<tr><td colspan="9" class="muted">No bad-result parts found.</td></tr>`;
 
   return `
-    <h3>2. AI Report (User)</h3>
-    <p class="muted">Configure report preferences and review inspection performance indicators.</p>
+    <h3>2. Report</h3>
+    <p class="muted">Review defect trends for each vehicle model.</p>
     <div id="moduleNotice" class="notice hidden"></div>
+
+    <div class="report-date-filter" aria-label="Report timestamp range">
+      <label for="reportFromDate">From
+        <input id="reportFromDate" type="date" value="${sanitize(reportFilters.fromDate)}" max="${sanitize(reportFilters.toDate)}" />
+      </label>
+      <label for="reportToDate">To
+        <input id="reportToDate" type="date" value="${sanitize(reportFilters.toDate)}" min="${sanitize(reportFilters.fromDate)}" />
+      </label>
+      <button type="button" id="clearReportDatesBtn" class="btn-ghost">Clear Dates</button>
+    </div>
+
+    <div id="reportTopFiveCharts">${buildTopFiveReportSummaries(reportRecords)}</div>
+
+    <div class="report-filter-row">
+      <label for="reportVehicleModel">Vehicle Model</label>
+      <select id="reportVehicleModel">
+        <option value="">All Vehicle Models</option>
+        ${vehicleModels.map((model) => `<option value="${sanitize(model)}" ${reportFilters.vehicleModel === model ? "selected" : ""}>${sanitize(model)}</option>`).join("")}
+      </select>
+    </div>
+    <div id="reportTrendCharts">${buildDefectTrendCharts(reportFilters.vehicleModel, reportRecords)}</div>
 
     <form class="form-grid section-grid" id="reportConfigForm">
       <label>Report Name<input name="reportName" type="text" placeholder="e.g. Daily Shift Summary" value="${sanitize(config.reportName || "")}" required /></label>
-      <label>Frequency
-        <select name="frequency" required>
-          <option value="Shift" ${config.frequency === "Shift" ? "selected" : ""}>Shift</option>
-          <option value="Daily" ${config.frequency === "Daily" || !config.frequency ? "selected" : ""}>Daily</option>
-          <option value="Weekly" ${config.frequency === "Weekly" ? "selected" : ""}>Weekly</option>
-        </select>
-      </label>
       <label>Email Recipients<input name="recipients" type="text" placeholder="qa@company.com, lead@company.com" value="${sanitize(config.recipients || "")}" /></label>
-      <label>Minimum Confidence for Alerts (%)<input name="alertThreshold" type="number" min="1" max="100" value="${sanitize(config.alertThreshold || 80)}" required /></label>
       <label class="full-span">Qualiff API Endpoint
         <input
           name="qualiffEndpoint"
@@ -7763,9 +8592,7 @@ function bindModuleEvents(moduleId) {
         const data = new FormData(form);
         const config = {
           reportName: data.get("reportName").toString().trim(),
-          frequency: data.get("frequency").toString(),
           recipients: data.get("recipients").toString().trim(),
-          alertThreshold: Number(data.get("alertThreshold")),
           qualiffEndpoint: data.get("qualiffEndpoint").toString().trim(),
           failedOnly: data.get("failedOnly") === "on",
         };
@@ -7773,14 +8600,51 @@ function bindModuleEvents(moduleId) {
         state.reportConfig = config;
         saveState(STORAGE_KEYS.reportConfig, config);
         openModule("ai-report", {
-          message: "AI report configuration saved.",
+          message: "Report configuration saved.",
         });
       });
     }
 
+    const modelFilter = document.getElementById("reportVehicleModel");
+    const trendCharts = document.getElementById("reportTrendCharts");
+    if (modelFilter && trendCharts) {
+      modelFilter.addEventListener("change", () => {
+        reportFilters.vehicleModel = modelFilter.value;
+        trendCharts.innerHTML = buildDefectTrendCharts(
+          modelFilter.value,
+          getDateFilteredReportRecords(),
+        );
+      });
+    }
+
+    reportRefreshTimer = setInterval(refreshReportGraphs, 5000);
+
+    const fromDateInput = document.getElementById("reportFromDate");
+    const toDateInput = document.getElementById("reportToDate");
+    const clearDatesBtn = document.getElementById("clearReportDatesBtn");
+    const applyDateRange = () => {
+      const fromDate = fromDateInput?.value || "";
+      const toDate = toDateInput?.value || "";
+      if (fromDate && toDate && fromDate > toDate) {
+        setModuleNotice("From date must be before or equal to To date.", "error");
+        return;
+      }
+      reportFilters.fromDate = fromDate;
+      reportFilters.toDate = toDate;
+      openModule("ai-report");
+    };
+    fromDateInput?.addEventListener("change", applyDateRange);
+    toDateInput?.addEventListener("change", applyDateRange);
+    clearDatesBtn?.addEventListener("click", () => {
+      reportFilters.fromDate = "";
+      reportFilters.toDate = "";
+      openModule("ai-report");
+    });
+
     if (exportBtn) {
       exportBtn.addEventListener("click", () => {
-        if (!state.inspections.length) {
+        const reportRecords = getDateFilteredReportRecords();
+        if (!reportRecords.length) {
           setModuleNotice("No inspection data available for export.", "error");
           return;
         }
@@ -7796,7 +8660,7 @@ function bindModuleEvents(moduleId) {
             "Remarks",
             "Timestamp",
           ].join(","),
-          ...state.inspections.map((item) =>
+          ...reportRecords.map((item) =>
             [
               item.vin,
               item.stationId,
@@ -7817,7 +8681,7 @@ function bindModuleEvents(moduleId) {
         const url = URL.createObjectURL(blob);
         const anchor = document.createElement("a");
         anchor.href = url;
-        anchor.download = "ai_quality_inspection_report.csv";
+        anchor.download = "quality_inspection_report.csv";
         document.body.appendChild(anchor);
         anchor.click();
         anchor.remove();
@@ -7837,7 +8701,7 @@ function bindModuleEvents(moduleId) {
     const snippetCloseBtn = document.getElementById("copySnippetCloseBtn");
 
     const getBadParts = () =>
-      state.inspections
+      getDateFilteredReportRecords()
         .filter((item) => item.resultBad && !item.resultGood)
         .map((item) => ({
           vin: item.vin || "",
@@ -8201,15 +9065,16 @@ function buildHomeWidgets() {
 }
 
 function showHome() {
+  if (reportRefreshTimer) {
+    clearInterval(reportRefreshTimer);
+    reportRefreshTimer = null;
+  }
   activeModuleId = null;
   modulePanel.classList.add("hidden");
   modulePanel.innerHTML = "";
 
-  // If mobile workflow screens were active, hide them and restore dashboard
-  if (
-    document.body.classList.contains("force-mobile-workflow") &&
-    isMobileRapidMode()
-  ) {
+  // If workflow screens were active, hide them and restore dashboard shell.
+  if (document.body.classList.contains("force-mobile-workflow")) {
     document
       .getElementById("mobileInspectionEntryScreen")
       ?.classList.add("hidden");
@@ -8218,6 +9083,7 @@ function showHome() {
     document.getElementById("partDetailsScreen")?.classList.add("hidden");
     document.getElementById("imageEditorScreen")?.classList.add("hidden");
     document.getElementById("inspectionSummaryScreen")?.classList.add("hidden");
+    document.getElementById("inspectionForm")?.style.removeProperty("display");
     document.body.classList.remove("force-mobile-workflow");
     document.getElementById("dashboardPage")?.classList.remove("hidden");
   }
@@ -8239,7 +9105,12 @@ function showHome() {
 }
 
 function setMenuVisible(isVisible) {
-  if (!optionGrid || !menuToggleBtn) {
+  if (!optionGrid) {
+    return;
+  }
+
+  if (!menuToggleBtn) {
+    optionGrid.classList.remove("hidden");
     return;
   }
 
@@ -8275,10 +9146,6 @@ function buildMobileTabBar() {
     existing.remove();
   }
 
-  const userModules = modules.filter(
-    (m) => m.role === currentUser.role || currentUser.role === "admin",
-  );
-
   const bar = document.createElement("nav");
   bar.id = "mobileTabBar";
   bar.className = "mobile-tab-bar";
@@ -8287,22 +9154,8 @@ function buildMobileTabBar() {
 
   const tabDefs = [
     { id: "__home__", icon: "🏠", label: "Home" },
-    ...userModules.slice(0, 3).map((m) => ({
-      id: m.id,
-      icon:
-        m.id === "station-inspection"
-          ? "🔍"
-          : m.id === "ai-report"
-            ? "📊"
-            : m.id === "station-config"
-              ? "⚙️"
-              : "📋",
-      label: m.title
-        .replace(/^\d+\.\s*/, "")
-        .replace("Station ", "")
-        .replace(" Configuration", " Config")
-        .replace("Quality Inspection", "Inspect"),
-    })),
+    { id: "station-inspection", icon: "🔍", label: "Inspect" },
+    { id: "ai-report", icon: "📊", label: "Report" },
   ];
 
   tabDefs.forEach((tab) => {
@@ -8484,7 +9337,7 @@ loginForm.addEventListener("submit", (event) => {
     currentUser = isMobileRole
       ? {
           name: name.trim(),
-          role: "mobile",
+          role: "user",
         }
       : {
           name: user.name,
@@ -8506,21 +9359,8 @@ loginForm.addEventListener("submit", (event) => {
       window.navigator.vibrate(20);
     }
 
-    // ═══════════════════════════════════════════════════════════════
-    // MOBILE ACCESS ROLE: Skip dashboard, show mobile inspection entry
-    // ═══════════════════════════════════════════════════════════════
-    if (_selectedLoginRole === "mobile") {
-      document.body.classList.add("force-mobile-workflow");
-      // Hide dashboard
-      if (dashboardPage) {
-        dashboardPage.classList.add("hidden");
-      }
-      // Show mobile inspection entry
-      showMobileInspectionEntry();
-    } else {
-      // Desktop/traditional flow
-      showDashboard();
-    }
+    // Always land on dashboard after sign-in.
+    showDashboard();
   }, 320);
 });
 

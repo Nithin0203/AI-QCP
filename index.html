@@ -6,7 +6,7 @@
       name="viewport"
       content="width=device-width, initial-scale=1.0, viewport-fit=cover, user-scalable=no"
     />
-    <meta name="theme-color" content="#0a1128" />
+    <meta name="theme-color" content="#243782" />
     <meta name="apple-mobile-web-app-capable" content="yes" />
     <meta
       name="apple-mobile-web-app-status-bar-style"
@@ -21,7 +21,7 @@
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
     <link
-      href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;700&family=IBM+Plex+Sans:wght@400;500;600&display=swap"
+      href="https://fonts.googleapis.com/css2?family=Encode+Sans:wght@400;500;600;700&family=Encode+Sans+Expanded:wght@400;500;600;700;800&display=swap"
       rel="stylesheet"
     />
     <link rel="stylesheet" href="styles.css" />
@@ -48,13 +48,13 @@
             >
               <path
                 d="M32 4L8 14v20c0 16 11.5 28.4 24 32 12.5-3.6 24-16 24-32V14L32 4z"
-                fill="rgba(44,79,191,0.25)"
-                stroke="rgba(100,140,255,0.7)"
+                fill="rgba(36,55,130,0.35)"
+                stroke="rgba(135,152,222,0.75)"
                 stroke-width="1.5"
               />
               <path
                 d="M22 36l7 7 13-14"
-                stroke="#64a8ff"
+                stroke="#43aaa0"
                 stroke-width="2.5"
                 stroke-linecap="round"
                 stroke-linejoin="round"
@@ -282,17 +282,7 @@
               <button id="homeBtn" type="button" class="side-nav-btn active">
                 Home
               </button>
-              <button
-                id="menuToggleBtn"
-                type="button"
-                class="side-nav-btn btn-with-icon"
-              >
-                <span class="btn-glyph menu-glyph" aria-hidden="true"
-                  >&#8801;</span
-                >
-                Menu
-              </button>
-              <section id="optionGrid" class="side-menu hidden"></section>
+              <section id="optionGrid" class="side-menu"></section>
             </aside>
 
             <div class="content-stack">
@@ -497,6 +487,27 @@
               >
                 ✏️ Draw
               </button>
+              <button
+                id="rectToolBtn"
+                class="toolbar-btn"
+                title="Draw rectangle"
+              >
+                ▭ Rectangle
+              </button>
+              <button
+                id="squareToolBtn"
+                class="toolbar-btn"
+                title="Draw square"
+              >
+                ⬜ Square
+              </button>
+              <button
+                id="circleToolBtn"
+                class="toolbar-btn"
+                title="Draw circle"
+              >
+                ⚪ Circle
+              </button>
             </div>
             <div class="toolbar-section">
               <label for="penSizeSlider" class="toolbar-label">Pen Size:</label>
@@ -546,6 +557,16 @@
       >
         <div class="screen-header">
           <h2>Start Inspection</h2>
+          <div class="screen-header-actions">
+            <button
+              id="mobileEntryHomeBtn"
+              class="btn-header"
+              type="button"
+              aria-label="Go to Home"
+            >
+              Home
+            </button>
+          </div>
         </div>
         <div class="mobile-entry-content">
           <div class="entry-form">
@@ -565,18 +586,11 @@
               />
               <div class="scan-btn-row">
                 <button
-                  id="mobileScanVinBtn"
-                  type="button"
-                  class="btn-ghost scan-vin-btn"
-                >
-                  Scan Barcode
-                </button>
-                <button
                   id="mobileCameraVinBtn"
                   type="button"
                   class="btn-ghost scan-vin-btn camera-btn"
                 >
-                  &#128247; Camera
+                  Scan Barcode
                 </button>
               </div>
             </label>
@@ -670,8 +684,8 @@
                   left: -2px;
                   width: 22px;
                   height: 22px;
-                  border-top: 3px solid #22c55e;
-                  border-left: 3px solid #22c55e;
+                  border-top: 3px solid #43aaa0;
+                  border-left: 3px solid #43aaa0;
                   border-radius: 3px 0 0 0;
                 "
               ></span>
@@ -682,8 +696,8 @@
                   right: -2px;
                   width: 22px;
                   height: 22px;
-                  border-top: 3px solid #22c55e;
-                  border-right: 3px solid #22c55e;
+                  border-top: 3px solid #43aaa0;
+                  border-right: 3px solid #43aaa0;
                   border-radius: 0 3px 0 0;
                 "
               ></span>
@@ -694,8 +708,8 @@
                   left: -2px;
                   width: 22px;
                   height: 22px;
-                  border-bottom: 3px solid #22c55e;
-                  border-left: 3px solid #22c55e;
+                  border-bottom: 3px solid #43aaa0;
+                  border-left: 3px solid #43aaa0;
                   border-radius: 0 0 0 3px;
                 "
               ></span>
@@ -706,8 +720,8 @@
                   right: -2px;
                   width: 22px;
                   height: 22px;
-                  border-bottom: 3px solid #22c55e;
-                  border-right: 3px solid #22c55e;
+                  border-bottom: 3px solid #43aaa0;
+                  border-right: 3px solid #43aaa0;
                   border-radius: 0 0 3px 0;
                 "
               ></span>
@@ -719,7 +733,7 @@
                   left: 6%;
                   right: 6%;
                   height: 1.5px;
-                  background: rgba(34, 197, 94, 0.7);
+                  background: rgba(67, 170, 160, 0.75);
                   transform: translateY(-50%);
                   border-radius: 2px;
                 "
@@ -748,7 +762,7 @@
             display: flex;
             gap: 12px;
             padding: 16px;
-            background: #111;
+            background: #090d20;
           "
         >
           <button
@@ -756,8 +770,8 @@
             style="
               flex: 1;
               padding: 14px;
-              background: #22c55e;
-              color: #000;
+              background: #43aaa0;
+              color: #ffffff;
               font-weight: 700;
               font-size: 1rem;
               border: none;
@@ -771,7 +785,7 @@
             id="liveCameraCloseBtn"
             style="
               padding: 14px 20px;
-              background: #374151;
+              background: #3d434f;
               color: #fff;
               font-weight: 600;
               border: none;
@@ -890,7 +904,7 @@
                   width: 12px;
                   height: 12px;
                   border-radius: 50%;
-                  background: #22c55e;
+                  background: #e94e24;
                   flex-shrink: 0;
                 "
               ></span>
@@ -911,7 +925,7 @@
                   width: 12px;
                   height: 12px;
                   border-radius: 50%;
-                  background: #22c55e;
+                  background: #43aaa0;
                   flex-shrink: 0;
                 "
               ></span>
@@ -972,6 +986,6 @@
     </div>
     <!-- /appRoot -->
 
-    <script src="app.js?v=20260728-3"></script>
+    <script src="app.js?v=20260901-14"></script>
   </body>
 </html>

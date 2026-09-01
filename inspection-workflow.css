@@ -12,6 +12,7 @@
 
 /* Prevent body from scrolling behind mobile screens */
 body.force-mobile-workflow {
+  --workflow-sidebar-offset: 230px;
   overflow: hidden;
   overscroll-behavior: none;
   touch-action: pan-x pan-y;
@@ -31,11 +32,16 @@ body.force-mobile-workflow {
 body.force-mobile-workflow .inspection-screen {
   position: fixed;
   top: 0;
-  left: 0;
-  width: 100%;
+  left: var(--workflow-sidebar-offset);
+  width: calc(100% - var(--workflow-sidebar-offset));
   height: 100vh;
   height: 100dvh;
-  background: linear-gradient(135deg, #0f1b40 0%, #1a2a5e 50%, #0d1530 100%);
+  background: linear-gradient(
+    135deg,
+    var(--st-blue-900) 0%,
+    var(--st-blue-700) 50%,
+    var(--st-blue-950) 100%
+  );
   display: flex;
   flex-direction: column;
   z-index: 900;
@@ -45,6 +51,18 @@ body.force-mobile-workflow .inspection-screen {
   -webkit-text-size-adjust: 100%;
   text-size-adjust: 100%;
   min-height: 0;
+}
+
+@media (max-width: 960px) {
+  body.force-mobile-workflow {
+    --workflow-sidebar-offset: 190px;
+  }
+}
+
+@media (max-width: 640px) {
+  body.force-mobile-workflow {
+    --workflow-sidebar-offset: 160px;
+  }
 }
 
 body.force-mobile-workflow #partsListScreen.hidden,
@@ -75,8 +93,8 @@ body.force-mobile-workflow .screen-header {
   justify-content: space-between;
   padding: 8px 16px;
   padding-top: max(8px, env(safe-area-inset-top));
-  background: rgba(27, 46, 110, 0.95);
-  border-bottom: 1px solid rgba(100, 140, 255, 0.15);
+  background: rgba(36, 55, 130, 0.96);
+  border-bottom: 1px solid rgba(135, 152, 222, 0.22);
   gap: 12px;
   flex-shrink: 0;
   min-height: 52px;
@@ -88,14 +106,14 @@ body.force-mobile-workflow .screen-header h2 {
   font-weight: 700;
   color: #ffffff !important;
   flex: 1;
-  font-family: "Space Grotesk", sans-serif;
+  font-family: var(--font-display);
 }
 
 /* Parts list title bar */
 body.force-mobile-workflow .parts-title-bar {
-  background: rgba(15, 27, 64, 0.98);
+  background: rgba(13, 20, 48, 0.98);
   padding: 12px 16px 10px 24px;
-  border-bottom: 1px solid rgba(100, 140, 255, 0.2);
+  border-bottom: 1px solid rgba(135, 152, 222, 0.25);
 }
 
 body.force-mobile-workflow .parts-main-heading {
@@ -103,7 +121,7 @@ body.force-mobile-workflow .parts-main-heading {
   font-size: 1.5rem;
   font-weight: 900;
   color: #ffffff !important;
-  font-family: "Space Grotesk", sans-serif;
+  font-family: var(--font-display);
   padding-left: 4px;
 }
 
@@ -126,7 +144,7 @@ body.force-mobile-workflow .part-details-title-bar h3 {
 }
 
 body.force-mobile-workflow .part-details-list dt {
-  color: rgba(100, 168, 255, 0.85) !important;
+  color: rgba(183, 193, 235, 0.9) !important;
   font-weight: 700;
   font-size: 0.72rem;
   text-transform: uppercase;
@@ -175,23 +193,23 @@ body.force-mobile-workflow .stat-card {
   padding: 16px;
   background: linear-gradient(
     135deg,
-    rgba(44, 79, 191, 0.2) 0%,
-    rgba(30, 138, 69, 0.1) 100%
+    rgba(36, 55, 130, 0.35) 0%,
+    rgba(67, 170, 160, 0.14) 100%
   );
-  border: 1px solid rgba(100, 140, 255, 0.2);
+  border: 1px solid rgba(135, 152, 222, 0.25);
   border-radius: 8px;
 }
 
 body.force-mobile-workflow .stat-number {
   font-size: 2rem;
   font-weight: 700;
-  color: #64a8ff;
+  color: var(--st-blue-200);
 }
 
 body.force-mobile-workflow .stat-label {
   font-size: 0.75rem;
   font-weight: 600;
-  color: #9db4d4;
+  color: var(--st-blue-100);
   text-align: center;
   text-transform: uppercase;
   letter-spacing: 0.5px;
@@ -204,8 +222,8 @@ body.force-mobile-workflow .stat-icon {
 
 body.force-mobile-workflow .summary-results {
   padding: 12px;
-  background: rgba(100, 140, 255, 0.05);
-  border: 1px solid rgba(100, 140, 255, 0.15);
+  background: rgba(135, 152, 222, 0.07);
+  border: 1px solid rgba(135, 152, 222, 0.18);
   border-radius: 8px;
 }
 
@@ -213,7 +231,7 @@ body.force-mobile-workflow .summary-results h3 {
   margin: 0 0 12px;
   font-size: 0.9rem;
   font-weight: 700;
-  color: #64a8ff;
+  color: var(--st-blue-200);
   text-transform: uppercase;
   letter-spacing: 0.5px;
 }
@@ -223,7 +241,7 @@ body.force-mobile-workflow .summary-result-item {
   justify-content: space-between;
   align-items: center;
   padding: 10px 0;
-  border-bottom: 1px solid rgba(100, 140, 255, 0.1);
+  border-bottom: 1px solid rgba(135, 152, 222, 0.14);
   gap: 8px;
 }
 
@@ -243,14 +261,14 @@ body.force-mobile-workflow .summary-result-item-badge {
   font-weight: 700;
   padding: 3px 8px;
   border-radius: 12px;
-  background: rgba(30, 138, 69, 0.2);
-  color: #4ade80;
+  background: rgba(67, 170, 160, 0.22);
+  color: var(--st-mint-light);
   flex-shrink: 0;
 }
 
 body.force-mobile-workflow .summary-result-item-badge.bad {
-  background: rgba(200, 38, 45, 0.2);
-  color: #ff6b6b;
+  background: rgba(233, 78, 36, 0.22);
+  color: var(--st-tangerine-light);
 }
 
 body.force-mobile-workflow .summary-actions {
@@ -267,7 +285,11 @@ body.force-mobile-workflow .summary-actions .btn-primary {
   font-size: 1rem;
   font-weight: 700;
   letter-spacing: 0.5px;
-  background: linear-gradient(135deg, #1e8a45 0%, #15652e 100%);
+  background: linear-gradient(
+    135deg,
+    var(--st-mint) 0%,
+    var(--st-mint-deep) 100%
+  );
   color: #ffffff;
   border: none;
   border-radius: 6px;
@@ -279,7 +301,7 @@ body.force-mobile-workflow .summary-actions .btn-primary {
 
 body.force-mobile-workflow .summary-actions .btn-primary:active {
   transform: scale(0.98);
-  box-shadow: 0 4px 12px rgba(30, 138, 69, 0.4);
+  box-shadow: 0 4px 12px rgba(0, 110, 106, 0.45);
 }
 
 body.force-mobile-workflow .summary-actions .btn-ghost {
@@ -288,9 +310,9 @@ body.force-mobile-workflow .summary-actions .btn-ghost {
   padding: 14px 16px;
   font-size: 0.9rem;
   font-weight: 600;
-  background: rgba(100, 140, 255, 0.1);
-  color: #64a8ff;
-  border: 1px solid rgba(100, 140, 255, 0.3);
+  background: rgba(135, 152, 222, 0.12);
+  color: var(--st-blue-200);
+  border: 1px solid rgba(135, 152, 222, 0.35);
   border-radius: 6px;
   cursor: pointer;
   transition: all 0.2s ease;
@@ -301,7 +323,7 @@ body.force-mobile-workflow .summary-actions .btn-ghost {
 body.force-mobile-workflow .summary-footer {
   text-align: center;
   font-size: 0.75rem;
-  color: #7a8ba8;
+  color: var(--st-blue-100);
   margin: 0;
   font-style: italic;
 }
@@ -323,8 +345,8 @@ body.force-mobile-workflow .parts-list-submit-bar {
   flex-shrink: 0;
   padding: 12px 16px;
   padding-bottom: max(16px, env(safe-area-inset-bottom));
-  background: rgba(15, 27, 64, 0.98);
-  border-top: 1px solid rgba(100, 140, 255, 0.2);
+  background: rgba(13, 20, 48, 0.98);
+  border-top: 1px solid rgba(135, 152, 222, 0.25);
 }
 
 body.force-mobile-workflow .btn-parts-submit {
@@ -334,7 +356,11 @@ body.force-mobile-workflow .btn-parts-submit {
   font-size: 1rem;
   font-weight: 700;
   letter-spacing: 0.5px;
-  background: linear-gradient(135deg, #1e8a45 0%, #15652e 100%);
+  background: linear-gradient(
+    135deg,
+    var(--st-mint) 0%,
+    var(--st-mint-deep) 100%
+  );
   color: #ffffff;
   border: none;
   border-radius: 8px;
@@ -346,7 +372,7 @@ body.force-mobile-workflow .btn-parts-submit {
 
 body.force-mobile-workflow .btn-parts-submit:active {
   transform: scale(0.98);
-  box-shadow: 0 4px 16px rgba(30, 138, 69, 0.5);
+  box-shadow: 0 4px 16px rgba(0, 110, 106, 0.5);
 }
 
 body.force-mobile-workflow .btn-parts-submit:disabled {
@@ -360,8 +386,8 @@ body.force-mobile-workflow .parts-list-item {
   flex-direction: column;
   gap: 8px;
   padding: 10px;
-  background: rgba(44, 79, 191, 0.12);
-  border: 1px solid rgba(100, 140, 255, 0.25);
+  background: rgba(36, 55, 130, 0.28);
+  border: 1px solid rgba(135, 152, 222, 0.28);
   border-radius: 10px;
   cursor: pointer;
   transition: all 0.2s ease;
@@ -369,12 +395,12 @@ body.force-mobile-workflow .parts-list-item {
 }
 
 body.force-mobile-workflow .parts-list-item.priority-part {
-  border-color: rgba(220, 38, 38, 0.4);
-  background: rgba(220, 38, 38, 0.08);
+  border-color: rgba(233, 78, 36, 0.45);
+  background: rgba(233, 78, 36, 0.1);
 }
 
 body.force-mobile-workflow .parts-list-item:active {
-  background: rgba(44, 79, 191, 0.25);
+  background: rgba(36, 55, 130, 0.45);
   transform: scale(0.98);
 }
 
@@ -390,10 +416,10 @@ body.force-mobile-workflow .parts-list-item-image {
 /* Detail button — inline beside priority badge in seqRow */
 body.force-mobile-workflow .parts-list-detail-btn {
   padding: 3px 10px;
-  background: rgba(100, 140, 255, 0.18);
-  border: 1px solid rgba(100, 140, 255, 0.45);
+  background: rgba(135, 152, 222, 0.2);
+  border: 1px solid rgba(135, 152, 222, 0.48);
   border-radius: 20px;
-  color: rgba(160, 190, 255, 0.95);
+  color: rgba(223, 228, 246, 0.95);
   font-size: 0.68rem;
   font-weight: 700;
   letter-spacing: 0.04em;
@@ -404,7 +430,7 @@ body.force-mobile-workflow .parts-list-detail-btn {
 }
 
 body.force-mobile-workflow .parts-list-detail-btn:active {
-  background: rgba(100, 140, 255, 0.35);
+  background: rgba(135, 152, 222, 0.38);
   color: #ffffff;
 }
 
@@ -434,7 +460,7 @@ body.force-mobile-workflow .parts-list-focus-btn {
 }
 
 body.force-mobile-workflow .parts-list-focus-btn:active {
-  background: rgba(100, 140, 255, 0.4);
+  background: rgba(135, 152, 222, 0.45);
 }
 
 body.force-mobile-workflow .parts-list-item-name {
@@ -447,14 +473,14 @@ body.force-mobile-workflow .parts-list-item-name {
 
 body.force-mobile-workflow .parts-list-item-meta {
   font-size: 0.7rem;
-  color: #9db4d4 !important;
+  color: var(--st-blue-100) !important;
   margin: 0;
 }
 
 body.force-mobile-workflow .parts-list-priority-tag {
   font-size: 0.65rem;
   font-weight: 700;
-  color: #dc2626 !important;
+  color: var(--st-tangerine-light) !important;
   text-transform: uppercase;
   letter-spacing: 0.5px;
 }
@@ -469,18 +495,18 @@ body.force-mobile-workflow .parts-list-item-status {
 }
 
 body.force-mobile-workflow .parts-list-item-status.pending {
-  background: rgba(100, 140, 255, 0.15);
-  color: #64a8ff !important;
+  background: rgba(135, 152, 222, 0.18);
+  color: var(--st-blue-200) !important;
 }
 
 body.force-mobile-workflow .parts-list-item-status.completed {
-  background: rgba(34, 197, 94, 0.15);
-  color: #22c55e !important;
+  background: rgba(67, 170, 160, 0.18);
+  color: var(--st-mint) !important;
 }
 
 body.force-mobile-workflow .parts-list-item-status.good {
-  background: rgba(34, 197, 94, 0.2);
-  color: #4ade80 !important;
+  background: rgba(67, 170, 160, 0.24);
+  color: var(--st-mint-light) !important;
 }
 
 /* Sequence row */
@@ -494,7 +520,7 @@ body.force-mobile-workflow .parts-list-seq-row {
 body.force-mobile-workflow .parts-list-seq-no {
   font-size: 0.72rem;
   font-weight: 700;
-  color: rgba(100, 168, 255, 0.9) !important;
+  color: rgba(183, 193, 235, 0.95) !important;
   text-transform: uppercase;
   letter-spacing: 0.8px;
 }
@@ -509,15 +535,15 @@ body.force-mobile-workflow .parts-list-defect-badge {
 }
 
 body.force-mobile-workflow .parts-list-defect-badge.priority {
-  color: #fca5a5 !important;
-  background: rgba(220, 38, 38, 0.2);
-  border: 1px solid rgba(220, 38, 38, 0.35);
+  color: var(--st-tangerine-light) !important;
+  background: rgba(233, 78, 36, 0.22);
+  border: 1px solid rgba(233, 78, 36, 0.4);
 }
 
 body.force-mobile-workflow .parts-list-defect-badge.regular {
-  color: #86efac !important;
-  background: rgba(34, 197, 94, 0.15);
-  border: 1px solid rgba(34, 197, 94, 0.3);
+  color: var(--st-mint-light) !important;
+  background: rgba(67, 170, 160, 0.18);
+  border: 1px solid rgba(67, 170, 160, 0.35);
 }
 
 /* Part ID + action buttons row */
@@ -535,9 +561,9 @@ body.force-mobile-workflow .parts-action-btn {
   font-size: 0.75rem;
   font-weight: 700;
   border-radius: 6px;
-  border: 1px solid rgba(100, 140, 255, 0.3);
-  background: rgba(100, 140, 255, 0.1);
-  color: #8fc1ff !important;
+  border: 1px solid rgba(135, 152, 222, 0.35);
+  background: rgba(135, 152, 222, 0.12);
+  color: var(--st-blue-200) !important;
   cursor: pointer;
   min-height: 32px;
   touch-action: manipulation;
@@ -546,20 +572,20 @@ body.force-mobile-workflow .parts-action-btn {
 }
 
 body.force-mobile-workflow .parts-action-btn.ok.active {
-  background: rgba(34, 197, 94, 0.25);
-  border-color: rgba(34, 197, 94, 0.5);
-  color: #4ade80 !important;
+  background: rgba(67, 170, 160, 0.28);
+  border-color: rgba(67, 170, 160, 0.55);
+  color: var(--st-mint-light) !important;
 }
 
 body.force-mobile-workflow .parts-action-btn.notok.active {
-  background: rgba(220, 38, 38, 0.25);
-  border-color: rgba(220, 38, 38, 0.5);
-  color: #f87171 !important;
+  background: rgba(233, 78, 36, 0.28);
+  border-color: rgba(233, 78, 36, 0.55);
+  color: var(--st-tangerine-light) !important;
 }
 
 body.force-mobile-workflow .parts-action-btn.notok.red {
-  background: rgba(220, 38, 38, 0.85) !important;
-  border-color: #dc2626 !important;
+  background: rgba(228, 35, 19, 0.9) !important;
+  border-color: var(--st-tangerine-deep) !important;
   color: #ffffff !important;
   font-weight: 700;
 }
@@ -568,8 +594,8 @@ body.force-mobile-workflow .parts-action-btn.notok.red {
 body.force-mobile-workflow .defect-details-panel {
   width: 100%;
   margin-top: 10px;
-  background: rgba(10, 20, 50, 0.95);
-  border: 1px solid rgba(220, 38, 38, 0.4);
+  background: rgba(9, 13, 32, 0.95);
+  border: 1px solid rgba(233, 78, 36, 0.45);
   border-radius: 10px;
   overflow: hidden;
 }
@@ -596,7 +622,7 @@ body.force-mobile-workflow .defect-field label {
   font-weight: 700;
   text-transform: uppercase;
   letter-spacing: 0.05em;
-  color: rgba(220, 38, 38, 0.9);
+  color: var(--st-tangerine-light);
 }
 
 body.force-mobile-workflow .defect-select {
@@ -617,19 +643,43 @@ body.force-mobile-workflow .defect-select {
 }
 
 body.force-mobile-workflow .defect-select:focus {
-  border-color: rgba(220, 38, 38, 0.6);
+  border-color: rgba(233, 78, 36, 0.65);
   background-color: rgba(255, 255, 255, 0.1);
 }
 
+body.force-mobile-workflow .voice-recording-status {
+  color: rgba(255, 255, 255, 0.78);
+  font-size: 0.8rem;
+}
+
+body.force-mobile-workflow .voice-recording-preview {
+  width: 100%;
+  height: 36px;
+}
+
+body.force-mobile-workflow .voice-recording-preview.hidden {
+  display: none;
+}
+
 body.force-mobile-workflow .defect-select option {
-  background: #1a2550;
+  background: var(--st-blue-850);
+  color: #ffffff;
+}
+
+body.force-mobile-workflow .defect-select option:before {
+  content: attr(data-indicator);
+}
+
+/* Highlight options with trend indicators */
+body.force-mobile-workflow .defect-select optgroup {
+  background: var(--st-blue-850);
   color: #ffffff;
 }
 
 body.force-mobile-workflow .defect-save-btn {
   margin-top: 4px;
   padding: 10px 14px;
-  background: rgba(34, 197, 94, 0.8);
+  background: rgba(67, 170, 160, 0.85);
   border: none;
   border-radius: 8px;
   color: #ffffff;
@@ -643,12 +693,18 @@ body.force-mobile-workflow .defect-save-btn {
 }
 
 body.force-mobile-workflow .defect-save-btn:active {
-  background: #15803d;
+  background: var(--st-mint-deep);
 }
 
 body.force-mobile-workflow .parts-action-btn.mic {
   padding: 5px 8px;
   font-size: 0.85rem;
+}
+
+body.force-mobile-workflow .parts-action-btn.mic.recording {
+  background: #d91e18;
+  border-color: #ff746d;
+  color: #ffffff !important;
 }
 
 body.force-mobile-workflow .parts-action-btn:active {
@@ -723,8 +779,8 @@ body.force-mobile-workflow .part-info-overlay.hidden {
 }
 
 body.force-mobile-workflow .part-info-card {
-  background: linear-gradient(135deg, #0f1b40, #1a2a5e);
-  border: 1px solid rgba(100, 140, 255, 0.3);
+  background: linear-gradient(135deg, var(--st-blue-900), var(--st-blue-700));
+  border: 1px solid rgba(135, 152, 222, 0.35);
   border-radius: 14px;
   width: 100%;
   max-width: 480px;
@@ -765,9 +821,9 @@ body.force-mobile-workflow .part-info-body {
 
 body.force-mobile-workflow .part-info-priority-badge {
   display: inline-block;
-  background: rgba(220, 38, 38, 0.2);
-  border: 1px solid rgba(220, 38, 38, 0.5);
-  color: #fca5a5 !important;
+  background: rgba(233, 78, 36, 0.22);
+  border: 1px solid rgba(233, 78, 36, 0.55);
+  color: var(--st-tangerine-light) !important;
   font-size: 0.75rem;
   font-weight: 700;
   padding: 4px 10px;
@@ -798,7 +854,7 @@ body.force-mobile-workflow .part-info-row {
   flex-direction: column;
   gap: 2px;
   padding: 8px 0;
-  border-top: 1px solid rgba(100, 140, 255, 0.15);
+  border-top: 1px solid rgba(135, 152, 222, 0.18);
 }
 
 body.force-mobile-workflow .part-info-label {
@@ -806,7 +862,7 @@ body.force-mobile-workflow .part-info-label {
   font-weight: 700;
   text-transform: uppercase;
   letter-spacing: 1px;
-  color: rgba(100, 140, 255, 0.8) !important;
+  color: rgba(183, 193, 235, 0.85) !important;
 }
 
 body.force-mobile-workflow .part-info-value {
@@ -816,9 +872,9 @@ body.force-mobile-workflow .part-info-value {
 }
 
 body.force-mobile-workflow .init-title-bar {
-  background: rgba(15, 27, 64, 0.98);
+  background: rgba(13, 20, 48, 0.98);
   padding: 12px 16px 10px 16px;
-  border-bottom: 1px solid rgba(100, 140, 255, 0.2);
+  border-bottom: 1px solid rgba(135, 152, 222, 0.25);
   flex-shrink: 0;
 }
 
@@ -830,8 +886,8 @@ body.force-mobile-workflow .init-actions {
   gap: 10px;
   padding: 12px 16px;
   padding-bottom: max(12px, env(safe-area-inset-bottom));
-  background: rgba(15, 27, 64, 0.98);
-  border-top: 1px solid rgba(100, 140, 255, 0.15);
+  background: rgba(13, 20, 48, 0.98);
+  border-top: 1px solid rgba(135, 152, 222, 0.18);
 }
 
 /* Smaller Init action buttons on mobile */
@@ -856,7 +912,7 @@ body.force-mobile-workflow .section-header.regular-header {
   border-radius: 6px;
   gap: 5px;
   background: #ffffff !important;
-  border: 2px solid #1d4ed8 !important;
+  border: 2px solid var(--st-blue-600) !important;
 }
 
 body.force-mobile-workflow .section-icon {
@@ -868,16 +924,16 @@ body.force-mobile-workflow .section-title {
   font-weight: 900;
   text-shadow: none;
   line-height: 1.2;
-  color: #172554 !important;
-  -webkit-text-stroke: 0.5px #172554;
+  color: var(--st-blue-800) !important;
+  -webkit-text-stroke: 0.5px var(--st-blue-800);
 }
 
 body.force-mobile-workflow .section-header.priority-header .section-title {
-  color: #172554 !important;
+  color: var(--st-blue-800) !important;
 }
 
 body.force-mobile-workflow .section-header.regular-header .section-title {
-  color: #172554 !important;
+  color: var(--st-blue-800) !important;
 }
 
 body.force-mobile-workflow .section-count {
@@ -932,17 +988,17 @@ body.force-mobile-workflow .defect-section {
 }
 
 body.force-mobile-workflow .defect-section.priority-section {
-  border: 1px solid rgba(252, 165, 165, 0.6);
+  border: 1px solid rgba(243, 150, 113, 0.6);
   border-radius: 7px;
   padding: 6px;
-  background: rgba(220, 38, 38, 0.1);
+  background: rgba(233, 78, 36, 0.12);
 }
 
 body.force-mobile-workflow .defect-section.regular-section {
-  border: 1px solid rgba(134, 239, 172, 0.5);
+  border: 1px solid rgba(160, 212, 205, 0.55);
   border-radius: 7px;
   padding: 6px;
-  background: rgba(34, 197, 94, 0.08);
+  background: rgba(67, 170, 160, 0.1);
 }
 
 body.force-mobile-workflow .numbered-list {
@@ -964,13 +1020,13 @@ body.force-mobile-workflow .init-main-heading {
   font-size: 1.6rem;
   font-weight: 900;
   color: #ffffff !important;
-  font-family: "Space Grotesk", sans-serif;
+  font-family: var(--font-display);
   letter-spacing: -0.3px;
 }
 
 body.force-mobile-workflow .init-description {
-  background: rgba(59, 130, 246, 0.12);
-  border: 1px solid rgba(100, 160, 255, 0.4);
+  background: rgba(135, 152, 222, 0.14);
+  border: 1px solid rgba(135, 152, 222, 0.42);
   border-radius: 8px;
   padding: 10px 14px;
   margin-bottom: 0;
@@ -994,41 +1050,54 @@ body.force-mobile-workflow .mobile-entry-content {
   overflow-y: auto;
   -webkit-overflow-scrolling: touch;
   overscroll-behavior-y: contain;
+  background: #ffffff;
 }
 
 body.force-mobile-workflow .entry-form {
   display: flex;
   flex-direction: column;
   gap: 20px;
+  width: min(100%, 760px);
+  margin: 0 auto;
 }
 
 body.force-mobile-workflow .entry-form label {
   display: flex;
   flex-direction: column;
+  width: 100%;
   gap: 8px;
   font-size: 15px;
   font-weight: 600;
-  color: #ffffff !important;
+  color: var(--st-blue-600) !important;
   letter-spacing: 0.3px;
 }
 
 body.force-mobile-workflow .entry-form input,
 body.force-mobile-workflow .entry-form select {
   padding: 14px 16px;
-  border: 2px solid rgba(100, 140, 255, 0.3);
+  border: 2px solid rgba(135, 152, 222, 0.55);
   border-radius: 8px;
   font-size: 16px;
-  background: rgba(255, 255, 255, 0.08);
-  color: #ffffff !important;
+  background: var(--st-blue-25);
+  color: var(--st-blue-700) !important;
+  transition: all 0.2s ease;
 }
 
 body.force-mobile-workflow .entry-form input::placeholder {
-  color: rgba(255, 255, 255, 0.5);
+  color: rgba(100, 107, 130, 0.85);
+}
+
+body.force-mobile-workflow .entry-form input:focus,
+body.force-mobile-workflow .entry-form select:focus {
+  outline: none;
+  border-color: var(--st-blue-500);
+  background: var(--st-blue-50);
+  box-shadow: 0 0 0 3px rgba(36, 55, 130, 0.18);
 }
 
 body.force-mobile-workflow .entry-form select option {
-  background: #1a2a5e;
-  color: #ffffff;
+  background: #ffffff;
+  color: var(--st-blue-700);
 }
 
 body.force-mobile-workflow .scan-btn-row {
@@ -1040,10 +1109,9 @@ body.force-mobile-workflow .scan-btn-row {
 body.force-mobile-workflow .scan-vin-btn {
   flex: 1;
   padding: 12px 10px;
-  border-radius: 6px;
-  border: 1px solid rgba(100, 140, 255, 0.45);
-  color: #8fc1ff;
-  background: rgba(16, 33, 84, 0.45);
+  border: 1px solid rgba(36, 55, 130, 0.32);
+  color: var(--st-blue-600);
+  background: var(--st-blue-50);
   font-size: 14px;
   font-weight: 600;
   cursor: pointer;
@@ -1051,14 +1119,16 @@ body.force-mobile-workflow .scan-vin-btn {
 }
 
 body.force-mobile-workflow .camera-btn {
-  border-color: rgba(100, 200, 140, 0.45);
-  color: #6ee7b7;
-  background: rgba(16, 60, 40, 0.45);
+  border-color: rgba(36, 55, 130, 0.35);
+  color: var(--st-blue-600);
+  background: var(--st-blue-50);
 }
 
 body.force-mobile-workflow .entry-actions {
   display: flex;
   flex-direction: column;
+  width: min(100%, 760px);
+  margin: 0 auto;
   gap: 12px;
 }
 
@@ -1066,7 +1136,7 @@ body.force-mobile-workflow .btn-primary.btn-large {
   padding: 16px;
   font-size: 16px;
   font-weight: 700;
-  background: #2563eb;
+  background: var(--st-blue-600);
   color: #ffffff;
   border: none;
   border-radius: 10px;
@@ -1081,9 +1151,9 @@ body.force-mobile-workflow .btn-ghost {
   padding: 14px;
   font-size: 15px;
   font-weight: 600;
-  background: transparent;
-  color: #8fc1ff;
-  border: 1px solid rgba(100, 140, 255, 0.3);
+  background: #ffffff;
+  color: var(--st-blue-600);
+  border: 1px solid rgba(36, 55, 130, 0.35);
   border-radius: 10px;
   cursor: pointer;
   width: 100%;
@@ -1139,7 +1209,12 @@ body.force-mobile-workflow .btn-ghost {
     left: 0;
     width: 100%;
     height: 100%;
-    background: linear-gradient(135deg, #0f1b40 0%, #1a2a5e 50%, #0d1530 100%);
+    background: linear-gradient(
+      135deg,
+      var(--st-blue-900) 0%,
+      var(--st-blue-700) 50%,
+      var(--st-blue-950) 100%
+    );
     display: flex;
     flex-direction: column;
     z-index: 900;
@@ -1184,8 +1259,8 @@ body.force-mobile-workflow .btn-ghost {
     justify-content: space-between;
     padding: 8px 16px;
     padding-top: max(8px, env(safe-area-inset-top));
-    background: rgba(27, 46, 110, 0.95);
-    border-bottom: 1px solid rgba(100, 140, 255, 0.15);
+    background: rgba(36, 55, 130, 0.96);
+    border-bottom: 1px solid rgba(135, 152, 222, 0.22);
     backdrop-filter: blur(4px);
     gap: 12px;
     flex-shrink: 0;
@@ -1198,16 +1273,26 @@ body.force-mobile-workflow .btn-ghost {
     font-weight: 600;
     color: #ffffff;
     flex: 1;
-    font-family: "Space Grotesk", sans-serif;
+    font-family: var(--font-display);
+  }
+
+  .screen-header-actions {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+  }
+
+  body.force-mobile-workflow #mobileInspectionEntryScreen {
+    background: #ffffff;
   }
 
   .btn-header {
     padding: 10px 14px;
     font-size: 0.9rem;
-    color: #64a8ff;
-    border: 1px solid rgba(100, 140, 255, 0.3);
+    color: var(--st-blue-200);
+    border: 1px solid rgba(135, 152, 222, 0.35);
     border-radius: 6px;
-    background: rgba(100, 140, 255, 0.05);
+    background: rgba(135, 152, 222, 0.08);
     cursor: pointer;
     transition: all 0.2s ease;
     min-height: 44px;
@@ -1215,9 +1300,15 @@ body.force-mobile-workflow .btn-ghost {
     -webkit-tap-highlight-color: transparent;
   }
 
+  .screen-header-actions .btn-header {
+    min-height: 38px;
+    padding: 8px 12px;
+    font-size: 0.8rem;
+  }
+
   .btn-header:active {
-    background: rgba(100, 140, 255, 0.15);
-    border-color: rgba(100, 140, 255, 0.5);
+    background: rgba(135, 152, 222, 0.2);
+    border-color: rgba(135, 152, 222, 0.55);
   }
 
   .parts-count-badge,
@@ -1225,12 +1316,12 @@ body.force-mobile-workflow .btn-ghost {
   .tool-status-badge {
     display: inline-block;
     padding: 4px 10px;
-    background: rgba(100, 140, 255, 0.2);
-    border: 1px solid rgba(100, 140, 255, 0.4);
+    background: rgba(135, 152, 222, 0.22);
+    border: 1px solid rgba(135, 152, 222, 0.42);
     border-radius: 12px;
     font-size: 0.75rem;
     font-weight: 600;
-    color: #64a8ff;
+    color: var(--st-blue-100);
     text-transform: uppercase;
     letter-spacing: 0.5px;
     white-space: nowrap;
@@ -1257,11 +1348,11 @@ body.force-mobile-workflow .btn-ghost {
   }
 
   .parts-list-container::-webkit-scrollbar-track {
-    background: rgba(100, 140, 255, 0.05);
+    background: rgba(135, 152, 222, 0.08);
   }
 
   .parts-list-container::-webkit-scrollbar-thumb {
-    background: rgba(100, 140, 255, 0.3);
+    background: rgba(135, 152, 222, 0.35);
     border-radius: 3px;
   }
 
@@ -1270,8 +1361,8 @@ body.force-mobile-workflow .btn-ghost {
     flex-direction: column;
     gap: 8px;
     padding: 12px;
-    background: rgba(44, 79, 191, 0.1);
-    border: 1px solid rgba(100, 140, 255, 0.2);
+    background: rgba(36, 55, 130, 0.25);
+    border: 1px solid rgba(135, 152, 222, 0.22);
     border-radius: 8px;
     cursor: pointer;
     transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
@@ -1314,10 +1405,10 @@ body.force-mobile-workflow .btn-ghost {
 
   .parts-list-item:hover,
   .parts-list-item:active {
-    background: rgba(44, 79, 191, 0.2);
-    border-color: rgba(100, 140, 255, 0.4);
+    background: rgba(36, 55, 130, 0.4);
+    border-color: rgba(135, 152, 222, 0.45);
     transform: translateY(-2px);
-    box-shadow: 0 4px 12px rgba(44, 79, 191, 0.2);
+    box-shadow: 0 4px 12px rgba(9, 13, 32, 0.35);
   }
 
   .parts-list-item-image {
@@ -1338,7 +1429,7 @@ body.force-mobile-workflow .btn-ghost {
 
   .parts-list-item-meta {
     font-size: 0.7rem;
-    color: #9db4d4;
+    color: var(--st-blue-100);
     margin: 0;
   }
 
@@ -1347,31 +1438,31 @@ body.force-mobile-workflow .btn-ghost {
     align-items: center;
     gap: 4px;
     padding: 4px 8px;
-    background: rgba(30, 138, 69, 0.2);
+    background: rgba(67, 170, 160, 0.22);
     border-radius: 3px;
     font-size: 0.65rem;
     font-weight: 600;
-    color: #4ade80;
+    color: var(--st-mint-light);
   }
 
   .parts-list-item-status.pending {
-    background: rgba(212, 107, 0, 0.2);
-    color: #fb923c;
+    background: rgba(236, 169, 53, 0.22);
+    color: var(--st-orange-light);
   }
 
   .parts-list-item-status.completed {
-    background: rgba(30, 138, 69, 0.2);
-    color: #4ade80;
+    background: rgba(67, 170, 160, 0.22);
+    color: var(--st-mint-light);
   }
 
   .parts-list-item-status.good {
-    background: rgba(30, 138, 69, 0.2);
-    color: #4ade80;
+    background: rgba(67, 170, 160, 0.22);
+    color: var(--st-mint-light);
   }
 
   .parts-list-item-status.bad {
-    background: rgba(180, 30, 30, 0.25);
-    color: #f87171;
+    background: rgba(233, 78, 36, 0.25);
+    color: var(--st-tangerine-light);
   }
 
   /* ═════════════════════════════════════════════════════════════
@@ -1402,7 +1493,7 @@ body.force-mobile-workflow .btn-ghost {
     font-size: 1.3rem;
     font-weight: 800;
     color: #ffffff !important;
-    font-family: "Space Grotesk", sans-serif;
+    font-family: var(--font-display);
     flex: 1;
   }
 
@@ -1412,9 +1503,9 @@ body.force-mobile-workflow .btn-ghost {
     padding: 3px 10px;
     border-radius: 20px;
     white-space: nowrap;
-    color: #86efac;
-    background: rgba(34, 197, 94, 0.15);
-    border: 1px solid rgba(34, 197, 94, 0.3);
+    color: var(--st-mint-light);
+    background: rgba(67, 170, 160, 0.18);
+    border: 1px solid rgba(67, 170, 160, 0.35);
   }
 
   .part-details-image-area {
@@ -1422,7 +1513,7 @@ body.force-mobile-workflow .btn-ghost {
     width: 100%;
     aspect-ratio: 16/9;
     background: rgba(0, 0, 0, 0.3);
-    border: 1px solid rgba(100, 140, 255, 0.2);
+    border: 1px solid rgba(135, 152, 222, 0.22);
     border-radius: 8px;
     overflow: hidden;
     display: flex;
@@ -1447,7 +1538,7 @@ body.force-mobile-workflow .btn-ghost {
     align-items: center;
     justify-content: center;
     background: rgba(0, 0, 0, 0.4);
-    border: 1px solid rgba(100, 140, 255, 0.3);
+    border: 1px solid rgba(135, 152, 222, 0.35);
     border-radius: 6px;
     font-size: 1.2rem;
     cursor: pointer;
@@ -1455,14 +1546,14 @@ body.force-mobile-workflow .btn-ghost {
   }
 
   .part-details-image-area .btn-icon:active {
-    background: rgba(100, 140, 255, 0.3);
+    background: rgba(135, 152, 222, 0.35);
     transform: scale(1.1);
   }
 
   .part-details-info-section {
     padding: 14px;
-    background: rgba(44, 79, 191, 0.12);
-    border: 1px solid rgba(100, 140, 255, 0.2);
+    background: rgba(36, 55, 130, 0.28);
+    border: 1px solid rgba(135, 152, 222, 0.22);
     border-radius: 8px;
   }
 
@@ -1477,7 +1568,7 @@ body.force-mobile-workflow .btn-ghost {
 
   .part-details-list dt {
     font-weight: 700;
-    color: rgba(100, 168, 255, 0.85) !important;
+    color: rgba(183, 193, 235, 0.9) !important;
     font-size: 0.72rem;
     text-transform: uppercase;
     letter-spacing: 0.8px;
@@ -1518,19 +1609,23 @@ body.force-mobile-workflow .btn-ghost {
   }
 
   .part-details-actions .btn-primary {
-    background: linear-gradient(135deg, #d46b00 0%, #c85b00 100%);
+    background: linear-gradient(
+      135deg,
+      var(--st-orange-deep) 0%,
+      #d06e00 100%
+    );
     color: white;
   }
 
   .part-details-actions .btn-primary:active {
     transform: scale(0.98);
-    box-shadow: 0 4px 12px rgba(212, 107, 0, 0.3);
+    box-shadow: 0 4px 12px rgba(239, 125, 0, 0.35);
   }
 
   .part-details-actions .btn-ghost {
-    background: rgba(100, 140, 255, 0.1);
-    color: #64a8ff;
-    border: 1px solid rgba(100, 140, 255, 0.3);
+    background: rgba(135, 152, 222, 0.12);
+    color: var(--st-blue-200);
+    border: 1px solid rgba(135, 152, 222, 0.35);
   }
 
   /* ═════════════════════════════════════════════════════════════
@@ -1551,10 +1646,10 @@ body.force-mobile-workflow .btn-ghost {
     flex: 1;
     background: linear-gradient(
       135deg,
-      rgba(44, 79, 191, 0.15) 0%,
-      rgba(30, 138, 69, 0.05) 100%
+      rgba(36, 55, 130, 0.3) 0%,
+      rgba(67, 170, 160, 0.08) 100%
     );
-    border: 2px solid rgba(100, 140, 255, 0.2);
+    border: 2px solid rgba(135, 152, 222, 0.22);
     border-radius: 8px;
     overflow: hidden;
     display: flex;
@@ -1582,7 +1677,7 @@ body.force-mobile-workflow .btn-ghost {
   .canvas-loader span {
     width: 8px;
     height: 8px;
-    background: rgba(100, 140, 255, 0.6);
+    background: var(--st-mint);
     border-radius: 50%;
     animation: loaderBounce 1.4s infinite ease-in-out both;
   }
@@ -1616,8 +1711,8 @@ body.force-mobile-workflow .btn-ghost {
     flex-direction: column;
     gap: 10px;
     padding: 12px;
-    background: rgba(44, 79, 191, 0.1);
-    border: 1px solid rgba(100, 140, 255, 0.15);
+    background: rgba(36, 55, 130, 0.25);
+    border: 1px solid rgba(135, 152, 222, 0.18);
     border-radius: 6px;
   }
 
@@ -1631,7 +1726,7 @@ body.force-mobile-workflow .btn-ghost {
   .toolbar-label {
     font-size: 0.75rem;
     font-weight: 600;
-    color: #64a8ff;
+    color: var(--st-blue-100);
     text-transform: uppercase;
     letter-spacing: 0.5px;
     margin: 0;
@@ -1641,7 +1736,7 @@ body.force-mobile-workflow .btn-ghost {
   .color-picker {
     width: 40px;
     height: 40px;
-    border: 2px solid rgba(100, 140, 255, 0.3);
+    border: 2px solid rgba(135, 152, 222, 0.35);
     border-radius: 4px;
     cursor: pointer;
     background: none;
@@ -1649,9 +1744,9 @@ body.force-mobile-workflow .btn-ghost {
 
   .toolbar-btn {
     padding: 6px 12px;
-    background: rgba(100, 140, 255, 0.1);
-    border: 1px solid rgba(100, 140, 255, 0.2);
-    color: #64a8ff;
+    background: rgba(135, 152, 222, 0.12);
+    border: 1px solid rgba(135, 152, 222, 0.25);
+    color: var(--st-blue-100);
     border-radius: 4px;
     font-size: 0.75rem;
     font-weight: 600;
@@ -1662,9 +1757,14 @@ body.force-mobile-workflow .btn-ghost {
 
   .toolbar-btn:active,
   .toolbar-btn.active {
-    background: linear-gradient(135deg, #1b2e6e 0%, #2c4fbf 100%);
-    border-color: rgba(100, 140, 255, 0.6);
-    box-shadow: 0 0 8px rgba(100, 140, 255, 0.3);
+    background: linear-gradient(
+      135deg,
+      var(--st-blue-700) 0%,
+      var(--st-blue-500) 100%
+    );
+    border-color: rgba(135, 152, 222, 0.65);
+    box-shadow: 0 0 8px rgba(135, 152, 222, 0.35);
+    color: #ffffff;
   }
 
   .size-slider {
@@ -1672,7 +1772,7 @@ body.force-mobile-workflow .btn-ghost {
     min-width: 80px;
     height: 6px;
     border-radius: 3px;
-    background: rgba(100, 140, 255, 0.2);
+    background: rgba(135, 152, 222, 0.25);
     outline: none;
     -webkit-appearance: none;
     appearance: none;
@@ -1684,8 +1784,12 @@ body.force-mobile-workflow .btn-ghost {
     width: 18px;
     height: 18px;
     border-radius: 50%;
-    background: linear-gradient(135deg, #1b2e6e 0%, #2c4fbf 100%);
-    border: 2px solid rgba(100, 140, 255, 0.5);
+    background: linear-gradient(
+      135deg,
+      var(--st-blue-700) 0%,
+      var(--st-blue-500) 100%
+    );
+    border: 2px solid rgba(135, 152, 222, 0.55);
     cursor: pointer;
     box-shadow: 0 2px 6px rgba(0, 0, 0, 0.2);
   }
@@ -1694,15 +1798,19 @@ body.force-mobile-workflow .btn-ghost {
     width: 18px;
     height: 18px;
     border-radius: 50%;
-    background: linear-gradient(135deg, #1b2e6e 0%, #2c4fbf 100%);
-    border: 2px solid rgba(100, 140, 255, 0.5);
+    background: linear-gradient(
+      135deg,
+      var(--st-blue-700) 0%,
+      var(--st-blue-500) 100%
+    );
+    border: 2px solid rgba(135, 152, 222, 0.55);
     cursor: pointer;
     box-shadow: 0 2px 6px rgba(0, 0, 0, 0.2);
   }
 
   #penSizeValue {
     font-size: 0.75rem;
-    color: #64a8ff;
+    color: var(--st-blue-100);
     min-width: 30px;
     font-weight: 600;
   }
@@ -1734,20 +1842,24 @@ body.force-mobile-workflow .btn-ghost {
   }
 
   .editor-actions .btn-primary {
-    background: linear-gradient(135deg, #c8262d 0%, #b01f25 100%);
+    background: linear-gradient(
+      135deg,
+      var(--st-tangerine) 0%,
+      var(--st-tangerine-deep) 100%
+    );
     color: white;
     flex: 1;
   }
 
   .editor-actions .btn-primary:active {
     transform: scale(0.98);
-    box-shadow: 0 4px 12px rgba(200, 38, 45, 0.3);
+    box-shadow: 0 4px 12px rgba(228, 35, 19, 0.35);
   }
 
   .editor-actions .btn-ghost {
-    background: rgba(100, 140, 255, 0.1);
-    color: #64a8ff;
-    border: 1px solid rgba(100, 140, 255, 0.3);
+    background: rgba(135, 152, 222, 0.12);
+    color: var(--st-blue-200);
+    border: 1px solid rgba(135, 152, 222, 0.35);
     flex: 1;
   }
 
@@ -1782,10 +1894,10 @@ body.force-mobile-workflow .btn-ghost {
     padding: 16px;
     background: linear-gradient(
       135deg,
-      rgba(44, 79, 191, 0.2) 0%,
-      rgba(30, 138, 69, 0.1) 100%
+      rgba(36, 55, 130, 0.35) 0%,
+      rgba(67, 170, 160, 0.14) 100%
     );
-    border: 1px solid rgba(100, 140, 255, 0.2);
+    border: 1px solid rgba(135, 152, 222, 0.25);
     border-radius: 8px;
     animation: statCardFade 0.4s ease-out forwards;
     opacity: 0;
@@ -1815,14 +1927,14 @@ body.force-mobile-workflow .btn-ghost {
   .stat-number {
     font-size: 2rem;
     font-weight: 700;
-    color: #64a8ff;
-    font-family: "Space Grotesk", sans-serif;
+    color: var(--st-blue-200);
+    font-family: var(--font-display);
   }
 
   .stat-label {
     font-size: 0.75rem;
     font-weight: 600;
-    color: #9db4d4;
+    color: var(--st-blue-100);
     text-align: center;
     text-transform: uppercase;
     letter-spacing: 0.5px;
@@ -1835,8 +1947,8 @@ body.force-mobile-workflow .btn-ghost {
 
   .summary-results {
     padding: 12px;
-    background: rgba(44, 79, 191, 0.08);
-    border: 1px solid rgba(100, 140, 255, 0.15);
+    background: rgba(36, 55, 130, 0.22);
+    border: 1px solid rgba(135, 152, 222, 0.18);
     border-radius: 6px;
   }
 
@@ -1845,7 +1957,7 @@ body.force-mobile-workflow .btn-ghost {
     font-size: 0.95rem;
     font-weight: 600;
     color: #ffffff;
-    font-family: "Space Grotesk", sans-serif;
+    font-family: var(--font-display);
   }
 
   .summary-results-list {
@@ -1861,7 +1973,7 @@ body.force-mobile-workflow .btn-ghost {
   }
 
   .summary-results-list::-webkit-scrollbar-thumb {
-    background: rgba(100, 140, 255, 0.3);
+    background: rgba(135, 152, 222, 0.35);
     border-radius: 2px;
   }
 
@@ -1878,7 +1990,7 @@ body.force-mobile-workflow .btn-ghost {
 
   .summary-result-item-name {
     flex: 1;
-    color: #c5d0e0;
+    color: var(--st-blue-50);
   }
 
   .summary-result-item-badge {
@@ -1886,17 +1998,17 @@ body.force-mobile-workflow .btn-ghost {
     align-items: center;
     gap: 4px;
     padding: 4px 8px;
-    background: rgba(30, 138, 69, 0.2);
+    background: rgba(67, 170, 160, 0.22);
     border-radius: 3px;
     font-size: 0.65rem;
     font-weight: 600;
-    color: #4ade80;
+    color: var(--st-mint-light);
     flex-shrink: 0;
   }
 
   .summary-result-item-badge.bad {
-    background: rgba(200, 38, 45, 0.2);
-    color: #ff6b6b;
+    background: rgba(233, 78, 36, 0.22);
+    color: var(--st-tangerine-light);
   }
 
   .summary-status-badge {
@@ -1904,14 +2016,14 @@ body.force-mobile-workflow .btn-ghost {
     padding: 4px 10px;
     background: linear-gradient(
       135deg,
-      rgba(30, 138, 69, 0.3) 0%,
-      rgba(74, 222, 128, 0.2) 100%
+      rgba(0, 110, 106, 0.35) 0%,
+      rgba(67, 170, 160, 0.22) 100%
     );
-    border: 1px solid rgba(74, 222, 128, 0.5);
+    border: 1px solid rgba(67, 170, 160, 0.55);
     border-radius: 12px;
     font-size: 0.75rem;
     font-weight: 600;
-    color: #4ade80;
+    color: var(--st-mint-light);
     text-transform: uppercase;
     letter-spacing: 0.5px;
   }
@@ -1931,7 +2043,11 @@ body.force-mobile-workflow .btn-ghost {
   }
 
   .summary-actions .btn-primary {
-    background: linear-gradient(135deg, #1e8a45 0%, #15652e 100%);
+    background: linear-gradient(
+      135deg,
+      var(--st-mint) 0%,
+      var(--st-mint-deep) 100%
+    );
     color: white;
     border: none;
     border-radius: 6px;
@@ -1941,13 +2057,13 @@ body.force-mobile-workflow .btn-ghost {
 
   .summary-actions .btn-primary:active {
     transform: scale(0.98);
-    box-shadow: 0 4px 12px rgba(30, 138, 69, 0.4);
+    box-shadow: 0 4px 12px rgba(0, 110, 106, 0.45);
   }
 
   .summary-actions .btn-ghost {
-    background: rgba(100, 140, 255, 0.1);
-    color: #64a8ff;
-    border: 1px solid rgba(100, 140, 255, 0.3);
+    background: rgba(135, 152, 222, 0.12);
+    color: var(--st-blue-200);
+    border: 1px solid rgba(135, 152, 222, 0.35);
     border-radius: 6px;
     cursor: pointer;
     transition: all 0.2s ease;
@@ -1956,7 +2072,7 @@ body.force-mobile-workflow .btn-ghost {
   .summary-footer {
     text-align: center;
     font-size: 0.75rem;
-    color: #7a8ba8;
+    color: var(--st-blue-100);
     margin: 0;
     font-style: italic;
   }
@@ -2098,13 +2214,13 @@ body.force-mobile-workflow .btn-ghost {
     }
 
     .defect-section.priority-section .part-item {
-      border-left-color: #3b82f6;
-      background: rgba(59, 130, 246, 0.25);
+      border-left-color: var(--st-tangerine);
+      background: rgba(233, 78, 36, 0.25);
     }
 
     .defect-section.regular-section .part-item {
-      border-left-color: #3b82f6;
-      background: rgba(59, 130, 246, 0.25);
+      border-left-color: var(--st-blue-300);
+      background: rgba(53, 81, 192, 0.28);
     }
 
     .part-item-badge {
@@ -2121,7 +2237,7 @@ body.force-mobile-workflow .btn-ghost {
       color: #ffffff !important;
       text-shadow:
         0 2px 8px rgba(0, 0, 0, 1),
-        0 0 6px rgba(100, 200, 255, 0.6);
+        0 0 6px rgba(135, 152, 222, 0.6);
     }
   }
 
@@ -2163,13 +2279,13 @@ body.force-mobile-workflow .btn-ghost {
   }
 
   .defect-section.priority-section .part-item {
-    border-left-color: #dc2626;
-    background: rgba(220, 38, 38, 0.25);
+    border-left-color: var(--st-tangerine);
+    background: rgba(233, 78, 36, 0.25);
   }
 
   .defect-section.regular-section .part-item {
-    border-left-color: #3b82f6;
-    background: rgba(59, 130, 246, 0.25);
+    border-left-color: var(--st-blue-300);
+    background: rgba(53, 81, 192, 0.28);
   }
 
   .part-item-badge {
@@ -2186,14 +2302,14 @@ body.force-mobile-workflow .btn-ghost {
     color: #ffffff !important;
     text-shadow:
       0 2px 8px rgba(0, 0, 0, 1),
-      0 0 6px rgba(100, 200, 255, 0.6);
+      0 0 6px rgba(135, 152, 222, 0.6);
   }
 
   /* Title bar below Back button */
   .init-title-bar {
-    background: rgba(15, 27, 64, 0.98);
+    background: rgba(13, 20, 48, 0.98);
     padding: 14px 16px 12px 16px;
-    border-bottom: 1px solid rgba(100, 140, 255, 0.2);
+    border-bottom: 1px solid rgba(135, 152, 222, 0.25);
   }
 
   .init-main-heading {
@@ -2201,7 +2317,7 @@ body.force-mobile-workflow .btn-ghost {
     font-size: 1.6rem;
     font-weight: 900;
     color: #ffffff !important;
-    font-family: "Space Grotesk", sans-serif;
+    font-family: var(--font-display);
     letter-spacing: -0.3px;
   }
 
@@ -2225,8 +2341,8 @@ body.force-mobile-workflow .btn-ghost {
 
   /* Description */
   .init-description {
-    background: rgba(59, 130, 246, 0.12);
-    border: 1px solid rgba(100, 160, 255, 0.4);
+    background: rgba(135, 152, 222, 0.14);
+    border: 1px solid rgba(135, 152, 222, 0.42);
     border-radius: 8px;
     padding: 12px 14px;
   }
@@ -2262,30 +2378,30 @@ body.force-mobile-workflow .btn-ghost {
   }
 
   .defect-section.priority-section {
-    border: 2px solid #fecaca;
+    border: 2px solid var(--st-tangerine-light);
     border-radius: 8px;
     padding: 1rem;
-    background: rgba(254, 202, 202, 0.08);
+    background: rgba(233, 78, 36, 0.1);
   }
 
   .defect-section.regular-section {
-    border: 2px solid #bbf7d0;
+    border: 2px solid var(--st-mint-light);
     border-radius: 8px;
     padding: 1rem;
-    background: rgba(187, 247, 208, 0.08);
+    background: rgba(67, 170, 160, 0.1);
   }
 
   /* Vehicle Information Card */
   .init-vehicle-card {
     background: linear-gradient(
       135deg,
-      rgba(59, 130, 246, 0.5),
-      rgba(100, 140, 255, 0.4)
+      rgba(36, 55, 130, 0.85),
+      rgba(53, 81, 192, 0.65)
     );
-    border: 3px solid #64a8ff;
+    border: 3px solid var(--st-blue-200);
     border-radius: 16px;
     padding: 1.5rem;
-    box-shadow: 0 8px 20px rgba(0, 0, 0, 0.4);
+    box-shadow: 0 8px 20px rgba(9, 13, 32, 0.45);
   }
 
   .vehicle-info-row {
@@ -2312,10 +2428,10 @@ body.force-mobile-workflow .btn-ghost {
   .vehicle-info-value {
     font-size: 1.3rem;
     font-weight: 700;
-    color: #ffff00;
+    color: var(--st-orange-light);
     text-shadow:
       0 3px 12px rgba(0, 0, 0, 0.9),
-      0 0 8px rgba(255, 255, 0, 0.6);
+      0 0 8px rgba(254, 205, 80, 0.6);
     word-break: break-word;
   }
 
@@ -2329,13 +2445,13 @@ body.force-mobile-workflow .btn-ghost {
   }
 
   .defect-section.priority-section {
-    border-color: rgba(220, 38, 38, 0.6);
-    box-shadow: 0 0 20px rgba(220, 38, 38, 0.2);
+    border-color: rgba(233, 78, 36, 0.65);
+    box-shadow: 0 0 20px rgba(233, 78, 36, 0.2);
   }
 
   .defect-section.regular-section {
-    border-color: rgba(59, 130, 246, 0.6);
-    box-shadow: 0 0 20px rgba(59, 130, 246, 0.2);
+    border-color: rgba(67, 170, 160, 0.65);
+    box-shadow: 0 0 20px rgba(67, 170, 160, 0.2);
   }
 
   .defect-section.hidden {
@@ -2356,20 +2472,20 @@ body.force-mobile-workflow .btn-ghost {
   .section-header.priority-header {
     background: linear-gradient(
       135deg,
-      rgba(254, 202, 202, 0.9),
-      rgba(254, 226, 226, 0.8)
+      rgba(253, 234, 229, 0.95),
+      rgba(253, 244, 240, 0.85)
     );
-    border: 2px solid #dc2626;
+    border: 2px solid var(--st-tangerine);
     padding: 1rem;
   }
 
   .section-header.regular-header {
     background: linear-gradient(
       135deg,
-      rgba(187, 247, 208, 0.9),
-      rgba(209, 250, 229, 0.8)
+      rgba(231, 244, 242, 0.95),
+      rgba(240, 249, 248, 0.85)
     );
-    border: 2px solid #22c55e;
+    border: 2px solid var(--st-mint);
     padding: 1rem;
   }
 
@@ -2383,13 +2499,13 @@ body.force-mobile-workflow .btn-ghost {
   }
 
   .section-header.priority-header .section-title {
-    color: #dc2626;
+    color: var(--st-tangerine-deep);
     font-weight: 700;
     font-size: 1rem;
   }
 
   .section-header.regular-header .section-title {
-    color: #22c55e;
+    color: var(--st-mint-deep);
     font-weight: 700;
     font-size: 1rem;
   }
@@ -2401,7 +2517,7 @@ body.force-mobile-workflow .btn-ghost {
     color: #ffffff !important;
     text-shadow:
       0 4px 16px rgba(0, 0, 0, 1),
-      0 0 8px rgba(100, 200, 255, 0.8),
+      0 0 8px rgba(135, 152, 222, 0.8),
       0 0 4px rgba(255, 255, 255, 0.5);
   }
 
@@ -2411,7 +2527,7 @@ body.force-mobile-workflow .btn-ghost {
     border-radius: 25px;
     font-size: 1.2rem;
     font-weight: 900;
-    color: #000000;
+    color: var(--st-anthracite);
     text-shadow: 0 1px 2px rgba(255, 255, 255, 0.6);
   }
 
@@ -2448,13 +2564,13 @@ body.force-mobile-workflow .btn-ghost {
   }
 
   .defect-section.priority-section .part-item {
-    border-left-color: #3b82f6;
-    background: rgba(59, 130, 246, 0.25);
+    border-left-color: var(--st-tangerine);
+    background: rgba(233, 78, 36, 0.25);
   }
 
   .defect-section.regular-section .part-item {
-    border-left-color: #3b82f6;
-    background: rgba(59, 130, 246, 0.25);
+    border-left-color: var(--st-blue-300);
+    background: rgba(53, 81, 192, 0.28);
   }
 
   .part-item-badge {
@@ -2471,7 +2587,7 @@ body.force-mobile-workflow .btn-ghost {
     color: #ffffff !important;
     text-shadow:
       0 2px 8px rgba(0, 0, 0, 1),
-      0 0 6px rgba(100, 200, 255, 0.6);
+      0 0 6px rgba(135, 152, 222, 0.6);
   }
 
   .mobile-entry-content {
@@ -2481,12 +2597,15 @@ body.force-mobile-workflow .btn-ghost {
     gap: 32px;
     flex: 1;
     overflow-y: auto;
+    background: #ffffff;
   }
 
   .entry-form {
     display: flex;
     flex-direction: column;
     gap: 20px;
+    width: min(100%, 760px);
+    margin: 0 auto;
   }
 
   .entry-form label {
@@ -2495,35 +2614,35 @@ body.force-mobile-workflow .btn-ghost {
     gap: 8px;
     font-size: 14px;
     font-weight: 500;
-    color: #ffffff;
+    color: var(--st-blue-600);
   }
 
   .entry-form input,
   .entry-form select {
     padding: 14px 16px;
-    border: 2px solid rgba(100, 140, 255, 0.3);
+    border: 2px solid rgba(135, 152, 222, 0.55);
     border-radius: 8px;
     font-size: 16px;
-    background: rgba(255, 255, 255, 0.08);
-    color: #ffffff;
+    background: var(--st-blue-25);
+    color: var(--st-blue-700);
     transition: all 0.2s ease;
   }
 
   .entry-form input::placeholder {
-    color: rgba(255, 255, 255, 0.5);
+    color: rgba(100, 107, 130, 0.85);
   }
 
   .entry-form input:focus,
   .entry-form select:focus {
     outline: none;
-    border-color: #64a8ff;
-    background: rgba(100, 140, 255, 0.15);
-    box-shadow: 0 0 0 3px rgba(100, 140, 255, 0.1);
+    border-color: var(--st-blue-500);
+    background: var(--st-blue-50);
+    box-shadow: 0 0 0 3px rgba(36, 55, 130, 0.18);
   }
 
   .entry-form select option {
-    background: #1a2a5e;
-    color: #ffffff;
+    background: #ffffff;
+    color: var(--st-blue-700);
   }
 
   .scan-vin-btn {
@@ -2532,16 +2651,16 @@ body.force-mobile-workflow .btn-ghost {
     padding: 8px 12px;
     min-height: 36px;
     border-radius: 6px;
-    border: 1px solid rgba(100, 140, 255, 0.45);
-    color: #8fc1ff;
-    background: rgba(16, 33, 84, 0.45);
+    border: 1px solid rgba(36, 55, 130, 0.32);
+    color: var(--st-blue-600);
+    background: var(--st-blue-50);
     font-size: 13px;
     font-weight: 600;
   }
 
   .scan-vin-btn:active {
     transform: scale(0.98);
-    background: rgba(44, 79, 191, 0.25);
+    background: var(--st-blue-100);
   }
 
   .entry-actions {
@@ -2550,6 +2669,9 @@ body.force-mobile-workflow .btn-ghost {
     gap: 12px;
     padding-top: 16px;
     margin-top: auto;
+    width: min(100%, 760px);
+    margin-left: auto;
+    margin-right: auto;
   }
 
   #mobileBeginInspectionBtn {
@@ -2557,18 +2679,18 @@ body.force-mobile-workflow .btn-ghost {
     font-size: 16px;
     font-weight: 600;
     min-height: 56px;
-    background: linear-gradient(135deg, #2c4fbf 0%, #1b2e6e 100%);
+    background: var(--st-blue-600);
     border: none;
     border-radius: 8px;
     color: #ffffff;
     cursor: pointer;
     transition: all 0.3s ease;
-    box-shadow: 0 4px 12px rgba(44, 79, 191, 0.3);
+    box-shadow: 0 4px 12px rgba(36, 55, 130, 0.35);
   }
 
   #mobileBeginInspectionBtn:active {
     transform: scale(0.98);
-    box-shadow: 0 2px 8px rgba(44, 79, 191, 0.5);
+    box-shadow: 0 2px 8px rgba(36, 55, 130, 0.55);
   }
 
   #mobileBackBtn {
@@ -2576,16 +2698,16 @@ body.force-mobile-workflow .btn-ghost {
     font-size: 16px;
     font-weight: 600;
     min-height: 48px;
-    background: transparent;
-    border: 2px solid rgba(100, 140, 255, 0.3);
+    background: #ffffff;
+    border: 2px solid rgba(36, 55, 130, 0.35);
     border-radius: 8px;
-    color: #64a8ff;
+    color: var(--st-blue-600);
     cursor: pointer;
     transition: all 0.2s ease;
   }
 
   #mobileBackBtn:active {
-    background: rgba(100, 140, 255, 0.1);
+    background: var(--st-blue-50);
   }
 
   /* Small phone optimization */
