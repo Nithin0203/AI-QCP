@@ -61,7 +61,28 @@ body.force-mobile-workflow .inspection-screen {
 
 @media (max-width: 640px) {
   body.force-mobile-workflow {
-    --workflow-sidebar-offset: 160px;
+    --workflow-sidebar-offset: 0px;
+  }
+
+  body.force-mobile-workflow .mobile-tab-bar {
+    display: none;
+  }
+
+  body.force-mobile-workflow .inspection-screen,
+  body.force-mobile-workflow .inspection-screen * {
+    box-sizing: border-box;
+  }
+
+  body.force-mobile-workflow #inspectionInitScreen {
+    max-width: 100vw;
+  }
+
+  body.force-mobile-workflow #inspectionInitScreen .init-content,
+  body.force-mobile-workflow #inspectionInitScreen .defect-section,
+  body.force-mobile-workflow #inspectionInitScreen .section-header,
+  body.force-mobile-workflow #inspectionInitScreen .init-actions {
+    min-width: 0;
+    max-width: 100%;
   }
 }
 
