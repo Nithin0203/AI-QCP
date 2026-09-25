@@ -291,6 +291,29 @@
                 <p class="muted">
                   Live summary for today's inspection activity.
                 </p>
+                <div class="dashboard-filters" aria-label="Dashboard filters">
+                  <label>
+                    Area
+                    <select id="dashboardAreaSelect">
+                      <option value="">Select area</option>
+                    </select>
+                  </label>
+                  <label>
+                    Subarea
+                    <select id="dashboardSubareaSelect" disabled>
+                      <option value="">Select subarea</option>
+                    </select>
+                  </label>
+                  <label>
+                    Station
+                    <span class="station-filter-control">
+                      <select id="dashboardStationSelect" disabled>
+                        <option value="">Select station</option>
+                      </select>
+                      <button id="dashboardLockBtn" class="dashboard-lock-btn" type="button" aria-label="Lock dashboard filters" aria-pressed="false" title="Lock dashboard filters">🔓</button>
+                    </span>
+                  </label>
+                </div>
                 <div id="homeWidgetGrid" class="home-widget-grid"></div>
               </section>
               <section

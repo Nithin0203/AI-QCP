@@ -271,6 +271,7 @@ const SAMPLE_LOGIN_USERS = [
   { name: "Neha", role: "admin" },
   { name: "Anita", role: "admin" },
   { name: "Sanjay", role: "admin" },
+  { name: "Amit", role: "admin" },
   { name: "Pooja", role: "user" },
   { name: "Rahul", role: "user" },
   { name: "Deepa", role: "user" },
@@ -463,6 +464,7 @@ const reportFilters = {
 let dashboardClockTimer = null;
 let liveWidgetTimer = null;
 let demoSimTimer = null;
+const dashboardFilterState = { area: "", subArea: "", station: "", locked: false };
 const MOBILE_RAPID_BREAKPOINT = "(max-width: 640px)";
 const inspectionUiState = {
   currentSequenceIndex: 0,
@@ -8939,6 +8941,64 @@ function updateMenuSelection() {
   });
 }
 
+function calculateDashboardMetrics(records) {
+  const total = records.length;
+  const passed = records.filter((item) => item.resultGood && !item.resultBad).length;
+  const failed = records.filter((item) => item.resultBad).length;
+  const defects = {};
+  records
+    .filter((item) => item.resultBad)
+    .forEach((item) => {
+      const key = item.partName || item.sequenceId || "Unknown";
+      defects[key] = (defects[key] || 0) + 1;
+    });
+
+  const topDefects = Object.entries(defects)
+    .sort((a, b) => b[1] - a[1])
+    .slice(0, 3);
+  const timestamps = records
+    .map((item) => new Date(item.timestamp).getTime())
+    .filter((timestamp) => !Number.isNaN(timestamp))
+    .sort((a, b) => a - b);
+  const averageMinutes = timestamps.length >= 2
+    ? ((timestamps[timestamps.length - 1] - timestamps[0]) / (timestamps.length - 1) / 60000).toFixed(1)
+    : null;
+
+  return {
+    total,
+    passed,
+    failed,
+    passRate: total ? ((passed / total) * 100).toFixed(1) : "0.0",
+    failRate: total ? ((failed / total) * 100).toFixed(1) : "0.0",
+    averageTime: averageMinutes ? `${averageMinutes} min` : "N/A",
+    topDefects,
+  };
+}
+
+function buildStationCards(records) {
+  const stationIds = dashboardFilterState.station === "all"
+    ? STATION_OPTIONS
+    : [dashboardFilterState.station];
+
+  return stationIds.map((stationId) => {
+    const stationRecords = records.filter((item) => item.stationId === stationId);
+    const metrics = calculateDashboardMetrics(stationRecords);
+    const stationNumber = STATION_OPTIONS.indexOf(stationId) + 1;
+    const stationFailRateAccent = Number(metrics.failRate) > 29.9
+      ? "station-fail-rate-high"
+      : "station-fail-rate-low";
+    return `<article class="station-card">
+      <div class="station-card-title station-card-title-s${stationNumber}"><span class="station-card-marker">S${stationNumber}</span><strong>Station S${stationNumber}</strong></div>
+      <div class="station-card-metrics">
+        <div><strong>${metrics.total}</strong><span>Inspected today</span></div>
+        <div class="${stationFailRateAccent}"><strong>${metrics.failRate}%</strong><span>Fail rate</span></div>
+        <div><strong>${metrics.topDefects.reduce((total, [, count]) => total + count, 0)}</strong><span>Major defects</span></div>
+        <div><strong>${metrics.averageTime}</strong><span>Avg. time</span></div>
+      </div>
+    </article>`;
+  }).join("");
+}
+
 function buildHomeWidgets() {
   const today = new Date().toDateString();
 
@@ -8946,54 +9006,26 @@ function buildHomeWidgets() {
     (item) => new Date(item.timestamp).toDateString() === today,
   );
 
-  const totalToday = todayInspections.length;
+  const filteredInspections = todayInspections.filter((item) => {
+    const areaMatches = !dashboardFilterState.area || item.area === dashboardFilterState.area;
+    const subAreaMatches =
+      !dashboardFilterState.subArea ||
+      item.subArea === dashboardFilterState.subArea ||
+      item.subArea === "Demo";
+    const stationMatches =
+      !dashboardFilterState.station ||
+      dashboardFilterState.station === "all" ||
+      item.stationId === dashboardFilterState.station;
+    return areaMatches && subAreaMatches && stationMatches;
+  });
 
-  const passToday = todayInspections.filter(
-    (item) => item.resultGood && !item.resultBad,
-  ).length;
-  const failToday = todayInspections.filter((item) => item.resultBad).length;
-
-  const passRate = totalToday
-    ? ((passToday / totalToday) * 100).toFixed(1)
-    : "0.0";
-  const failRate = totalToday
-    ? ((failToday / totalToday) * 100).toFixed(1)
-    : "0.0";
-
-  // First Pass Yield = inspections good on first attempt (resultGood, not resultBad)
-  const fpyCount = todayInspections.filter(
-    (item) => item.resultGood && !item.resultBad,
-  ).length;
-  const fpy = totalToday ? ((fpyCount / totalToday) * 100).toFixed(1) : "0.0";
-
-  // Major defects: parts where resultBad is true – count by partName
-  const defectMap = {};
-  todayInspections
-    .filter((item) => item.resultBad)
-    .forEach((item) => {
-      const key = item.partName || item.sequenceId || "Unknown";
-      defectMap[key] = (defectMap[key] || 0) + 1;
-    });
-
-  const top3 = Object.entries(defectMap)
-    .sort((a, b) => b[1] - a[1])
-    .slice(0, 3);
-
-  // Average inspection time: difference in minutes between earliest and latest today
-  let avgTimeText = "N/A";
-  if (todayInspections.length >= 2) {
-    const timestamps = todayInspections
-      .map((item) => new Date(item.timestamp).getTime())
-      .filter((t) => !Number.isNaN(t))
-      .sort((a, b) => a - b);
-
-    if (timestamps.length >= 2) {
-      const spanMs = timestamps[timestamps.length - 1] - timestamps[0];
-      const avgMs = spanMs / (timestamps.length - 1);
-      const avgMin = (avgMs / 60000).toFixed(1);
-      avgTimeText = `${avgMin} min`;
-    }
+  if (!dashboardFilterState.station) {
+    return `<div class="dashboard-empty-state">Select an area, subarea, and station to view station quality metrics.</div>`;
   }
+
+  const metrics = calculateDashboardMetrics(filteredInspections);
+  const { total: totalToday, passed: passToday, failed: failToday, passRate, failRate, averageTime: avgTimeText, topDefects: top3 } = metrics;
+  const fpy = passRate;
 
   const defectRows = top3.length
     ? top3
@@ -9004,33 +9036,20 @@ function buildHomeWidgets() {
         .join("")
     : `<p class="muted" style="font-size:0.85rem;margin:0.3rem 0 0">No defects recorded today.</p>`;
 
-  return [
+  const widgetMarkup = [
+    {
+      icon: "📊",
+      title: "Pass Rate",
+      value: `${passRate}%`,
+      sub: `${passToday} of ${totalToday} passed`,
+      accent: "widget-green widget-featured",
+    },
     {
       icon: "🚗",
       title: "Total Inspected Today",
       value: String(totalToday),
       sub: "vehicles",
       accent: "widget-blue",
-    },
-    {
-      icon: "✅",
-      title: "Pass Rate",
-      value: `${passRate}%`,
-      sub: `${passToday} of ${totalToday} passed`,
-      accent: "widget-green",
-    },
-    {
-      icon: "❌",
-      title: "Fail Rate",
-      value: `${failRate}%`,
-      sub: `${failToday} of ${totalToday} failed`,
-      accent: "widget-red",
-    },
-    {
-      icon: "⚠️",
-      title: "Major Defects (Top 3)",
-      valueHtml: defectRows,
-      accent: "widget-orange",
     },
     {
       icon: "🏆",
@@ -9045,6 +9064,13 @@ function buildHomeWidgets() {
       value: avgTimeText,
       sub: "between records today",
       accent: "widget-gold",
+    },
+    {
+      icon: "⚠️",
+      title: "Most Defects Found",
+      value: top3.length ? sanitize(top3[0][0]) : "None",
+      sub: top3.length ? `${top3[0][1]} occurrence${top3[0][1] === 1 ? "" : "s"}` : "No defects today",
+      accent: "widget-orange",
     },
   ]
     .map(
@@ -9062,6 +9088,13 @@ function buildHomeWidgets() {
         </article>`,
     )
     .join("");
+
+  return `<section class="dashboard-kpi-section" aria-label="Quality KPIs">
+    <div class="dashboard-kpi-stack">${widgetMarkup}</div>
+  </section>
+  <section class="station-cards-section" aria-label="Station summaries">
+    <div class="station-cards-grid">${buildStationCards(filteredInspections)}</div>
+  </section>`;
 }
 
 function showHome() {
@@ -9136,6 +9169,63 @@ function bindSidebarEvents() {
   }
 }
 
+function initDashboardFilters() {
+  const areaSelect = document.getElementById("dashboardAreaSelect");
+  const subAreaSelect = document.getElementById("dashboardSubareaSelect");
+  const stationSelect = document.getElementById("dashboardStationSelect");
+  const lockButton = document.getElementById("dashboardLockBtn");
+  if (!areaSelect || !subAreaSelect || !stationSelect || !lockButton || areaSelect.dataset.ready) {
+    return;
+  }
+
+  areaSelect.dataset.ready = "true";
+  areaSelect.insertAdjacentHTML(
+    "beforeend",
+    AREA_OPTIONS.map((area) => `<option value="${sanitize(area)}">${sanitize(area)}</option>`).join(""),
+  );
+
+  areaSelect.addEventListener("change", () => {
+    dashboardFilterState.area = areaSelect.value;
+    dashboardFilterState.subArea = "";
+    dashboardFilterState.station = "";
+    subAreaSelect.innerHTML = `<option value="">Select subarea</option>${(SUBAREA_OPTIONS[areaSelect.value] || [])
+      .map((subArea) => `<option value="${sanitize(subArea)}">${sanitize(subArea)}</option>`)
+      .join("")}`;
+    subAreaSelect.disabled = !areaSelect.value;
+    stationSelect.innerHTML = `<option value="">Select station</option>`;
+    stationSelect.disabled = true;
+    refreshWidgetGrid();
+  });
+
+  subAreaSelect.addEventListener("change", () => {
+    dashboardFilterState.subArea = subAreaSelect.value;
+    dashboardFilterState.station = "";
+    stationSelect.innerHTML = `<option value="">Select station</option>${STATION_OPTIONS
+      .map((station, index) => `<option value="${station}">S${index + 1}</option>`)
+      .join("")}<option value="all">All</option>`;
+    stationSelect.disabled = !subAreaSelect.value;
+    refreshWidgetGrid();
+  });
+
+  stationSelect.addEventListener("change", () => {
+    dashboardFilterState.station = stationSelect.value;
+    refreshWidgetGrid();
+  });
+
+  lockButton.addEventListener("click", () => {
+    dashboardFilterState.locked = !dashboardFilterState.locked;
+    const locked = dashboardFilterState.locked;
+    areaSelect.disabled = locked;
+    subAreaSelect.disabled = locked || !dashboardFilterState.area;
+    stationSelect.disabled = locked || !dashboardFilterState.subArea;
+    lockButton.textContent = locked ? "🔒" : "🔓";
+    lockButton.setAttribute("aria-label", locked ? "Unlock dashboard filters" : "Lock dashboard filters");
+    lockButton.setAttribute("title", locked ? "Unlock dashboard filters" : "Lock dashboard filters");
+    lockButton.setAttribute("aria-pressed", String(locked));
+    lockButton.classList.toggle("is-locked", locked);
+  });
+}
+
 function buildMobileTabBar() {
   if (!isMobileRapidMode()) {
     return;
@@ -9202,6 +9292,7 @@ function updateMobileTabBar() {
 function showDashboard() {
   loginPage.classList.add("hidden");
   dashboardPage.classList.remove("hidden");
+  initDashboardFilters();
 
   const roleLabel = currentUser.role === "admin" ? "Admin" : "User";
   welcomeText.textContent = `${currentUser.name} | ${roleLabel}`;
