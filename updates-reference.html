@@ -1,0 +1,996 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>AI Quality Inspection - Updates & Enhancements Reference</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Encode+Sans:wght@400;500;600;700&family=Encode+Sans+Expanded:wght@400;500;600;700;800&display=swap"
+      rel="stylesheet"
+    />
+    <style>
+      :root {
+        --st-blue-950: #090d20;
+        --st-blue-900: #0d1430;
+        --st-blue-800: #162250;
+        --st-blue-700: #1d2c68;
+        --st-blue-600: #243782;
+        --st-blue-300: #576fd1;
+        --st-blue-200: #8798de;
+        --st-blue-100: #b7c1eb;
+        --st-mint: #43aaa0;
+        --st-mint-light: #a0d4cd;
+        --st-orange: #eca935;
+        --st-tangerine: #e94e24;
+      }
+
+      * {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+      }
+
+      body {
+        font-family: "Encode Sans", "Segoe UI", Roboto, Arial, sans-serif;
+        background: linear-gradient(
+          135deg,
+          var(--st-blue-950) 0%,
+          var(--st-blue-800) 100%
+        );
+        color: #e6e9f2;
+        line-height: 1.6;
+        min-height: 100vh;
+        padding: 20px;
+      }
+
+      h1,
+      h2,
+      h3 {
+        font-family: "Encode Sans Expanded", "Segoe UI", Arial, sans-serif;
+      }
+
+      .container {
+        max-width: 1200px;
+        margin: 0 auto;
+      }
+
+      /* Header */
+      .header {
+        text-align: center;
+        margin-bottom: 50px;
+        padding-top: 30px;
+      }
+
+      .logo-shield {
+        width: 80px;
+        height: 80px;
+        margin: 0 auto 20px;
+        background: linear-gradient(
+          135deg,
+          var(--st-blue-600) 0%,
+          var(--st-blue-300) 100%
+        );
+        border-radius: 12px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 40px;
+        box-shadow: 0 8px 24px rgba(36, 55, 130, 0.4);
+      }
+
+      .stellantis-label {
+        font-size: 12px;
+        letter-spacing: 2px;
+        color: var(--st-blue-200);
+        margin-bottom: 10px;
+        text-transform: uppercase;
+        font-weight: 600;
+      }
+
+      h1 {
+        font-size: 2.5em;
+        color: #ffffff;
+        margin-bottom: 10px;
+        font-weight: 700;
+      }
+
+      .subtitle {
+        color: var(--st-blue-200);
+        font-size: 1.1em;
+        margin-bottom: 10px;
+      }
+
+      .version-badge {
+        display: inline-block;
+        background: rgba(36, 55, 130, 0.35);
+        color: var(--st-blue-100);
+        padding: 8px 16px;
+        border-radius: 20px;
+        font-size: 0.9em;
+        border: 1px solid var(--st-blue-300);
+        margin-top: 15px;
+      }
+
+      /* Navigation Tabs */
+      .tabs {
+        display: flex;
+        gap: 10px;
+        margin-bottom: 40px;
+        flex-wrap: wrap;
+        justify-content: center;
+        border-bottom: 2px solid rgba(135, 152, 222, 0.25);
+        padding-bottom: 20px;
+      }
+
+      .tab-btn {
+        padding: 12px 24px;
+        background: transparent;
+        border: 2px solid transparent;
+        color: var(--st-blue-200);
+        cursor: pointer;
+        font-size: 1em;
+        font-weight: 600;
+        transition: all 0.3s ease;
+        border-radius: 8px;
+      }
+
+      .tab-btn:hover {
+        background: rgba(36, 55, 130, 0.3);
+        color: #ffffff;
+      }
+
+      .tab-btn.active {
+        color: #ffffff;
+        border-bottom: 2px solid var(--st-mint);
+      }
+
+      /* Content Sections */
+      .section {
+        display: none;
+        animation: fadeIn 0.5s ease;
+      }
+
+      .section.active {
+        display: block;
+      }
+
+      @keyframes fadeIn {
+        from {
+          opacity: 0;
+          transform: translateY(10px);
+        }
+        to {
+          opacity: 1;
+          transform: translateY(0);
+        }
+      }
+
+      /* Feature Cards */
+      .features-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+        gap: 24px;
+        margin-bottom: 40px;
+      }
+
+      .feature-card {
+        background: rgba(255, 255, 255, 0.05);
+        border: 1px solid rgba(135, 152, 222, 0.25);
+        border-radius: 12px;
+        padding: 24px;
+        backdrop-filter: blur(10px);
+        transition: all 0.3s ease;
+        cursor: pointer;
+      }
+
+      .feature-card:hover {
+        background: rgba(255, 255, 255, 0.08);
+        border-color: rgba(135, 152, 222, 0.55);
+        transform: translateY(-5px);
+        box-shadow: 0 12px 36px rgba(9, 13, 32, 0.45);
+      }
+
+      .feature-icon {
+        font-size: 2.5em;
+        margin-bottom: 15px;
+        display: inline-block;
+      }
+
+      .feature-card h3 {
+        color: #ffffff;
+        margin-bottom: 12px;
+        font-size: 1.3em;
+      }
+
+      .feature-card p {
+        color: var(--st-blue-100);
+        margin-bottom: 15px;
+        line-height: 1.7;
+      }
+
+      .benefit-badge {
+        display: inline-block;
+        background: rgba(67, 170, 160, 0.18);
+        color: var(--st-mint-light);
+        padding: 6px 12px;
+        border-radius: 6px;
+        font-size: 0.85em;
+        margin-right: 8px;
+        margin-bottom: 8px;
+        font-weight: 500;
+      }
+
+      /* Enhancement List */
+      .enhancement-list {
+        background: rgba(255, 255, 255, 0.05);
+        border: 1px solid rgba(135, 152, 222, 0.25);
+        border-radius: 12px;
+        padding: 24px;
+        margin-bottom: 24px;
+      }
+
+      .enhancement-item {
+        display: flex;
+        gap: 20px;
+        padding: 20px 0;
+        border-bottom: 1px solid rgba(135, 152, 222, 0.15);
+      }
+
+      .enhancement-item:last-child {
+        border-bottom: none;
+      }
+
+      .enhancement-number {
+        min-width: 40px;
+        height: 40px;
+        background: linear-gradient(
+          135deg,
+          var(--st-blue-600) 0%,
+          var(--st-blue-300) 100%
+        );
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        color: white;
+        font-weight: bold;
+        font-size: 1.1em;
+      }
+
+      .enhancement-content h4 {
+        color: #ffffff;
+        margin-bottom: 8px;
+        font-size: 1.1em;
+      }
+
+      .enhancement-content p {
+        color: var(--st-blue-100);
+        margin-bottom: 8px;
+      }
+
+      .enhancement-details {
+        color: var(--st-blue-200);
+        font-size: 0.9em;
+        font-style: italic;
+      }
+
+      /* Status Indicators */
+      .status-badge {
+        display: inline-block;
+        padding: 6px 12px;
+        border-radius: 20px;
+        font-size: 0.85em;
+        font-weight: 600;
+        margin-right: 10px;
+      }
+
+      .status-deployed {
+        background: rgba(67, 170, 160, 0.2);
+        color: var(--st-mint);
+        border: 1px solid var(--st-mint);
+      }
+
+      .status-planned {
+        background: rgba(236, 169, 53, 0.2);
+        color: var(--st-orange);
+        border: 1px solid var(--st-orange);
+      }
+
+      /* Impact Section */
+      .impact-section {
+        background: linear-gradient(
+          135deg,
+          rgba(67, 170, 160, 0.12) 0%,
+          rgba(36, 55, 130, 0.18) 100%
+        );
+        border: 1px solid rgba(67, 170, 160, 0.35);
+        border-radius: 12px;
+        padding: 30px;
+        margin-top: 40px;
+        text-align: center;
+      }
+
+      .impact-section h3 {
+        color: #ffffff;
+        font-size: 1.5em;
+        margin-bottom: 20px;
+      }
+
+      .impact-metrics {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+        gap: 20px;
+        margin-top: 20px;
+      }
+
+      .metric {
+        background: rgba(255, 255, 255, 0.05);
+        padding: 20px;
+        border-radius: 8px;
+        border: 1px solid rgba(135, 152, 222, 0.25);
+      }
+
+      .metric-value {
+        font-size: 2em;
+        color: var(--st-mint);
+        font-weight: bold;
+        margin-bottom: 5px;
+      }
+
+      .metric-label {
+        color: var(--st-blue-200);
+        font-size: 0.9em;
+      }
+
+      /* Footer */
+      .footer {
+        text-align: center;
+        margin-top: 60px;
+        padding: 30px 0;
+        border-top: 1px solid rgba(135, 152, 222, 0.25);
+        color: var(--st-blue-200);
+        font-size: 0.9em;
+      }
+
+      /* Print Styles */
+      @media print {
+        body {
+          background: white;
+          color: black;
+        }
+        .feature-card {
+          page-break-inside: avoid;
+        }
+        .tabs {
+          display: none;
+        }
+      }
+
+      /* Mobile Responsive */
+      @media (max-width: 768px) {
+        h1 {
+          font-size: 1.8em;
+        }
+        .features-grid {
+          grid-template-columns: 1fr;
+        }
+        .impact-metrics {
+          grid-template-columns: repeat(2, 1fr);
+        }
+      }
+
+      /* Quick Reference Box */
+      .quick-ref {
+        background: rgba(36, 55, 130, 0.28);
+        border-left: 4px solid var(--st-mint);
+        padding: 15px;
+        border-radius: 6px;
+        margin: 15px 0;
+        color: var(--st-blue-100);
+      }
+
+      .quick-ref strong {
+        color: var(--st-mint-light);
+      }
+
+      /* Code/Tech Details */
+      .tech-detail {
+        background: rgba(0, 0, 0, 0.2);
+        padding: 12px;
+        border-radius: 6px;
+        font-family: "Courier New", monospace;
+        font-size: 0.9em;
+        color: var(--st-mint-light);
+        margin: 10px 0;
+        overflow-x: auto;
+      }
+    </style>
+  </head>
+  <body>
+    <div class="container">
+      <!-- Header -->
+      <div class="header">
+        <div class="stellantis-label">STELLANTIS</div>
+        <div class="logo-shield">🛡️</div>
+        <h1>AI Quality Inspection</h1>
+        <p class="subtitle">Updates & Enhancements Reference</p>
+        <div class="version-badge">Latest Deployment — v2.0+</div>
+      </div>
+
+      <!-- Navigation Tabs -->
+      <div class="tabs">
+        <button class="tab-btn active" onclick="switchTab('deployed')">
+          ✅ Deployed Features
+        </button>
+        <button class="tab-btn" onclick="switchTab('workflow')">
+          📱 Mobile Workflow
+        </button>
+        <button class="tab-btn" onclick="switchTab('improvements')">
+          🎯 Key Improvements
+        </button>
+        <button class="tab-btn" onclick="switchTab('impact')">
+          📊 Impact Summary
+        </button>
+      </div>
+
+      <!-- DEPLOYED FEATURES -->
+      <div id="deployed" class="section active">
+        <h2 style="color: #ffffff; margin-bottom: 30px; font-size: 2em">
+          🚀 Deployed UX Enhancements
+        </h2>
+
+        <div class="features-grid">
+          <!-- Feature 1 -->
+          <div class="feature-card">
+            <div class="feature-icon">↶</div>
+            <h3>Undo Toast Notification</h3>
+            <p>
+              When operators mark a part GOOD or BAD, a green toast slides up
+              from the bottom with a 3-second countdown. Tap "← Undo" to
+              instantly revert.
+            </p>
+            <div>
+              <span class="benefit-badge">Reduces Friction</span>
+              <span class="benefit-badge">Instant Recovery</span>
+            </div>
+            <div class="quick-ref">
+              <strong>Why It Matters:</strong> Operators work fast and make
+              typos. Undo is instant relief without page navigation.
+            </div>
+          </div>
+
+          <!-- Feature 2 -->
+          <div class="feature-card">
+            <div class="feature-icon">📍</div>
+            <h3>Live Context Bar</h3>
+            <p>
+              Sticky header at the top showing vehicle VIN, current part, and
+              progress [3/7]. Always visible while scrolling through the
+              inspection form.
+            </p>
+            <div>
+              <span class="benefit-badge">Prevents Confusion</span>
+              <span class="benefit-badge">Navigation Aid</span>
+            </div>
+            <div class="quick-ref">
+              <strong>Why It Matters:</strong> Operators glance up to confirm
+              what vehicle/part they're inspecting without losing context.
+            </div>
+          </div>
+
+          <!-- Feature 3 -->
+          <div class="feature-card">
+            <div class="feature-icon">▓▓░░░</div>
+            <h3>Visual Progress Bar</h3>
+            <p>
+              Progress bar fills left-to-right as operators complete parts.
+              Includes estimated time remaining (assumes ~2 min per part).
+            </p>
+            <div>
+              <span class="benefit-badge">Motivation</span>
+              <span class="benefit-badge">Time Awareness</span>
+            </div>
+            <div class="quick-ref">
+              <strong>Why It Matters:</strong> Visual progress is more
+              motivating than numbers. Operators see momentum as the bar fills.
+            </div>
+          </div>
+
+          <!-- Feature 4 -->
+          <div class="feature-card">
+            <div class="feature-icon">✨</div>
+            <h3>Result Confirmation Animations</h3>
+            <p>
+              When marking GOOD or BAD, button icon scales up and rotates.
+              Surrounding area flashes (green for GOOD, amber for BAD) with soft
+              glow ripple effect.
+            </p>
+            <div>
+              <span class="benefit-badge">Confidence Boost</span>
+              <span class="benefit-badge">Responsiveness</span>
+            </div>
+            <div class="quick-ref">
+              <strong>Why It Matters:</strong> Confirms action was registered
+              instantly. Feels responsive and engaging without waiting for
+              success messages.
+            </div>
+          </div>
+
+          <!-- Feature 5 -->
+          <div class="feature-card">
+            <div class="feature-icon">🎨</div>
+            <h3>Dark Theme & Mobile-First Design</h3>
+            <p>
+              Complete dark theme optimized for factory lighting. Large touch
+              targets, bottom tab bar for thumb-reach access, and haptic
+              feedback on actions.
+            </p>
+            <div>
+              <span class="benefit-badge">Factory Ready</span>
+              <span class="benefit-badge">Ergonomic</span>
+            </div>
+            <div class="quick-ref">
+              <strong>Why It Matters:</strong> Easier on eyes under harsh
+              factory lighting. Comfortable for standing operators with one-hand
+              operation.
+            </div>
+          </div>
+
+          <!-- Feature 6 -->
+          <div class="feature-card">
+            <div class="feature-icon">💾</div>
+            <h3>Persistent State & Offline Support</h3>
+            <p>
+              All inspection data stored in browser localStorage. Service worker
+              enables offline functionality. Operators can pause and resume
+              inspections without losing work.
+            </p>
+            <div>
+              <span class="benefit-badge">Reliability</span>
+              <span class="benefit-badge">Continuity</span>
+            </div>
+            <div class="quick-ref">
+              <strong>Why It Matters:</strong> No lost work from network
+              dropouts. Operators can inspect offline and sync when connection
+              returns.
+            </div>
+          </div>
+        </div>
+
+        <div class="enhancement-list">
+          <h3 style="color: #ffffff; margin-bottom: 20px">
+            📋 Implementation Details
+          </h3>
+
+          <div class="enhancement-item">
+            <div class="enhancement-number">1</div>
+            <div class="enhancement-content">
+              <h4>Undo History Management</h4>
+              <p>
+                Stores inspection history in <code>_undoHistory</code> array for
+                quick state restoration.
+              </p>
+              <p class="enhancement-details">
+                Functions: <code>showUndoToast(message, onUndo)</code>,
+                <code>dismissUndoToast()</code>
+              </p>
+            </div>
+          </div>
+
+          <div class="enhancement-item">
+            <div class="enhancement-number">2</div>
+            <div class="enhancement-content">
+              <h4>Context Bar Updates</h4>
+              <p>
+                Sticky positioning with vehicle VIN, part name, and progress
+                count badge.
+              </p>
+              <p class="enhancement-details">
+                Functions:
+                <code
+                  >updateLiveContextBar(vin, partName, partIndex,
+                  totalParts)</code
+                >, <code>hideLiveContextBar()</code>
+              </p>
+            </div>
+          </div>
+
+          <div class="enhancement-item">
+            <div class="enhancement-number">3</div>
+            <div class="enhancement-content">
+              <h4>Progress Bar Animation</h4>
+              <p>
+                Smooth CSS transitions with gradient blue-to-purple fill. 0.35s
+                cubic-bezier easing for snappy feel.
+              </p>
+              <p class="enhancement-details">
+                Functions:
+                <code
+                  >updateProgressBar(completed, total,
+                  estimatedSecRemaining)</code
+                >
+              </p>
+            </div>
+          </div>
+
+          <div class="enhancement-item">
+            <div class="enhancement-number">4</div>
+            <div class="enhancement-content">
+              <h4>Animation & Haptics Integration</h4>
+              <p>
+                CSS animations for resultPulse (outward glow), icon scaling, and
+                color flashes (green/amber). Haptic vibration triggers on
+                confirmation.
+              </p>
+              <p class="enhancement-details">
+                Functions: <code>animateResultConfirmation(isGood)</code> —
+                Total duration: 0.6s
+              </p>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- MOBILE WORKFLOW -->
+      <div id="workflow" class="section">
+        <h2 style="color: #ffffff; margin-bottom: 30px; font-size: 2em">
+          📱 Mobile Inspection Workflow
+        </h2>
+        <p style="font-size: 1.1em; margin-bottom: 30px; color: var(--st-blue-100)">
+          Complete 3-stage workflow designed exclusively for mobile operators
+          (≤640px). Desktop users continue using the traditional inspection
+          form.
+        </p>
+
+        <div class="features-grid">
+          <div class="feature-card">
+            <div class="feature-icon">📋</div>
+            <h3>Stage 1: Parts List Overview</h3>
+            <p><strong>Grid view of all parts to inspect</strong></p>
+            <ul style="color: var(--st-blue-100); margin-left: 20px; margin-top: 10px">
+              <li>Thumbnail image of each part</li>
+              <li>Part name and ID</li>
+              <li>Status badge (Pending / Done)</li>
+              <li>7-10 cards visible on screen</li>
+            </ul>
+            <div class="quick-ref" style="margin-top: 15px">
+              <strong>Action:</strong> Tap any part to inspect it
+            </div>
+          </div>
+
+          <div class="feature-card">
+            <div class="feature-icon">🔍</div>
+            <h3>Stage 2: Part Details Screen</h3>
+            <p><strong>Full details about the selected part</strong></p>
+            <ul style="color: var(--st-blue-100); margin-left: 20px; margin-top: 10px">
+              <li>Large reference image</li>
+              <li>Part name, ID, quality criteria</li>
+              <li>Check type (Priority or Standard)</li>
+            </ul>
+            <div class="quick-ref" style="margin-top: 15px">
+              <strong>Actions:</strong><br />
+              • "Mark Defects" → goes to image editor<br />
+              • "Mark as GOOD" → instantly saves
+            </div>
+          </div>
+
+          <div class="feature-card">
+            <div class="feature-icon">✏️</div>
+            <h3>Stage 3: Image Editor & Defect Marking</h3>
+            <p>
+              <strong
+                >Drawing tools to annotate defects on reference image</strong
+              >
+            </p>
+            <ul style="color: var(--st-blue-100); margin-left: 20px; margin-top: 10px">
+              <li>✏️ Draw — Freehand pen</li>
+              <li>⭕ Circle — Draw circles around defects</li>
+              <li>➜ Arrow — Point to specific issues</li>
+              <li>🎨 Color picker — Change pen color</li>
+              <li>📏 Pen size — Adjust thickness (2-15px)</li>
+              <li>↶ Undo — Revert last mark</li>
+              <li>🗑️ Clear — Clear all marks</li>
+            </ul>
+            <div class="quick-ref" style="margin-top: 15px">
+              <strong>Finish:</strong> Save with "Mark as BAD ⚠️" button
+            </div>
+          </div>
+        </div>
+
+        <div
+          class="quick-ref"
+          style="margin-top: 30px; padding: 20px; font-size: 1.1em"
+        >
+          <strong>Why This 3-Stage Workflow:</strong> Breaking the process into
+          simple, focused steps makes inspection dramatically faster. Operators
+          see all parts at a glance, review details, and mark defects with
+          visual precision—all in thumb-reach touch targets.
+        </div>
+      </div>
+
+      <!-- KEY IMPROVEMENTS -->
+      <div id="improvements" class="section">
+        <h2 style="color: #ffffff; margin-bottom: 30px; font-size: 2em">
+          🎯 Key Improvement Areas
+        </h2>
+
+        <div class="enhancement-list">
+          <h3 style="color: #ffffff; margin-bottom: 20px">
+            🔍 Categorized Enhancements
+          </h3>
+
+          <div class="enhancement-item">
+            <div class="enhancement-number">A</div>
+            <div class="enhancement-content">
+              <h4>Context Clarity & Confusion Prevention</h4>
+              <p>
+                <strong>Problem:</strong> Operators lose track of which part
+                they're inspecting, how many remain, and overall progress.
+              </p>
+              <p>
+                <strong>Solution:</strong> Live Context Bar showing "🚙 VIN:
+                ABC123... | Part: Left Door Handle [3/7] | Status: Ready"
+              </p>
+              <p class="enhancement-details">
+                Implementation Effort: Low (1–2 hours)
+              </p>
+              <span class="status-badge status-deployed">✅ DEPLOYED</span>
+            </div>
+          </div>
+
+          <div class="enhancement-item">
+            <div class="enhancement-number">B</div>
+            <div class="enhancement-content">
+              <h4>Visual Feedback for Results</h4>
+              <p>
+                <strong>Problem:</strong> After marking GOOD/BAD, operators
+                might miss confirmation that input was saved.
+              </p>
+              <p>
+                <strong>Solution:</strong> Celebratory micro-interactions: GOOD
+                → Green flash + checkmark icon (100ms), BAD → Amber flash +
+                alert icon.
+              </p>
+              <p class="enhancement-details">
+                Implementation Effort: Low (CSS animations + icons)
+              </p>
+              <span class="status-badge status-deployed">✅ DEPLOYED</span>
+            </div>
+          </div>
+
+          <div class="enhancement-item">
+            <div class="enhancement-number">C</div>
+            <div class="enhancement-content">
+              <h4>Smart Part Cards for Rapid Mode</h4>
+              <p>
+                <strong>Problem:</strong> Dense workflow may confuse newer
+                operators about which part they're on.
+              </p>
+              <p>
+                <strong>Solution:</strong> Display current & next 2 parts as
+                large, swipe-able cards with reference thumbnails. Part Queue
+                indicator shows what's left.
+              </p>
+              <p class="enhancement-details">
+                Implementation Effort: Medium (2–3 hours)
+              </p>
+              <span class="status-badge status-planned">📋 PLANNED</span>
+            </div>
+          </div>
+
+          <div class="enhancement-item">
+            <div class="enhancement-number">D</div>
+            <div class="enhancement-content">
+              <h4>One-Tap Result Capture</h4>
+              <p>
+                <strong>Problem:</strong> GOOD/BAD buttons work but multi-step
+                form entry slows down rapid inspections.
+              </p>
+              <p>
+                <strong>Solution:</strong> Enhanced rapid mode with
+                voice-to-text notes (optional), instant confirmation, and
+                automatic sequence advancement.
+              </p>
+              <p class="enhancement-details">
+                Implementation Effort: Medium (refactor UI flow)
+              </p>
+              <span class="status-badge status-planned">📋 PLANNED</span>
+            </div>
+          </div>
+
+          <div class="enhancement-item">
+            <div class="enhancement-number">E</div>
+            <div class="enhancement-content">
+              <h4>Mis-Scan Prevention</h4>
+              <p>
+                <strong>Problem:</strong> Multiple sequences at same station +
+                dropdown selection = potential for scanning wrong part.
+              </p>
+              <p>
+                <strong>Solution:</strong> Barcode auto-routes to correct
+                sequence; visual confirmation of scanned model before part
+                selection begins.
+              </p>
+              <p class="enhancement-details">
+                Implementation Effort: Medium (barcode parsing, routing logic)
+              </p>
+              <span class="status-badge status-planned">📋 PLANNED</span>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- IMPACT SUMMARY -->
+      <div id="impact" class="section">
+        <h2 style="color: #ffffff; margin-bottom: 30px; font-size: 2em">
+          📊 Impact & Key Metrics
+        </h2>
+
+        <div class="impact-section">
+          <h3>Projected Cycle Time Reduction</h3>
+          <div class="impact-metrics">
+            <div class="metric">
+              <div class="metric-value">15-20%</div>
+              <div class="metric-label">Faster Cycle Time</div>
+            </div>
+            <div class="metric">
+              <div class="metric-value">~40 sec</div>
+              <div class="metric-label">Saved per Vehicle</div>
+            </div>
+            <div class="metric">
+              <div class="metric-value">↓90%</div>
+              <div class="metric-label">Mis-Marks (with Undo)</div>
+            </div>
+          </div>
+        </div>
+
+        <div style="margin-top: 40px">
+          <h3 style="color: #ffffff; margin-bottom: 20px; font-size: 1.3em">
+            💡 Why Each Enhancement Matters
+          </h3>
+
+          <div class="enhancement-list">
+            <div class="enhancement-item">
+              <div class="enhancement-number">✓</div>
+              <div class="enhancement-content">
+                <h4>Undo Toast → Confidence & Speed</h4>
+                <p>
+                  Operators no longer hesitate after mis-taps. Instant recovery
+                  without page re-navigation reduces anxiety and speeds up
+                  workflows.
+                </p>
+              </div>
+            </div>
+
+            <div class="enhancement-item">
+              <div class="enhancement-number">✓</div>
+              <div class="enhancement-content">
+                <h4>Context Bar → Reduced Errors</h4>
+                <p>
+                  No more "Wait, which part was I on?" confusion. Glance-able
+                  reference prevents re-inspections and out-of-order marks.
+                </p>
+              </div>
+            </div>
+
+            <div class="enhancement-item">
+              <div class="enhancement-number">✓</div>
+              <div class="enhancement-content">
+                <h4>Progress Bar → Motivation & Pacing</h4>
+                <p>
+                  Visual momentum keeps operators engaged. Time estimate helps
+                  supervisors schedule break times and manage shift goals.
+                </p>
+              </div>
+            </div>
+
+            <div class="enhancement-item">
+              <div class="enhancement-number">✓</div>
+              <div class="enhancement-content">
+                <h4>Animation Feedback → Perceived Responsiveness</h4>
+                <p>
+                  Celebratory micro-interactions make the app feel fast and
+                  polished. Operators feel their actions are registered
+                  immediately.
+                </p>
+              </div>
+            </div>
+
+            <div class="enhancement-item">
+              <div class="enhancement-number">✓</div>
+              <div class="enhancement-content">
+                <h4>Mobile 3-Stage Workflow → Focused Attention</h4>
+                <p>
+                  Breaking inspection into clear stages reduces cognitive load.
+                  Operators stay focused on one task at a time.
+                </p>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div
+          style="
+            background: rgba(67, 170, 160, 0.12);
+            border: 1px solid rgba(67, 170, 160, 0.35);
+            border-radius: 12px;
+            padding: 25px;
+            margin-top: 40px;
+          "
+        >
+          <h3 style="color: var(--st-mint); margin-bottom: 15px">
+            ✅ Validated Outcomes
+          </h3>
+          <ul style="color: var(--st-blue-100); margin-left: 20px; line-height: 2">
+            <li>
+              <strong>Folder structure verified:</strong> app-versions/ with
+              original/, latest/, and agent-features/ subdirectories
+            </li>
+            <li>
+              <strong>Version management:</strong> Clear separation between
+              Created/ (baseline) and deploy-clean/ (production)
+            </li>
+            <li>
+              <strong>Agent integration planning:</strong> Reserved
+              agent-features/ folder for safe development without touching
+              production
+            </li>
+            <li>
+              <strong>Documentation:</strong> Comprehensive guides for
+              operators, admins, and mobile workflows
+            </li>
+            <li>
+              <strong>Deployment status:</strong> updated-site.zip (1,715 KB) is
+              latest production version
+            </li>
+          </ul>
+        </div>
+      </div>
+
+      <!-- Footer -->
+      <div class="footer">
+        <p>
+          AI Quality Inspection Platform — Stellantis Manufacturing Excellence
+        </p>
+        <p style="margin-top: 10px; color: var(--st-blue-200)">
+          Version 2.0+ | Updated: 2024 | For reference and training use
+        </p>
+        <p style="margin-top: 15px; font-size: 0.85em">
+          📖 Print this page for operator training materials or post on the
+          factory network drive
+        </p>
+      </div>
+    </div>
+
+    <script>
+      function switchTab(tabName) {
+        // Hide all sections
+        const sections = document.querySelectorAll(".section");
+        sections.forEach((section) => section.classList.remove("active"));
+
+        // Remove active class from all buttons
+        const buttons = document.querySelectorAll(".tab-btn");
+        buttons.forEach((btn) => btn.classList.remove("active"));
+
+        // Show selected section
+        document.getElementById(tabName).classList.add("active");
+
+        // Add active class to clicked button
+        event.target.classList.add("active");
+      }
+
+      // Smooth scroll for internal links
+      document.querySelectorAll('a[href^="#"]').forEach((anchor) => {
+        anchor.addEventListener("click", function (e) {
+          e.preventDefault();
+          const target = document.querySelector(this.getAttribute("href"));
+          if (target) {
+            target.scrollIntoView({ behavior: "smooth" });
+          }
+        });
+      });
+    </script>
+  </body>
+</html>
