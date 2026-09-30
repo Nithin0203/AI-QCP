@@ -2010,6 +2010,11 @@ th {
 }
 .widget-red .home-widget-value {
   color: var(--st-tangerine-deep);
+<<<<<<< HEAD
+=======
+<<<<<<< HEAD
+=======
+>>>>>>> f0c59a0d1bd7104589d07df261268bdc92f046ef
 }
 .fail-rate-high {
   background: #fff1ef;
@@ -2020,6 +2025,10 @@ th {
 }
 .fail-rate-low .home-widget-value {
   color: var(--st-mint-deep);
+<<<<<<< HEAD
+=======
+>>>>>>> bdc2952 (Update dashboard homepage and styling)
+>>>>>>> f0c59a0d1bd7104589d07df261268bdc92f046ef
 }
 .widget-orange {
   border-top-color: var(--st-orange-deep);
@@ -2359,6 +2368,7 @@ th {
   }
 
   .dashboard-filters {
+<<<<<<< HEAD
     grid-template-columns: repeat(3, minmax(0, 1fr));
     gap: 0.35rem;
     margin-top: 0.55rem;
@@ -2395,6 +2405,10 @@ th {
 
   #homeWidgetGrid {
     gap: 0.55rem;
+=======
+    grid-template-columns: 1fr;
+    padding: 0.75rem;
+>>>>>>> f0c59a0d1bd7104589d07df261268bdc92f046ef
   }
 
   .dashboard-selection-path {
@@ -2402,6 +2416,7 @@ th {
   }
 
   .station-cards-grid {
+<<<<<<< HEAD
     grid-template-columns: repeat(3, minmax(0, 1fr));
     gap: 0.35rem;
   }
@@ -2451,12 +2466,22 @@ th {
   .dashboard-kpi-stack {
     grid-template-columns: repeat(2, minmax(0, 1fr));
     gap: 0.55rem;
+=======
+    grid-template-columns: 1fr;
+  }
+
+  .dashboard-kpi-stack {
+    grid-template-columns: 1fr;
+>>>>>>> f0c59a0d1bd7104589d07df261268bdc92f046ef
   }
 
   .dashboard-kpi-stack .home-widget {
     aspect-ratio: auto;
+<<<<<<< HEAD
     min-height: 0;
     padding: 0.5rem;
+=======
+>>>>>>> f0c59a0d1bd7104589d07df261268bdc92f046ef
   }
 
   .home-widget-grid {
